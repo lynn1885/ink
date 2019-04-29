@@ -1,6 +1,6 @@
 // 用于对当前行中cursor之前的文本进行替换, 可以和讯飞语音输入法搭配使用
-// 需要在根目录建立一个叫做textReplaceMap.js的文件, 其中是替换对照map
-import textReplaceMap from '@/textReplaceMap.js';
+// 需要在根目录建立一个叫做text-replace-map.js的文件, 其中是替换对照map
+import textReplaceMap from '@/text-replace-map.js';
 
 const textReplaceMapKeys = Object.keys(textReplaceMap);
 

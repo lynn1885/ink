@@ -10,6 +10,7 @@ selenium-debug.log
 
 public/icons
 src/components/catalog/catalog-order.js
+src/text-replace-map.js
 
 # Editor directories and files
 .idea
