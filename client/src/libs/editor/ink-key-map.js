@@ -1,0 +1,379 @@
+// 基础快捷键
+export default function (editor, keyMap) {
+  const defaultKeyMap = {
+    // header
+    header1: 'Ctrl-1',
+    header2: 'Ctrl-2',
+    header3: 'Ctrl-3',
+    header4: 'Ctrl-4',
+    header5: 'Ctrl-5',
+    header6: 'Ctrl-6',
+    // format
+    bold: 'Ctrl-B',
+    code: 'Ctrl-;',
+    // italic: 'Ctrl-I',
+    // link: 'Ctrl-L',
+    // insert
+    insertFencedCode: 'Ctrl-Alt-F',
+    insertImage: 'Ctrl-Alt-I',
+    insertMath: 'Ctrl-Alt-M',
+    insertNewLineUp: 'Shift-Ctrl-Enter', // Ctrl-Shift-Enter doesn't work
+    insertNewLineDown: 'Ctrl-Enter',
+    // find
+    find: 'Ctrl-F',
+    // other
+    alt: 'Alt', // just to prevent the cursor becoming cross when type alt
+  };
+  const mergedKeyMap = Object.assign(defaultKeyMap, keyMap);
+
+  editor.cm.addKeyMap({
+    // header
+    [mergedKeyMap.header1]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 2) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 2 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes.length !== 2) {
+        doc.replaceRange(
+          '# ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '# ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    [mergedKeyMap.header2]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 3) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 3 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes[0].length !== 3) {
+        doc.replaceRange(
+          '## ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '## ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    [mergedKeyMap.header3]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 4) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 4 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes[0].length !== 4) {
+        doc.replaceRange(
+          '### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    [mergedKeyMap.header4]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 5) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 5 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes[0].length !== 5) {
+        doc.replaceRange(
+          '#### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '#### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    [mergedKeyMap.header5]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 6) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 6 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes[0].length !== 6) {
+        doc.replaceRange(
+          '##### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '##### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    [mergedKeyMap.header6]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      const matchRes = lineText.match(/^#+?\s/);
+      if (matchRes && matchRes[0].length === 7) {
+        doc.replaceRange(
+          '',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: 7 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      } else if (matchRes && matchRes[0].length !== 7) {
+        doc.replaceRange(
+          '###### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes[0].length },
+        );
+      } else {
+        doc.replaceRange(
+          '###### ',
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+        );
+        doc.setCursor({
+          line: cursor.line,
+          ch: doc.getLine(cursor.line).length,
+        });
+      }
+    },
+
+    // format
+    [mergedKeyMap.bold]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^\*\*(.*?)\*\*$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`**${sel}**`);
+        }
+      } else {
+        doc.replaceRange('**b**', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 2 },
+          { line: cursor.line, ch: cursor.ch + 3 },
+        );
+      }
+    },
+
+    [mergedKeyMap.italic]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^_(.*?)_$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`_${sel}_`);
+        }
+      } else {
+        doc.replaceRange('_i_', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
+        );
+      }
+    },
+
+    [mergedKeyMap.code]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^`(.*?)`$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`\`${sel}\``);
+        }
+      } else {
+        doc.replaceRange('`c`', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
+        );
+      }
+    },
+
+    [mergedKeyMap.link]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^\[(.*?)\]$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`[${sel}]`);
+        }
+      } else {
+        doc.replaceRange('[l]', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
+        );
+      }
+    },
+
+    // insert
+    [mergedKeyMap.insertMath]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/\$([^$]+?)\$$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`$${sel}$`);
+        }
+      } else {
+        doc.replaceRange('$m$', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
+        );
+      }
+    },
+
+    [mergedKeyMap.insertFencedCode]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      doc.replaceRange('```\n```', cursor);
+      doc.setCursor({ line: cursor.line, ch: 3 });
+    },
+
+    [mergedKeyMap.insertImage]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      doc.replaceRange('![]()', cursor);
+      doc.setCursor({ line: cursor.line, ch: 4 });
+    },
+
+    [mergedKeyMap.insertNewLineDown]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineTextLen = cm.lineInfo(cursor.line).text.length;
+      doc.replaceRange(
+        '\n',
+        { line: cursor.line, ch: lineTextLen },
+        { line: cursor.line, ch: lineTextLen },
+      );
+      doc.setCursor({ line: cursor.line + 1, ch: 0 });
+    },
+    [mergedKeyMap.insertNewLineUp]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      if (cursor.line > 0) {
+        const lineTextLen = cm.lineInfo(cursor.line - 1).text.length;
+        doc.replaceRange(
+          '\n',
+          { line: cursor.line - 1, ch: lineTextLen },
+          { line: cursor.line - 1, ch: lineTextLen },
+        );
+        doc.setCursor({ line: cursor.line, ch: 0 });
+      }
+    },
+
+    [mergedKeyMap.alt]: (cm) => {
+    },
+  });
+}

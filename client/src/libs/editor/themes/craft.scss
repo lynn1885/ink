@@ -1,0 +1,340 @@
+$editor-bg: rgb(253, 251, 249);
+$header-1: #963607;
+$header-2: #339966;
+$header-3: #997B57;
+$header-4: #809174;
+$header-5: #B2867B;
+$header-6: rgb(150, 142, 140);
+$selection: rgb(242, 230, 250);
+
+// editor
+.CodeMirror {
+  height: 100%;
+  border: none;
+  font-size: 14px;
+  color: #333;
+  background: $editor-bg!important;
+  line-height: 2;
+  padding: 10px;
+  caret-color:#333;
+  font-family: 'yahei consolas hybrid' !important;
+  span::selection, img::selection {
+    background: $selection!important;
+  }
+  & pre:last-child {
+    margin-bottom: 300px;
+  }
+}
+
+// fat cursor
+.cm-fat-cursor-mark {
+  width: auto;
+  border: 0px!important;
+  background: rgb(229, 203, 247)!important;
+  border-radius: 0px!important;
+  padding: 0px!important;
+  margin: 0px!important;
+}
+
+// dialogue (vim-dialogue)
+.CodeMirror-dialog-bottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0 10px!important;
+  margin: 0;
+  width: 100%;
+  height: 24px;
+  line-height: 24px;
+  font-size: 14px;
+  background: #eee;
+  padding: 0;
+  margin: 0;
+  z-index: 100;
+  opacity: 0.9;
+  overflow: hidden;
+  input {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    background: #eee;
+    outline: none;
+    border: none;
+  }
+}
+
+// header
+// use padding instead of margin when you want to set a line indentation
+// otherwise you will get a wrong position of cursor(caret) and selection
+.cm-header {
+  font-size: 14px;
+  margin: 0;
+  padding: 0;
+  font-weight: normal;
+}
+.cm-formatting-header{
+  font-size: 8px!important;
+}
+.cm-formatting-header-3 {
+  padding-left: 20px;
+}
+.cm-formatting-header-4 {
+  padding-left: 40px;
+}
+.cm-formatting-header-5 {
+  padding-left: 60px;
+}
+.cm-formatting-header-6 {
+  padding-left: 80px;
+}
+.CodeMirror-line:not(.line-cm-header) {
+  padding-left: 100px;
+}
+.cm-header-1{
+  color: $header-1 !important;
+  font-weight: 600!important;
+}
+.cm-header-2 {
+  color: $header-2 !important;
+  font-weight: 600!important;
+}
+.cm-header-3 {
+  color: $header-3 !important;
+}
+.cm-header-4 {
+  color: $header-4 !important;
+}
+.cm-header-5 {
+  color: $header-5 !important;
+}
+.cm-header-6 {
+  color: $header-6 !important;
+}
+.line-cm-header-1:not(:first-of-type) {
+  padding-top: 20px!important;
+}
+
+// variable
+.cm-variable-2 {
+  color: #888 !important;
+}
+
+// code
+.cm-comment {
+  padding: 2px;
+  background: rgb(245, 241, 235);
+  border-radius: 4px;
+  color:rgb(136, 108, 76)!important;
+}
+.cm-comment.cm-code-comment { // 代码中的注释
+  background: none;
+  color:#aaa!important;
+}
+.cm-link {
+  text-decoration: none;
+  background: rgb(236, 243, 248);
+  padding: 2px;
+  color: rgb(47, 147, 165) !important;
+  border-radius: 4px;
+}
+.line-cm-code-block-boundary {
+  .cm-comment {
+    background: none;
+    color: #999 !important;
+  }
+}
+
+// link
+.cm-link {
+  background: none;
+  color: rgb(47, 147, 165) !important;
+}
+.cm-url {
+  color: rgb(112, 163, 172) !important;
+  cursor: pointer;
+}
+
+// quote
+.cm-quote {
+  background: #f4f4f4;
+  color: #333!important;
+  padding: 6px 4px;
+  border-radius: 4px;
+}
+
+// formatting
+.cm-formatting, .cm-formatting-escape {
+  color: #ddd!important;
+}
+.cm-formatting-strong {
+  font-size: 8px!important;
+}
+
+// list
+.cm-formatting-list {
+  background: rgb(250, 244, 239);
+  border-radius: 3px;
+  padding: 0px 4px;
+  margin-right: 4px;
+  color: #ccc!important;
+}
+
+// fold-marker
+.CodeMirror-foldmarker {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  text-align: center;
+  line-height: 16px;
+  line-height: 1;
+  background: rgb(247, 236, 226);
+  color: rgb(247, 214, 183);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+// image
+.line-cm-image {
+  span {
+    font-size: 12px;
+    border-radius: 4px;
+    background: #f4f4f4;
+    padding: 4px 2px;
+    cursor: text;
+  }
+  .cm-url {
+    color: #ddd!important;
+  }
+}
+.inserted-widget-image {
+  display: block;
+  padding-left: 100px;
+  box-sizing: border-box;
+  max-width: 94%;
+}
+
+.katex {
+  padding: 0px 4px;
+  color: #000;
+}
+// math
+.line-cm-math {
+  span {
+    color: #aaa!important;
+    background: #f4f4f4!important;
+    padding: 2px 4px;
+    border-radius: 4px;
+  }
+}
+.inserted-widget-math {
+  padding-left: 100px;
+}
+.ink-math-preview {
+  padding: 10px;
+  margin-left: 100px;
+}
+
+// cmd line
+.line-cm-cmd {
+  span {
+    font-size: 12px;
+    color: #ccc!important;
+  }
+}
+
+// line-char
+.line-char {
+  position: relative;
+  display: inline-block;
+  margin: 0px 0px;
+  padding: 0px;
+}
+[class*="line-char-1"]::before {
+  display: inline-block;
+  position: absolute;
+  top: -6px;
+  left: 10%;
+  width: 40%;
+  height: 10px;
+  box-sizing: border-box;
+  font-size: 10px;
+  line-height: 10px;
+  text-align: right;
+  color: rgb(78, 54, 8);
+  background: rgb(216, 234, 253);
+  overflow: hidden;
+}
+[class*="line-char-2"]::after {
+  display: inline-block;
+  position: absolute;
+  top: -6px;
+  right: 10%;
+  width: 40%;
+  height: 10px;
+  box-sizing: border-box;
+  font-size: 10px;
+  line-height: 10px;
+  text-align: left;
+  color: rgb(78, 54, 8);
+  background: rgb(216, 234, 253);
+  overflow: hidden;
+}
+
+.line-char-1-q::before {content: 'q'}
+.line-char-1-w::before {content: 'w'}
+.line-char-1-e::before {content: 'e'}
+.line-char-1-r::before {content: 'r'}
+.line-char-1-t::before {content: 't'}
+.line-char-1-a::before {content: 'a'}
+.line-char-1-s::before {content: 's'}
+.line-char-1-d::before {content: 'd'}
+.line-char-1-f::before {content: 'f'}
+.line-char-1-g::before {content: 'g'}
+.line-char-1-z::before {content: 'z'}
+.line-char-1-x::before {content: 'x'}
+.line-char-1-c::before {content: 'c'}
+.line-char-1-v::before {content: 'v'}
+.line-char-1-y::before {content: 'y'}
+.line-char-1-u::before {content: 'u'}
+.line-char-1-i::before {content: 'i'}
+.line-char-1-o::before {content: 'o'}
+.line-char-1-p::before {content: 'p'}
+.line-char-1-h::before {content: 'h'}
+.line-char-1-j::before {content: 'j'}
+.line-char-1-k::before {content: 'k'}
+.line-char-1-l::before {content: 'l'}
+.line-char-1-b::before {content: 'b'}
+.line-char-1-n::before {content: 'n'}
+.line-char-1-m::before {content: 'm'}
+
+.line-char-2-q::after {content: 'q'}
+.line-char-2-w::after {content: 'w'}
+.line-char-2-e::after {content: 'e'}
+.line-char-2-r::after {content: 'r'}
+.line-char-2-t::after {content: 't'}
+.line-char-2-a::after {content: 'a'}
+.line-char-2-s::after {content: 's'}
+.line-char-2-d::after {content: 'd'}
+.line-char-2-f::after {content: 'f'}
+.line-char-2-g::after {content: 'g'}
+.line-char-2-z::after {content: 'z'}
+.line-char-2-x::after {content: 'x'}
+.line-char-2-c::after {content: 'c'}
+.line-char-2-v::after {content: 'v'}
+.line-char-2-y::after {content: 'y'}
+.line-char-2-u::after {content: 'u'}
+.line-char-2-i::after {content: 'i'}
+.line-char-2-o::after {content: 'o'}
+.line-char-2-p::after {content: 'p'}
+.line-char-2-h::after {content: 'h'}
+.line-char-2-j::after {content: 'j'}
+.line-char-2-k::after {content: 'k'}
+.line-char-2-l::after {content: 'l'}
+.line-char-2-b::after {content: 'b'}
+.line-char-2-n::after {content: 'n'}
+.line-char-2-m::after {content: 'm'}
+
+
+
