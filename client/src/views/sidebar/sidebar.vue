@@ -16,8 +16,6 @@
     <div id="tool-pages">
       <catalog v-show="activePage === 'catalog'"></catalog>
     </div>
-
-    
   </div>
 </template>
 <script>
@@ -26,17 +24,21 @@ import readonly from '@/components/readonly/readonly.js';
 
 export default {
   name: 'side-bar',
-  components:  {
+  components: {
     Catalog,
   },
   data() {
     return {
-      activePage: 'catalog',      // 当前激活的工具
-      activeButtons: {},  // 当前激活的按钮
-      isSideBarSmall: false,   // 是否显示为小工具栏状态
+      activePage: 'catalog', // 当前激活的工具
+      activeButtons: {}, // 当前激活的按钮
+      isSideBarSmall: false, // 是否显示为小工具栏状态
       tools: [
-        { name: 'catalog', icon: 'torah', url: '/catalog', type: 'page' },
-        { name: 'readonly', icon: 'moon', url: '/readonly', type: 'button', onclick: readonly }
+        {
+          name: 'catalog', icon: 'torah', url: '/catalog', type: 'page',
+        },
+        {
+          name: 'readonly', icon: 'moon', url: '/readonly', type: 'button', onclick: readonly,
+        },
       ],
     };
   },
@@ -44,7 +46,7 @@ export default {
     changeTool(tool) {
       if (tool.type === 'page') {
         if (this.activePage === tool.name) {
-        this.isSideBarSmall = !this.isSideBarSmall;
+          this.isSideBarSmall = !this.isSideBarSmall;
         } else {
           this.isSideBarSmall = false;
           this.activePage = tool.name;
@@ -60,20 +62,20 @@ export default {
           this.activeButtons[tool.name] = false;
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-$tools-width: 50px;
+@import "@/themes/craft/var.scss";
 
 #side-bar {
   display: flex;
-  width: 380px;
-  background: rgb(248, 247, 246);
+  width: $side-bar-width;
+  background: $side-bar-bg;
   &.side-bar-small { // 小工具栏
-    width: $tools-width;
+    width: $icon-bar-width;
     #tool-pages {
       display: none;
     }
@@ -81,11 +83,11 @@ $tools-width: 50px;
 }
 
 #tools {
-  flex-basis: $tools-width;
+  flex-basis: $icon-bar-width;
   flex-shrink: 0;
   flex-grow: 0;
   height: 100%;
-  background: rgb(236, 234, 232);
+  background: $icon-bar-bg;
 }
 #tool-pages {
   display: block;
@@ -96,23 +98,23 @@ $tools-width: 50px;
 }
 .tool {
   width: 100%;
-  height: 50px;
+  height: $icon-bar-width;
   text-align: center;
-  line-height: 50px;
-  color: #999;
+  line-height: $icon-bar-width;
+  color: $icon-color;
   transition: all 0.3s;
   cursor: pointer;
   &.active {
-    color: #333;
+    color: $icon-color-active;
     transition: all 0.3s;
   }
   &:not(.active):hover {
-    color: #888;
+    color: $icon-color-hover;
   }
   svg {
     text-align: center;
-    line-height: 60px;
-    font-size: 22px;
+    line-height: $icon-bar-width;
+    font-size: $icon-size;
     vertical-align: middle;
   }
 }

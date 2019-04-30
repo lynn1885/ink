@@ -1,5 +1,7 @@
 // 用于对当前行中cursor之前的文本进行替换, 可以和讯飞语音输入法搭配使用
 // 需要在根目录建立一个叫做text-replace-map.js的文件, 其中是替换对照map
+
+// eslint-disable-next-line import/extensions, import/no-unresolved
 import textReplaceMap from '@/text-replace-map.js';
 
 const textReplaceMapKeys = Object.keys(textReplaceMap);
@@ -10,7 +12,7 @@ const map = {
 };
 
 // 导出
-export default function (editor, config) {
+export default function (editor) {
   editor.cm.addKeyMap({
     [map.replaceLine]: (cm) => {
       // 读取配置文件
@@ -27,7 +29,7 @@ export default function (editor, config) {
 
       // 读取行内配置指令
       const matchRes = editor.getCmdInLastLine(/%text-replace:(.+)%/);
-      
+
       if (matchRes) {
         if (matchRes[1] && matchRes[1].length >= 3) {
           let cmdStr = matchRes[1];

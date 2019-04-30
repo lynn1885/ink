@@ -1,0 +1,61 @@
+// font
+$font-family-main: 'yahei consolas hybrid';
+$font-size-main: 14px;
+$formatting-font-size: 8px;
+
+// size
+$side-bar-width: 380px;
+$icon-bar-width: 50px;
+$icon-size: 22px;
+
+// color: side-bar
+$side-bar-bg: rgb(248, 247, 246);
+$icon-bar-bg: rgb(236, 234, 232);
+$icon-color: #999;
+$icon-color-active: #333;
+$icon-color-hover: #888;
+
+// color: catalog
+$catalog-active-bg: rgb(234, 231, 243);
+$catalog-active-color: rgb(78, 78, 99);
+$catalog-hover: #f3f3f3;
+$catalog-modal-bg: rgba(255, 255, 255, 0.1);
+$catalog-jump-bg: rgba(248, 247, 246, 0.9);
+$catalog-jump-input-bg: #f4f4f4;
+$catalog-jump-input-color: rgb(176, 149, 206);
+$catalog-col-border: 1px solid #f3f3f3;
+$catalog-jump-li-border: 1px solid #eee;
+
+// color: editor
+$editor-bg: rgb(253, 251, 249);
+
+// color: headers
+$header-1: #963607;
+$header-2: #339966;
+$header-3: #997B57;
+$header-4: #809174;
+$header-5: #B2867B;
+$header-6: rgb(150, 142, 140);
+$selection: rgb(242, 230, 250);
+
+// color: cursor
+$fat-cursor: rgb(229, 203, 247);
+$cursor: #333;
+
+// color: code, link, quote
+$code-bg: rgb(245, 241, 235);
+$code-color: rgb(136, 108, 76);
+$cm-code-comment: #aaa;
+$cm-link-bg: rgb(236, 243, 248);
+$cm-link-color: rgb(47, 147, 165);
+$cm-quote-bg: #f4f4f4;
+$cm-quote-color: #333;
+$cm-formatting-color: #ddd;
+$cm-list-bg: rgb(250, 244, 239);
+$cm-list-color: #ccc;
+$cm-foldmarker-bg: rgb(247, 236, 226);
+$cm-foldmarker-color: rgb(247, 214, 183);
+$cm-image-font-bg: #f4f4f4;
+$cm-image-font-color: #ddd;
+$cm-line-char-bg: rgb(216, 234, 253);
+$cm-line-char-color: rgb(78, 54, 8);

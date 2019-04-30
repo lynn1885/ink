@@ -1,23 +1,16 @@
-$editor-bg: rgb(253, 251, 249);
-$header-1: #963607;
-$header-2: #339966;
-$header-3: #997B57;
-$header-4: #809174;
-$header-5: #B2867B;
-$header-6: rgb(150, 142, 140);
-$selection: rgb(242, 230, 250);
+@import "var.scss";
 
 // editor
 .CodeMirror {
   height: 100%;
   border: none;
-  font-size: 14px;
+  font-size: $font-size-main;
   color: #333;
   background: $editor-bg!important;
   line-height: 2;
   padding: 10px;
-  caret-color:#333;
-  font-family: 'yahei consolas hybrid' !important;
+  caret-color:$cursor;
+  font-family: $font-family-main !important;
   span::selection, img::selection {
     background: $selection!important;
   }
@@ -30,7 +23,7 @@ $selection: rgb(242, 230, 250);
 .cm-fat-cursor-mark {
   width: auto;
   border: 0px!important;
-  background: rgb(229, 203, 247)!important;
+  background: $fat-cursor!important;
   border-radius: 0px!important;
   padding: 0px!important;
   margin: 0px!important;
@@ -47,7 +40,7 @@ $selection: rgb(242, 230, 250);
   width: 100%;
   height: 24px;
   line-height: 24px;
-  font-size: 14px;
+  font-size: $font-size-main;
   background: #eee;
   padding: 0;
   margin: 0;
@@ -123,19 +116,19 @@ $selection: rgb(242, 230, 250);
 // code
 .cm-comment {
   padding: 2px;
-  background: rgb(245, 241, 235);
+  background: $code-bg;
   border-radius: 4px;
-  color:rgb(136, 108, 76)!important;
+  color:$code-color!important;
 }
 .cm-comment.cm-code-comment { // 代码中的注释
   background: none;
-  color:#aaa!important;
+  color:$cm-code-comment!important;
 }
 .cm-link {
   text-decoration: none;
-  background: rgb(236, 243, 248);
+  background: $cm-link-bg;
   padding: 2px;
-  color: rgb(47, 147, 165) !important;
+  color: $cm-link-color !important;
   border-radius: 4px;
 }
 .line-cm-code-block-boundary {
@@ -148,36 +141,36 @@ $selection: rgb(242, 230, 250);
 // link
 .cm-link {
   background: none;
-  color: rgb(47, 147, 165) !important;
+  color: $cm-link-color !important;
 }
 .cm-url {
-  color: rgb(112, 163, 172) !important;
+  color: $cm-link-color !important;
   cursor: pointer;
 }
 
 // quote
 .cm-quote {
-  background: #f4f4f4;
-  color: #333!important;
+  background: $cm-quote-bg;
+  color: $cm-quote-color!important;
   padding: 6px 4px;
   border-radius: 4px;
 }
 
 // formatting
 .cm-formatting, .cm-formatting-escape {
-  color: #ddd!important;
+  color: $cm-formatting-color!important;
 }
 .cm-formatting-strong {
-  font-size: 8px!important;
+  font-size: $formatting-font-size!important;
 }
 
 // list
 .cm-formatting-list {
-  background: rgb(250, 244, 239);
+  background: $cm-list-bg;
   border-radius: 3px;
   padding: 0px 4px;
   margin-right: 4px;
-  color: #ccc!important;
+  color: $cm-list-color!important;
 }
 
 // fold-marker
@@ -189,8 +182,8 @@ $selection: rgb(242, 230, 250);
   text-align: center;
   line-height: 16px;
   line-height: 1;
-  background: rgb(247, 236, 226);
-  color: rgb(247, 214, 183);
+  background: $cm-foldmarker-bg;
+  color: $cm-foldmarker-color;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -200,12 +193,12 @@ $selection: rgb(242, 230, 250);
   span {
     font-size: 12px;
     border-radius: 4px;
-    background: #f4f4f4;
+    background: $cm-image-font-bg;
     padding: 4px 2px;
     cursor: text;
   }
   .cm-url {
-    color: #ddd!important;
+    color: $cm-image-font-color!important;
   }
 }
 .inserted-widget-image {
@@ -262,8 +255,8 @@ $selection: rgb(242, 230, 250);
   font-size: 10px;
   line-height: 10px;
   text-align: right;
-  color: rgb(78, 54, 8);
-  background: rgb(216, 234, 253);
+  color: $cm-line-char-color;
+  background: $cm-line-char-bg;
   overflow: hidden;
 }
 [class*="line-char-2"]::after {
@@ -277,8 +270,8 @@ $selection: rgb(242, 230, 250);
   font-size: 10px;
   line-height: 10px;
   text-align: left;
-  color: rgb(78, 54, 8);
-  background: rgb(216, 234, 253);
+  color: $cm-line-char-color;
+  background: $cm-line-char-bg;
   overflow: hidden;
 }
 
@@ -335,6 +328,3 @@ $selection: rgb(242, 230, 250);
 .line-char-2-b::after {content: 'b'}
 .line-char-2-n::after {content: 'n'}
 .line-char-2-m::after {content: 'm'}
-
-
-

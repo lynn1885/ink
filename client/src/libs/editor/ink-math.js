@@ -5,7 +5,7 @@ import 'katex/dist/katex.css';
 import 'katex/dist/fonts/KaTeX_AMS-Regular.ttf';
 
 export default function (editor, config) { // eslint-disable-line no-unused-vars
-  editor.cm.on('renderLine', (cm, line, el) => {
+  editor.cm.on('renderLine', (cm, line) => {
     if (line.text !== line.lastTimeText_math) {
       line.lastTimeText_math = line.text;
       const r = /\$([^$]+?)\$/g;

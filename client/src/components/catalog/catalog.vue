@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unresolved */
 <template>
   <div id="catalog" v-if="isCatalogLoaded">
 
@@ -5,7 +6,12 @@
     <div class="catalog-container" id="catalog-level-1">
       <ul v-for="cat of catsLv1" :key="cat" v-show="catsLv1.length">
         <li @click="changeCurCat(1, cat)" :class="{'cat-active': curCatLv1 === cat}">
-          <img :src="`icons/${cat}.png`" v-if="isShowCatIcon" onerror="this.style.visibility='hidden'" class="catalog-icon">
+          <img
+            :src="`icons/${cat}.png`"
+            v-if="isShowCatIcon"
+            onerror="this.style.visibility='hidden'"
+            class="catalog-icon"
+          >
           {{cat}}
         </li>
       </ul>
@@ -14,7 +20,12 @@
     <div class="catalog-container" id="catalog-level-2" v-show="catsLv2.length">
       <ul v-for="cat of catsLv2" :key="cat">
         <li @click="changeCurCat(2, cat)" :class="{'cat-active': curCatLv2 === cat}">
-          <img :src="`icons/${cat}.png`" v-if="isShowCatIcon" onerror="this.style.visibility='hidden'" class="catalog-icon">
+          <img
+            :src="`icons/${cat}.png`"
+            v-if="isShowCatIcon"
+            onerror="this.style.visibility='hidden'"
+            class="catalog-icon"
+          >
           {{cat}}
         </li>
       </ul>
@@ -23,7 +34,12 @@
     <div class="catalog-container" id="catalog-level-3" v-show="catsLv3.length">
       <ul v-for="cat of catsLv3" :key="cat">
         <li @click="changeCurCat(3, cat)" :class="{'cat-active': curCatLv3 === cat}">
-          <img :src="`icons/${cat}.png`" v-if="isShowCatIcon" onerror="this.style.visibility='hidden'" class="catalog-icon">
+          <img
+            :src="`icons/${cat}.png`"
+            v-if="isShowCatIcon"
+            onerror="this.style.visibility='hidden'"
+            class="catalog-icon"
+          >
           {{cat}}
         </li>
       </ul>
@@ -34,9 +50,22 @@
 
     <!-- 目录跳转 -->
     <div id="catalog-jump" v-show="isShowCatalogJump">
-      <input class="catalog-jump-input" type="text"  v-model="catalogJumpSearchStr" ref="catalog-jump-input">
-      <ul class="catalog-jump-result" v-for="curRes of catalogJumpSearchRes" :key="curRes.toString()">
-        <li @click="jumpCatalog(curRes)" :class="{'selected-search-res': curRes === catalogJumpSearchRes[0 + curSelectedSearchResBias]}">
+      <input
+        class="catalog-jump-input"
+        type="text"
+        v-model="catalogJumpSearchStr"
+        ref="catalog-jump-input"
+      >
+      <ul
+        class="catalog-jump-result"
+        v-for="curRes of catalogJumpSearchRes"
+        :key="curRes.toString()"
+      >
+        <li
+          @click="jumpCatalog(curRes)"
+          :class="{'selected-search-res':
+          curRes === catalogJumpSearchRes[0 + curSelectedSearchResBias]}"
+        >
           {{curRes}}
         </li>
       </ul>
@@ -47,10 +76,10 @@
   </div>
 </template>
 <script>
-import $ from 'jquery';
+// eslint-disable-next-line import/extensions, import/no-unresolved
+import config from '@/config';
 import _ from 'lodash';
 import catalogOrder from './catalog-order';
-import config from '@/config'
 
 export default {
   name: 'catalog',
@@ -68,13 +97,13 @@ export default {
       catsLv2: [],
       catsLv3: [],
       curSelectedSearchResBias: 0, // 当前选中的目录搜索结果的偏移值, 默认选中第一个搜索结果
-      catalogJumpSearchStr: '',   // 目录跳转搜索字符串
-      catalogJumpSearchRes: [],   // 目录跳转搜索结果
-      isShowCatIcon: true,        // 是否显示目录图标
-      isCatalogLoaded: false,     // 目录是否加载完毕
-      isShowCatalogJump: false,   // 是否显示目录跳转
-      isPlayClickAudio: false,     // 是否播放点击音效
-      clickSoundSrc: './sounds/click.wav',  // 点击音效
+      catalogJumpSearchStr: '', // 目录跳转搜索字符串
+      catalogJumpSearchRes: [], // 目录跳转搜索结果
+      isShowCatIcon: true, // 是否显示目录图标
+      isCatalogLoaded: false, // 目录是否加载完毕
+      isShowCatalogJump: false, // 是否显示目录跳转
+      isPlayClickAudio: false, // 是否播放点击音效
+      clickSoundSrc: './sounds/click.wav', // 点击音效
     };
   },
 
@@ -82,52 +111,52 @@ export default {
     // 监听编辑器加载
     '$store.state.editor': {
       immediate: true,
-      async handler (editor) {
+      async handler(editor) {
         if (editor) {
           await this.getCatalog(editor);
         }
-      }
+      },
     },
 
     // 总目录变更, 更新一级目录
-    catalog () {
+    catalog() {
       this.updateCatalog(1);
     },
 
     // 一级路径变更, 更新二级目录
-    curCatLv1 () {
+    curCatLv1() {
       this.updateCatalog(2);
     },
 
     // 二级路径变更, 更新三级目录
-    curCatLv2 () {
+    curCatLv2() {
       this.updateCatalog(3);
     },
 
     // 三级路径变更时, 更新页面
-    curCatLv3 (value) {
+    curCatLv3(value) {
       if (value) {
         this.updateFilePath();
       }
     },
 
     // 目录跳转: 及时搜索
-    catalogJumpSearchStr () {
+    catalogJumpSearchStr() {
       this.updateCatalogJumpSearchRes(this.catalogJumpSearchStr);
     },
 
     // 目录跳转: 关闭时, 做一些清理工作
-    isShowCatalogJump (value) {
+    isShowCatalogJump(value) {
       if (value === false) {
         this.catalogJumpSearchStr = '';
         this.catalogJumpSearchRes = [];
       }
-    }
+    },
   },
 
   methods: {
     // 获取目录, 更新一二三级默认路径
-    async getCatalog (editor) {
+    async getCatalog(editor) {
       this.catalog = await editor.fileServer.getCatalog();
       this.catalog = _.merge(catalogOrder, this.catalog);
       if (this.defaultCatLv1) {
@@ -140,11 +169,11 @@ export default {
         this.curCatLv3 = this.defaultCatLv3;
       }
       if (!this.curCatLv1 && typeof this.catalog === 'object') {
-        this.curCatLv1 = Object.keys(this.catalog)[0];
+        [this.curCatLv1] = Object.keys(this.catalog);
         if (!this.curCatLv2 && typeof this.catalog[this.curCatLv1] === 'object') {
-          this.curCatLv2 = Object.keys(this.catalog[this.curCatLv1])[0];
+          [this.curCatLv2] = Object.keys(this.catalog[this.curCatLv1]);
           if (!this.curCatLv3 && typeof this.catalog[this.curCatLv1][this.curCatLv2] === 'object') {
-            this.curCatLv3 = Object.keys(this.catalog[this.curCatLv1][this.curCatLv2])[0];
+            [this.curCatLv3] = Object.keys(this.catalog[this.curCatLv1][this.curCatLv2]);
           }
         }
       }
@@ -152,7 +181,7 @@ export default {
     },
 
     // 更新目录
-    updateCatalog (lv) {
+    updateCatalog(lv) {
       if (lv === 1) {
         this.curCatLv1 = '';
         this.curCatLv2 = '';
@@ -194,7 +223,7 @@ export default {
     },
 
     // 更改当前目录
-    changeCurCat (lv, value) {
+    changeCurCat(lv, value) {
       if (lv === 1) {
         this.curCatLv1 = value;
       } else if (lv === 2) {
@@ -209,14 +238,14 @@ export default {
     },
 
     // 播放声音
-    playAudio (src) {
+    playAudio(src) {
       if (!src) return;
       this.$refs['audio-player'].setAttribute('src', src);
       this.$refs['audio-player'].play();
     },
 
     // 绑定热键
-    bindHotKey () {
+    bindHotKey() {
       document.addEventListener('keydown', (e) => {
         // ctrl + /: 显隐目录跳转
         if (e.ctrlKey && e.keyCode === 191) {
@@ -234,13 +263,13 @@ export default {
           && e.keyCode === 40
           && this.curSelectedSearchResBias < this.catalogJumpSearchRes.length - 1
         ) {
-           this.curSelectedSearchResBias ++;
+          this.curSelectedSearchResBias += 1;
         }
         if (this.isShowCatalogJump
           && e.keyCode === 38
           && this.curSelectedSearchResBias > 0
         ) {
-           this.curSelectedSearchResBias --;
+          this.curSelectedSearchResBias -= 1;
         }
 
         // enter键跳转至当前选中的目录
@@ -251,23 +280,23 @@ export default {
     },
 
     // 目录跳转: 搜索目录
-    updateCatalogJumpSearchRes (searchStr) {
+    updateCatalogJumpSearchRes(searchStr) {
       this.catalogJumpSearchRes = [];
-      let res = [];
+      const res = [];
       if (searchStr) {
-        for (let cat1 in this.catalog) {
-          for (let cat2 in this.catalog[cat1]) {
-            for (let cat3 in this.catalog[cat1][cat2]) {
+        for (const cat1 in this.catalog) {
+          for (const cat2 in this.catalog[cat1]) {
+            for (const cat3 in this.catalog[cat1][cat2]) {
               if (cat1.toLowerCase().includes(searchStr.toLowerCase())) {
-                let r = cat1;
+                const r = cat1;
                 res.push(r);
               }
               if (cat2.toLowerCase().includes(searchStr.toLowerCase())) {
-                let r = `${cat1} > ${cat2}`;
+                const r = `${cat1} > ${cat2}`;
                 res.push(r);
               }
               if (cat3.toLowerCase().includes(searchStr.toLowerCase())) {
-                let r = `${cat1} > ${cat2} > ${cat3}`;
+                const r = `${cat1} > ${cat2} > ${cat3}`;
                 res.push(r);
               }
             }
@@ -278,38 +307,36 @@ export default {
     },
 
     // 目录跳转: 跳转
-    jumpCatalog (catStr) {
-      if (typeof catStr!== 'string') {
+    jumpCatalog(catStr) {
+      if (typeof catStr !== 'string') {
         return;
       }
-      let aimCats = catStr.split(' > ');
+      const aimCats = catStr.split(' > ');
       if (aimCats[0]) {
-        this.curCatLv1 = aimCats[0];
+        [this.curCatLv1] = aimCats;
       }
       setTimeout(() => {
         if (aimCats[1]) {
-          this.curCatLv2 = aimCats[1];
+          [, this.curCatLv2] = aimCats;
         }
         setTimeout(() => {
           if (aimCats[2]) {
-            this.curCatLv3 = aimCats[2];
+            [, , this.curCatLv3] = aimCats;
           }
         }, 0);
       }, 0);
       this.isShowCatalogJump = false;
-    }
+    },
   },
 
-  mounted () {
+  mounted() {
     this.bindHotKey();
-  }
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-$active-background: rgb(234, 231, 243);
-$active-color: rgb(78, 78, 99);
-
+@import "@/themes/craft/var.scss";
 /* scrollbar */
 ::-webkit-scrollbar {
   width: 0px!important;
@@ -333,15 +360,15 @@ $active-color: rgb(78, 78, 99);
   height: 100%;
   overflow: auto;
   box-sizing: border-box;
-  border-right: 1px solid #f3f3f3;
+  border-right: $catalog-col-border;
   ul {
     margin: 0;
     padding: 0;
     list-style: none;
   }
   li {
-    height: 14px;
-    line-height: 14px;
+    height: $font-size-main;
+    line-height: $font-size-main;
     padding: 6px 0px 6px 4px;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -349,11 +376,11 @@ $active-color: rgb(78, 78, 99);
     cursor: default;
   }
   li:hover {
-    background: #f3f3f3;
+    background: $catalog-hover;
   }
   li.cat-active {
-    background: $active-background;
-    color: $active-color;
+    background: $catalog-active-bg;
+    color: $catalog-active-color;
   }
   .catalog-icon {
     position: relative;
@@ -378,7 +405,7 @@ $active-color: rgb(78, 78, 99);
   top: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.1);
+  background: $catalog-modal-bg;
   cursor: wait;
 }
 
@@ -389,16 +416,16 @@ $active-color: rgb(78, 78, 99);
   top: 0px;
   width: 100%;
   height: 100%;
-  background: rgba(248, 247, 246, 0.9);
+  background: $catalog-jump-bg;
   .catalog-jump-input {
     width: 100%;
     height: 30px;
-    background: #f4f4f4;
+    background: $catalog-jump-input-bg;
     border: none;
     box-sizing: border-box;
     text-align: center;
     font-weight: bold;
-    color: rgb(176, 149, 206);
+    color: $catalog-jump-input-color;
     outline: none;
   }
   .catalog-jump-result {
@@ -408,17 +435,17 @@ $active-color: rgb(78, 78, 99);
     li {
       padding: 5px 8px;
       box-sizing: border-box;
-      border-bottom: 1px solid #eee;
+      border-bottom: $catalog-jump-li-border;
       &:hover {
-       background: $active-background;
-       color: $active-color;
+       background: $catalog-active-bg;
+       color: $catalog-active-color;
        cursor: default;
       }
     }
   }
   .selected-search-res {
-    background: $active-background;
-    color: $active-color;
+    background: $catalog-active-bg;
+    color: $catalog-active-color;
   }
 }
 

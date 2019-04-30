@@ -13,7 +13,7 @@ import inkFlexibleCursor from '@/libs/editor/ink-flexible-cursor';
 import inkFlexibleCursorLineChar from '@/libs/editor/ink-flexible-cursor-line-char';
 import inkHeaderManager from '@/libs/editor/ink-header-manager';
 import inkLineReplace from '@/libs/editor/ink-line-replace';
-import '@/libs/editor/themes/craft.scss'
+import '@/themes/craft/index.scss'
 import config from '@/config'
 
 export default {

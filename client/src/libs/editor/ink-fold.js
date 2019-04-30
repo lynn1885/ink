@@ -12,7 +12,7 @@ const map = {
 };
 
 // 导出
-export default function (editor, config) {
+export default function (editor) {
   editor.cm.addKeyMap({
     // fold code
     [map.foldCode]: (cm) => {

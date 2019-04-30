@@ -7,14 +7,15 @@ const map = {
 };
 
 // 导出
-export default function (editor, config) {
+export default function (editor) {
   editor.cm.addKeyMap({
     // insert header by hierarchy: next
     [map.insertHeaderNext]: (cm) => {
       const doc = cm.getDoc();
       const { headerLv } = editor.getHeaderByCursor();
       if (headerLv > 0) { // 只有当前已经位于某个header中时, 才会执行下面的操作
-        const { nextSiblingHeaderlineNum, parentHeaderLastLineNum } // 找到下一个同级header所在行, 或当前所在行的父级header的最后一行, 这是要插入的位置
+        // 找到下一个同级header所在行, 或当前所在行的父级header的最后一行, 这是要插入的位置
+        const { nextSiblingHeaderlineNum, parentHeaderLastLineNum }
             = getNextSiblingHeaderLineNumByCurosr(editor, cm, headerLv);
         let insertLineNum;
         if (nextSiblingHeaderlineNum) {

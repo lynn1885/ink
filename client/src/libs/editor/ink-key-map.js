@@ -19,6 +19,11 @@ export default function (editor, keyMap) {
     insertMath: 'Ctrl-Alt-M',
     insertNewLineUp: 'Shift-Ctrl-Enter', // Ctrl-Shift-Enter doesn't work
     insertNewLineDown: 'Ctrl-Enter',
+    // line
+    copyCurLineDown: 'Shift-Alt-Down',
+    copyCurLineUp: 'Shift-Alt-Up',
+    exchangeCurLineUp: 'Alt-Up',
+    exchangeCurLineDown: 'Alt-Down',
     // find
     find: 'Ctrl-F',
     // other
@@ -373,7 +378,73 @@ export default function (editor, keyMap) {
       }
     },
 
-    [mergedKeyMap.alt]: (cm) => {
+    // line
+    [mergedKeyMap.copyCurLineUp]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = cm.lineInfo(cursor.line).text;
+      doc.replaceRange(
+        `${lineText}\n`,
+        { line: cursor.line, ch: 0 },
+        { line: cursor.line, ch: 0 },
+      );
+      doc.setCursor({ line: cursor.line, ch: cursor.ch });
+    },
+
+    [mergedKeyMap.copyCurLineDown]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = cm.lineInfo(cursor.line).text;
+      doc.replaceRange(
+        `\n${lineText}`,
+        { line: cursor.line, ch: lineText.length },
+        { line: cursor.line, ch: lineText.length },
+      );
+      doc.setCursor({ line: cursor.line + 1, ch: cursor.ch });
+    },
+
+    [mergedKeyMap.exchangeCurLineUp]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      if (cursor.line > 0) {
+        const lineTextCur = cm.lineInfo(cursor.line).text;
+        const lineTextUp = cm.lineInfo(cursor.line - 1).text;
+        doc.replaceRange(
+          lineTextCur,
+          { line: cursor.line - 1, ch: 0 },
+          { line: cursor.line - 1, ch: lineTextUp.length },
+        );
+        doc.replaceRange(
+          lineTextUp,
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineTextCur.length },
+        );
+        doc.setCursor({ line: cursor.line - 1, ch: cursor.ch });
+      }
+    },
+
+    [mergedKeyMap.exchangeCurLineDown]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lastLineNum = doc.lastLine();
+      if (cursor.line < lastLineNum) {
+        const lineTextCur = cm.lineInfo(cursor.line).text;
+        const lineTextDown = cm.lineInfo(cursor.line + 1).text;
+        doc.replaceRange(
+          lineTextDown,
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineTextCur.length },
+        );
+        doc.replaceRange(
+          lineTextCur,
+          { line: cursor.line + 1, ch: 0 },
+          { line: cursor.line + 1, ch: lineTextDown.length },
+        );
+        doc.setCursor({ line: cursor.line + 1, ch: cursor.ch });
+      }
+    },
+
+    [mergedKeyMap.alt]: () => {
     },
   });
 }

@@ -108,7 +108,7 @@ function getCommand(e) {
 }
 
 // 导出
-export default function (_editor, config) {
+export default function (_editor) {
   editor = _editor; // 放到全局
   ({ cm } = editor);
   const keyMap = {

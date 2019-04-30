@@ -83,7 +83,7 @@ export default class {
    * @param {cm} cm cm
    * @param {*} change change
    */
-  _onChange(cm, change) { // eslint-disable-line class-methods-use-this
+  _onChange() { // eslint-disable-line class-methods-use-this
     // console.log(change);
     // this.isFileContentChanged = true;
     // window.focusedLine = change.from.line; // no!! use vuex;

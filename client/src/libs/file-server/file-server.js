@@ -358,7 +358,7 @@ export default function (editor, config) {
 
   // 手动保存快捷键
   editor.cm.addKeyMap({
-    'Ctrl-S': async (cm) => {
+    'Ctrl-S': async () => {
       await editor.fileServer.saveFile('MANUAL', true);
     },
   });
@@ -375,5 +375,6 @@ export default function (editor, config) {
       event.returnValue = 'has unsaved file!';
       return 'has unsaved file!';
     }
+    return null;
   };
 }

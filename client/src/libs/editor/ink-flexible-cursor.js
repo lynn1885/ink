@@ -21,7 +21,7 @@ const map = {
 };
 
 // export
-export default function (editor, config) {
+export default function (editor) {
   editor.cm.addKeyMap({
     [map.cursorToHome]: (cm) => {
       cm.execCommand('goLineLeft');

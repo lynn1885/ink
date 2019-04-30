@@ -14,6 +14,9 @@ module.exports = {
     'no-use-before-define': 'warn',
     'no-restricted-syntax': 'warn',
     'no-underscore-dangle': 'off',
+    'guard-for-in': 'warn',
+    'import/no-unresolved': 'warn',
+    'import/extensions': 'warn',
   },
   parserOptions: {
     parser: 'babel-eslint',
