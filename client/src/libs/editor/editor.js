@@ -4,11 +4,12 @@ import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown'; // language mode: mark down
 import 'codemirror/mode/javascript/javascript'; // language mode: js
-import 'codemirror/mode/python/python'; // language mode: c, c++, oc, java
+import 'codemirror/mode/clike/clike'; // language mode: c, c++, oc, java
+import 'codemirror/mode/python/python'; // language mode: python
+import 'codemirror/mode/php/php'; // language mode: php
 import 'codemirror/mode/shell/shell'; // language mode: shell
 import 'codemirror/mode/css/css'; // language mode: css
 import 'codemirror/addon/fold/foldcode'; // fold code
-import 'codemirror/mode/clike/clike'; // language mode: c, c++, oc, java
 import 'codemirror/mode/sql/sql'; // language mode: sql
 import 'codemirror/addon/fold/markdown-fold'; // fold code method for markdown
 import 'codemirror/addon/display/autorefresh'; // close brackets
@@ -48,7 +49,7 @@ export default class {
         highlightFormatting: true, // https://.net/mode/markdown/
       },
       theme: 'paraiso-light', // editor theme, mark sure that you have imported this theme
-      tabSize: 2,
+      tabSize: 4,
       // keyMap: 'vim', // 这个vim不兼容中文输入法, 因为笔记中要大量输入中文, 所以默认不开启
       smartIndent: false, // 并不怎么smart
       indentUnit: 4,

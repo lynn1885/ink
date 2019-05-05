@@ -12,9 +12,9 @@ html, body {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #ddd;
+  background: #ccc;
   border-radius: 4px;
   &:hover{
-   background: #ccc;
+   background: #bbb;
   }
 }

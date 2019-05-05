@@ -56,7 +56,7 @@ export default function (editor) {
         let lineTextBeforeCursor = cm.lineInfo(cursor.line).text.slice(0, cursor.ch);
         const tMapKeys = Object.keys(tMap);
         for (let i = 0; i < tMapKeys.length; i += 1) {
-          lineTextBeforeCursor = lineTextBeforeCursor.replace(tMapKeys[i], tMap[tMapKeys[i]]);
+          lineTextBeforeCursor = lineTextBeforeCursor.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
         }
         doc.setSelection({ line: cursor.line, ch: 0 }, { line: cursor.line, ch: cursor.ch });
         doc.replaceSelection(lineTextBeforeCursor);

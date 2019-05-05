@@ -338,7 +338,7 @@ export default {
 <style lang="scss" scoped>
 @import "@/themes/craft/var.scss";
 /* scrollbar */
-::-webkit-scrollbar {
+.catalog-container::-webkit-scrollbar {
   width: 0px!important;
 }
 
