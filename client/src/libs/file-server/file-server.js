@@ -1,43 +1,48 @@
+import config from '@/config';
 import _ from 'lodash';
 import Directories from './models/directories';
 import Files from './models/files';
 import Images from './models/images';
 
 // config
+let mixedConfig = {};
 const defaultConfig = {
-  autoSaveInterval: 30 * 1000, // 自动存储间隔: 单位ms
-  messager: null, // 信息提示对象. 有时file-server需要给用户弹出某些提示信息
-  serverUrl: null,
-  autoFoldDelay: -1, // 自动折叠延迟. -1表示没有延迟
+  fileServer: {
+    autoSaveInterval: 40 * 1000, // 自动存储间隔: 单位ms
+    messager: null, // 信息提示对象. 有时file-server需要给用户弹出某些提示信息
+    serverUrl: null,
+    autoFoldDelay: 200, // auto fold document after openning. unit: ms. no delay: -1
+  },
 };
 const minAutoSaveInterval = 10 * 1000; // 最小自动存储间隔
 
 // export
-export default function (editor, config) {
-  // config
-  config = _.merge(defaultConfig, config);
-  if (config.autoSaveInterval < minAutoSaveInterval) {
+export default function (editor, messager) {
+  // mix config: defaultConfig &
+  defaultConfig.fileServer.messager = messager;
+  mixedConfig = _.merge(defaultConfig, config);
+  if (mixedConfig.fileServer.autoSaveInterval < minAutoSaveInterval) {
     console.warn(`file-server: you set a short auto save interval, 
-      This may cause performance degradation: ${config.autoSaveInterval}
+      This may cause performance degradation: ${mixedConfig.fileServer.autoSaveInterval}
       interval will be reset to ${minAutoSaveInterval} ms`);
-    config.autoSaveInterval = minAutoSaveInterval;
+    mixedConfig.fileServer.autoSaveInterval = minAutoSaveInterval;
   }
-  if (!config.serverUrl) {
-    throw new Error(`file server, invalid serverUrl: ${config.serverUrl}`);
+  if (!mixedConfig.server.serverUrl) {
+    throw new Error(`file server, invalid serverUrl: ${mixedConfig.server.serverUrl}`);
   }
-  if (!config.staticResUrl) {
-    throw new Error(`file server, invalid staticResUrl: ${config.staticResUrl}`);
+  if (!mixedConfig.server.staticResUrl) {
+    throw new Error(`file server, invalid staticResUrl: ${mixedConfig.server.staticResUrl}`);
   }
 
   // add properties to editor.fileServer
   editor.fileServer = {
-    autoSaveInterval: config.autoSaveInterval,
+    autoSaveInterval: mixedConfig.fileServer.autoSaveInterval,
     isFileContentChanged: false,
     curFilePath: null,
     curFileDir: null,
     autoSaveTimer: null,
-    serverUrl: config.serverUrl,
-    staticResUrl: config.staticResUrl,
+    serverUrl: mixedConfig.server.serverUrl,
+    staticResUrl: mixedConfig.server.staticResUrl,
     /**
      * loadFile: 加载文件
      * @param {str} filePath 要加载的文件路径
@@ -56,7 +61,7 @@ export default function (editor, config) {
       this.curFileDir = this.curFilePath.replace(/\/[^/]+?.md/, '/');
 
       let fileContent;
-      await Files.get(config.serverUrl, filePath)
+      await Files.get(mixedConfig.server.serverUrl, filePath)
         .then((res) => {
           if (res.status === 200) {
             if (typeof res.data !== 'string') {
@@ -64,15 +69,15 @@ export default function (editor, config) {
             }
             fileContent = res.data;
           } else {
-            if (config.messager) {
-              config.messager.error(`loadFile(): Bad HTTP status: ${res}`);
+            if (mixedConfig.fileServer.messager) {
+              mixedConfig.fileServer.messager.error(`loadFile(): Bad HTTP status: ${res}`);
             }
             throw new Error(`loadFile(): Bad HTTP status: ${res}`);
           }
         })
         .catch((err) => {
-          if (config.messager) {
-            config.messager.error(`loadFile failed: ${err}\n path: ${filePath}`);
+          if (mixedConfig.fileServer.messager) {
+            mixedConfig.fileServer.messager.error(`loadFile failed: ${err}\n path: ${filePath}`);
           }
           throw new Error(`loadFile failed: ${err}\n path: ${filePath}`);
         });
@@ -138,34 +143,46 @@ export default function (editor, config) {
           );
         }
       }
+
       // 获取文件信息
       const data = editor.cm.getValue();
 
       // 保存
-      this.isFileContentChanged = false;
+      // 这里之所以把this.isFileContentChanged放在一个异步操作中
+      // 是因为保存时, 我们可能会自动修改文本的最后一行(指令行)
+      // 这个修改操作会触发editor的change监听, 而change监听中, 会把this.isFileContChanged变为true
+      // 这里把this.isFileContentChanged = false;放在下一轮事件循环中
+      // 这样就能保证, this.isFileContentChanged = false;会在editor的change事件后触发
+      // 即, 这样可以保证, 自动修改完指令行之后, this.isFileContentChanged还是false
+      // 但这样也可能导致 [保存时自动修改指令行之后, 下一轮事件循环开始标记isFileContentChanged为false] 这之间的操作丢失
+      await new Promise(resolve => setTimeout(() => {
+        this.isFileContentChanged = false;
+        resolve();
+      }, 0));
+
       const content = JSON.stringify({
         path: filePath,
         data,
       });
-      await Files.update(config.serverUrl, content)
+      await Files.update(mixedConfig.server.serverUrl, content)
         .then((res) => {
           if (res.status === 200) {
             console.log(`file updated: ${filePath}`);
-            if (isShowSuccessInfo && config.messager) {
+            if (isShowSuccessInfo && mixedConfig.fileServer.messager) {
               const pathParts = filePath.split('/');
               const fileName = pathParts[pathParts.length - 1];
-              config.messager.success(`updated: ${fileName}`);
+              mixedConfig.fileServer.messager.success(`updated: ${fileName}`);
             }
           } else {
-            if (config.messager) {
-              config.messager.error(`File.update(), Bad Http Status: ${res}`);
+            if (mixedConfig.fileServer.messager) {
+              mixedConfig.fileServer.messager.error(`File.update(), Bad Http Status: ${res}`);
             }
             throw new Error(`File.update(), Bad Http Status: ${res}`);
           }
         })
         .catch((err) => {
-          if (config.messager) {
-            config.messager.error(`File.update(), Update Failed: ${err}`);
+          if (mixedConfig.fileServer.messager) {
+            mixedConfig.fileServer.messager.error(`File.update(), Update Failed: ${err}`);
           }
           throw new Error(`File.update(), Update Failed: ${err}`);
         });
@@ -176,20 +193,20 @@ export default function (editor, config) {
      */
     async getCatalog() {
       let catalog;
-      await Directories.get(config.serverUrl)
+      await Directories.get(mixedConfig.server.serverUrl)
         .then((res) => {
           if (res.status === 200) {
             catalog = res.data;
           } else {
-            if (config.messager) {
-              config.messager.error(`Directories.get(), Bad HTTP status: \n', ${res.status}`);
+            if (mixedConfig.fileServer.messager) {
+              mixedConfig.fileServer.messager.error(`Directories.get(), Bad HTTP status: \n', ${res.status}`);
             }
             throw new Error(`Directories.get(), Bad HTTP status: \n', ${res.status}`);
           }
         })
         .catch((err) => {
-          if (config.messager) {
-            config.messager.error(`Directories.get() Error: ${err}`);
+          if (mixedConfig.fileServer.messager) {
+            mixedConfig.fileServer.messager.error(`Directories.get() Error: ${err}`);
           }
           throw new Error(`Directories.get() Error: ${err}`);
         });
@@ -212,15 +229,15 @@ export default function (editor, config) {
             ({ data } = res);
             console.log('image uploaded');
           } else {
-            if (config.messager) {
-              config.messager.error(`Images.upload(), Bad Http Status: ${res}`);
+            if (mixedConfig.fileServer.messager) {
+              mixedConfig.fileServer.messager.error(`Images.upload(), Bad Http Status: ${res}`);
             }
             throw new Error(`Images.upload(), Bad Http Status: ${res}`);
           }
         })
         .catch((err) => {
-          if (config.messager) {
-            config.messager.error(`Images.upload(), Update Failed: ${err}`);
+          if (mixedConfig.fileServer.messager) {
+            mixedConfig.fileServer.messager.error(`Images.upload(), Update Failed: ${err}`);
           }
           throw new Error(`Images.upload(), Update Failed: ${err}`);
         });
@@ -274,15 +291,15 @@ export default function (editor, config) {
       const ln = editor.cm.getDoc().lastLine();
       const lt = editor.cm.lineInfo(ln).text;
       if (!editor.isThisLineCmdLine(ln, lt) || !lt.includes('%no-auto-fold%')) {
-        if (config.autoFoldDelay >= 0) {
-          if (config.autoFoldDelay === 0) {
+        if (mixedConfig.fileServer.autoFoldDelay >= 0) {
+          if (mixedConfig.fileServer.autoFoldDelay === 0) {
             fold();
           } else {
             setTimeout(() => {
               if (this.curFilePath === waitFoldPath) {
                 fold();
               }
-            }, config.autoFoldDelay);
+            }, mixedConfig.fileServer.autoFoldDelay);
           }
         }
       }

@@ -1,11 +1,35 @@
 // 应用程序监听端口参见vue.config.js
-const config = {
-  serverUrl: 'http://localhost:3001/',
-  staticResUrl: 'http://localhost:3001/images/',
-  autoSaveInterval: 30 * 1000, // ms
-  autoFoldDelay: 200, // ms
-  defaultCatLv1: 'mine', // 默认路径
-  defaultCatLv2: 'model',
-  defaultCatLv3: 'routine',
+import _ from 'lodash';
+import userConfig from './user-config';
+
+// default config
+const defaultConfig = {
+  // server
+  server: {
+    serverUrl: 'http://localhost:3001/',
+    staticResUrl: 'http://localhost:3001/images/',
+  },
+
+  // theme: unavailable now
+  theme: {
+
+  },
+
+  // catalog
+  catalog: {
+    // default open catalog
+    defaultOpen: {
+      lv1: 'mine',
+      lv2: 'model',
+      lv3: 'routine',
+    },
+    // catalog order
+    order: {},
+  },
 };
-export default config;
+
+// mix config: default config & user config
+const mixedConfig = _.merge(defaultConfig, userConfig);
+
+// export
+export default mixedConfig;

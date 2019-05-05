@@ -9,7 +9,7 @@ yarn-error.log*
 selenium-debug.log
 
 public/icons
-src/components/catalog/catalog-order.js
+src/user-config.js
 
 # Editor directories and files
 .idea

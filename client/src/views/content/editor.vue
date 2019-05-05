@@ -14,7 +14,6 @@ import inkFlexibleCursorLineChar from '@/libs/editor/ink-flexible-cursor-line-ch
 import inkHeaderManager from '@/libs/editor/ink-header-manager';
 import inkLineReplace from '@/libs/editor/ink-line-replace';
 import '@/themes/craft/index.scss';
-import config from '@/config';
 
 export default {
   name: 'editor',
@@ -31,15 +30,14 @@ export default {
     // However, you must use setTimeout to postpone the refresh() to after
     // CodeMirror/Browser has updated the layout according to the new content
     // Codemirror editor is not loading content until clicked
-    // but I still find that, if I call this.editor.cm.refresh() after timeout 0
-    // then when I click the editor, I will get an error:
+    // but I still find that, if you call this.editor.cm.refresh() after timeout 0
+    // then when you click the editor, you will get an error:
     // Uncaught DOMException:
     // Failed to execute 'setEnd' on 'Range': The offset 39 is larger than the node's length (0).
     // if I call this.editor.cm.refresh() when timeout 1000, no error. don't know why
-    async '$store.state.filePath'(newFilePath, oldFilePath) {
+    '$store.state.filePath': async function fn(newFilePath) {
       if (newFilePath) {
         this.$store.commit('updateIsEditorLoading', true);
-        // console.info('newFile: ', newFilePath, '\noldFile:', oldFilePath);
         try {
           if (this.editor.fileServer.isFileContentChanged) {
             this.editor.fileServer.turnOffAutoSave();
@@ -67,13 +65,7 @@ export default {
       isUseFileServer: true,
     });
     this.editor.use(inkMath);
-    this.editor.use(fileServer, {
-      messager: this.$message,
-      autoSaveInterval: config.autoSaveInterval,
-      serverUrl: config.serverUrl,
-      staticResUrl: config.staticResUrl,
-      autoFoldDelay: config.autoFoldDelay,
-    });
+    this.editor.use(fileServer, this.$message);
     this.$store.commit('updateEditor', this.editor);
   },
 };

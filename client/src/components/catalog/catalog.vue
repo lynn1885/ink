@@ -76,10 +76,10 @@
   </div>
 </template>
 <script>
-// eslint-disable-next-line import/extensions, import/no-unresolved
 import config from '@/config';
 import _ from 'lodash';
-import catalogOrder from './catalog-order';
+
+const catalogOrder = config.catalog.order;
 
 export default {
   name: 'catalog',
@@ -89,9 +89,9 @@ export default {
       curCatLv1: '', // 当前路径
       curCatLv2: '',
       curCatLv3: '',
-      defaultCatLv1: config.defaultCatLv1, // 默认路径
-      defaultCatLv2: config.defaultCatLv2,
-      defaultCatLv3: config.defaultCatLv3,
+      defaultCatLv1: config.catalog.defaultOpen.lv1, // 默认路径
+      defaultCatLv2: config.catalog.defaultOpen.lv2,
+      defaultCatLv3: config.catalog.defaultOpen.lv3,
       catalog: [], // 总目录
       catsLv1: [], // 各级目录
       catsLv2: [],

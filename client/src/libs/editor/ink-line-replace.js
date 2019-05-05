@@ -2,9 +2,15 @@
 // 需要在根目录建立一个叫做text-replace-map.js的文件, 其中是替换对照map
 
 // eslint-disable-next-line import/extensions, import/no-unresolved
-import textReplaceMap from '@/text-replace-map.js';
+import config from '@/config';
 
-const textReplaceMapKeys = Object.keys(textReplaceMap);
+// get user config map
+let textReplaceMap = {};
+let textReplaceMapKeys = [];
+if (config.inkLineReplace) {
+  textReplaceMap = config.inkLineReplace;
+  textReplaceMapKeys = Object.keys(textReplaceMap);
+}
 
 // 快捷键
 const map = {
