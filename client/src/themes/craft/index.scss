@@ -113,10 +113,16 @@
   color: #888 !important;
 }
 
-// em
+// em, strong
 .cm-em {
-  color: $cm-em!important;
+  background: $cm-em-bg!important;
   font-style: normal;
+  border-radius: 2px;
+  padding: 1px;
+}
+
+.cm-strong {
+  font-weight: bold!important;
 }
 
 // code
