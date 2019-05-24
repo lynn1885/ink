@@ -35,7 +35,6 @@ export default function (editor) {
 
       // 读取行内配置指令
       const matchRes = editor.getCmdInLastLine(/%text-replace:(.+)%/);
-
       if (matchRes) {
         if (matchRes[1] && matchRes[1].length >= 3) {
           let cmdStr = matchRes[1];

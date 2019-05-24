@@ -1,12 +1,14 @@
 // font
 $font-family-main: 'yahei consolas hybrid';
 $font-size-main: 14px;
+$font-size-catalog: 12px;
 $formatting-font-size: 8px;
+$icon-size: 22px;
 
 // size
 $side-bar-width: 380px;
 $icon-bar-width: 50px;
-$icon-size: 22px;
+
 
 // color: side-bar
 $side-bar-bg: rgb(248, 247, 246);
@@ -42,9 +44,10 @@ $selection: rgb(242, 230, 250);
 $fat-cursor: rgb(229, 203, 247);
 $cursor: #333;
 
-// color: code, link, quote
+// color: code, link, quote, em
 $code-bg: rgb(245, 241, 235);
 $code-color: rgb(136, 108, 76);
+$cm-em: rgb(181, 99, 189);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgb(236, 243, 248);
 $cm-link-color: rgb(47, 147, 165);

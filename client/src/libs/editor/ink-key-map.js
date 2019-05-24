@@ -11,6 +11,7 @@ export default function (editor, keyMap) {
     // format
     bold: 'Ctrl-B',
     code: 'Ctrl-;',
+    em: 'Ctrl-E',
     // italic: 'Ctrl-I',
     // link: 'Ctrl-L',
     // insert
@@ -254,6 +255,26 @@ export default function (editor, keyMap) {
         doc.setSelection(
           { line: cursor.line, ch: cursor.ch + 2 },
           { line: cursor.line, ch: cursor.ch + 3 },
+        );
+      }
+    },
+
+    [mergedKeyMap.em]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^\*(.*?)\*$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`*${sel}*`);
+        }
+      } else {
+        doc.replaceRange('*e*', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
         );
       }
     },

@@ -349,7 +349,7 @@ export default {
   width: 100%;
   box-sizing: border-box;
   height: 100%;
-  font-size: 12px;
+  font-size: $font-size-catalog;
   color: rgb(102, 84, 72);
 }
 
