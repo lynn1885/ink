@@ -53,7 +53,6 @@ export default {
           prev = outlineHeaders.querySelector(`.line-${findLine}`);
         }
         if (prev) {
-          console.log('找到了要滚动到的地方');
           prev.scrollIntoView({
             behavior: 'smooth',
             block: 'center',

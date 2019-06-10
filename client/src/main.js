@@ -10,7 +10,6 @@ import './assets/css/reset.scss';
 import App from './App.vue';
 
 Vue.use(ElementUI);
-
 library.add(faSearch, faTorah, faStream, faMoon);
 Vue.component('font-awesome-icon', FontAwesomeIcon);
 Vue.config.productionTip = false;

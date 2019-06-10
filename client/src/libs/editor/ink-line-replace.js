@@ -1,16 +1,4 @@
 // 用于对当前行中cursor之前的文本进行替换, 可以和讯飞语音输入法搭配使用
-// 需要在根目录建立一个叫做text-replace-map.js的文件, 其中是替换对照map
-
-// eslint-disable-next-line import/extensions, import/no-unresolved
-import config from '@/config';
-
-// get user config map
-let textReplaceMap = {};
-let textReplaceMapKeys = [];
-if (config.inkLineReplace) {
-  textReplaceMap = config.inkLineReplace;
-  textReplaceMapKeys = Object.keys(textReplaceMap);
-}
 
 // 快捷键
 const map = {
@@ -18,17 +6,23 @@ const map = {
 };
 
 // 导出
-export default function (editor) {
+export default function (editor, config) {
+  // 加载插件时: 获取用户配置
+  let textReplaceMap = {};
+  let textReplaceMapKeys = [];
+  if (config) {
+    textReplaceMap = config;
+    textReplaceMapKeys = Object.keys(textReplaceMap);
+  }
+
+  // 按下快捷键时
   editor.cm.addKeyMap({
     [map.replaceLine]: (cm) => {
-      // 读取配置文件
-      let tMap;
+      // 读取配置文件中的配置
+      const tMap = {};
       const curDir = editor.fileServer.curFileDir;
       for (let i = 0; i < textReplaceMapKeys.length; i += 1) {
         if (curDir.toLowerCase().includes(textReplaceMapKeys[i].toLowerCase())) {
-          if (!tMap) {
-            tMap = {};
-          }
           Object.assign(tMap, textReplaceMap[textReplaceMapKeys[i]]);
         }
       }
@@ -54,7 +48,8 @@ export default function (editor) {
           Object.assign(tMap, m);
         }
       }
-      // 替换
+
+      // 执行替换
       if (tMap) {
         const cursor = cm.getCursor();
         const doc = cm.getDoc();

@@ -17,6 +17,7 @@ module.exports = {
     'guard-for-in': 'warn',
     'import/no-unresolved': 'warn',
     'import/extensions': 'warn',
+    'max-len': 'warn',
   },
   parserOptions: {
     parser: 'babel-eslint',

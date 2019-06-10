@@ -9,7 +9,6 @@ yarn-error.log*
 selenium-debug.log
 
 public/icons
-src/user-config.js
 
 # Editor directories and files
 .idea

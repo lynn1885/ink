@@ -1,0 +1,11 @@
+{
+  "theme": {},
+  "catalog": {
+    "defaultOpen": {
+      "lv1": "mine",
+      "lv2": "model",
+      "lv3": "routine"
+    },
+    "order": {}
+  }
+}

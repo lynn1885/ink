@@ -17,6 +17,11 @@ export default {
     SideBar,
     NoteContent,
   },
+  methods: {
+  },
+
+  async created() {
+  },
 };
 </script>
 

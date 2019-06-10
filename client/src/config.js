@@ -1,35 +1,13 @@
 // 应用程序监听端口参见vue.config.js
-import _ from 'lodash';
-import userConfig from './user-config';
 
-// default config
-const defaultConfig = {
-  // server
+const config = {
   server: {
     serverUrl: 'http://localhost:3001/',
-    staticResUrl: 'http://localhost:3001/images/',
+    staticImageUrl: 'http://localhost:3001/images/',
+    staticIconUrl: 'http://localhost:3001/icons/',
   },
-
-  // theme: unavailable now
-  theme: {
-
-  },
-
-  // catalog
-  catalog: {
-    // default open catalog
-    defaultOpen: {
-      lv1: 'mine',
-      lv2: 'model',
-      lv3: 'routine',
-    },
-    // catalog order
-    order: {},
-  },
+  password: '123456', // 密码, 用于删除文件或别的需要加密的地方
 };
 
-// mix config: default config & user config
-const mixedConfig = _.merge(defaultConfig, userConfig);
-
 // export
-export default mixedConfig;
+export default config;

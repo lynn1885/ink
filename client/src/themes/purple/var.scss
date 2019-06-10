@@ -11,34 +11,31 @@ $icon-bar-width: 44px;
 
 
 // color: side-bar
-$side-bar-bg: rgb(248, 247, 246);
-$icon-bar-bg: rgb(236, 234, 232);
-$icon-color: #999;
-$icon-color-active: #333;
-$icon-color-hover: #888;
+$icon-bar-bg: rgb(231, 212, 238);
+$side-bar-bg: rgb(255, 245, 254);
+$icon-color: rgb(247, 247, 247);
+$icon-color-active: rgb(139, 98, 136);
+$icon-color-hover: rgb(240, 240, 240);
 
 // color: catalog
-$catalog-color: rgb(102, 84, 72);
 $catalog-active-bg: rgb(234, 231, 243);
 $catalog-active-color: rgb(78, 78, 99);
-$catalog-active-border-color: rgb(166, 121, 224);
-$catalog-hover: rgb(236, 236, 241);
+$catalog-hover: rgb(240, 238, 248);
 $catalog-modal-bg: rgba(255, 255, 255, 0.1);
 $catalog-jump-bg: rgba(248, 247, 246, 0.9);
 $catalog-jump-input-bg: #f4f4f4;
 $catalog-jump-input-color: rgb(176, 149, 206);
-$catalog-col-border: 1px solid #f3f3f3;
-$catalog-jump-li-border: 0.5px solid #eee;
+$catalog-col-border: none;
+$catalog-jump-li-border: 1px solid #eee;
 
 // color: editor
-$editor-bg: rgb(253, 251, 249);
-$editor-color: #333;
+$editor-bg: #fff;
 
 // color: headers
-$header-1: #963607;
-$header-2: #339966;
-$header-3: #997B57;
-$header-4: #809174;
+$header-1: #a16499;
+$header-2: #a1646d;
+$header-3: #926c8d;
+$header-4: #926c6c;
 $header-5: #B2867B;
 $header-6: rgb(150, 142, 140);
 $selection: rgb(242, 230, 250);
@@ -48,27 +45,19 @@ $fat-cursor: rgb(229, 203, 247);
 $cursor: #333;
 
 // color: code, link, quote, em
-$code-bg: rgb(245, 241, 235);
-$code-color: rgb(136, 108, 76);
+$code-bg: rgb(243, 235, 245);
+$code-color: rgb(136, 76, 113);
 $cm-em-bg: rgb(213, 243, 242);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgb(236, 243, 248);
 $cm-link-color: rgb(47, 147, 165);
 $cm-quote-color: #999;
 $cm-formatting-color: #ddd;
-$cm-list-bg: rgb(250, 244, 239);
+$cm-list-bg: rgb(248, 239, 250);
 $cm-list-color: #ccc;
-$cm-foldmarker-bg: rgb(247, 236, 226);
-$cm-foldmarker-color: rgb(247, 214, 183);
+$cm-foldmarker-bg: rgb(245, 226, 247);
+$cm-foldmarker-color: rgb(232, 183, 247);
 $cm-image-font-bg: #f4f4f4;
 $cm-image-font-color: #ddd;
 $cm-line-char-bg: rgb(216, 234, 253);
 $cm-line-char-color: rgb(78, 54, 8);
-
-// color: content menu
-$content-menu-bg: $editor-bg;
-$content-menu-color: #333;
-$content-menu-border-bottom: 0.5px solid #f4f4f4;
-$content-menu-shadow: 0px 0px 10px #ddd;
-$content-menu-active-bg: $catalog-active-bg;
-$content-menu-active-color: $content-menu-color;

@@ -1,24 +1,23 @@
-# TODOS
-## bugs
-### file-server: 分离代码
-TODO: 现在自动折叠, 标记最后一命令行的代码现在都写在file-server中
-其实应该让file-server提供事件, 如onfileloaded, onfileunloaded
-然后应该让自动折叠等功能监听这些事件, 以插件的形式存在
-### server: catalog-order, icons
-应该以(静态)文件的形式托管在后端, 这样前端就可以直接打包了. 想要更新catalog-order或者icons, 修改后端文件即可
-### server: _images
-现在这个文件必须得自己创建, 应该自动创建
-### server: 修改备份策略
-让可以备份一个月之前的文件
-### ink: fold 无法折叠图片
-图片后面需要有一个空行
-### ink: imgs 有些图片无法上传
-### server: 一级目录不支持中文, 需要修复一下
+#Todos
+1. 开启服务器时, 自动清理_deleted目录中的过期文件
+2. 前端rename, reorder, create等操作时, 正在编辑的文件的保存问题
+3. 日志系统
+4. 疯狂ctrl+s就会疯狂触发. 来个节流吧
+5. 刚打开服务器时, 如果user-config.json是空的, 应该把default-config.json复制进去, 现在需要手动处理
 
-## editor
-### 支持$$数学
-### 支持table编辑
+#Todos 难解决
+1. 如何在程序启动时锁定对应的文件夹, 防止被外部程序占用呢
+2. 重命名文件夹之前, 应对锁定要进行操作的目录, 防止外界占用导致重命名失败, 现在的重命名操作, 是可能出现致命错误的, 虽然几率不大
+3. 定时清理图片
 
-## features
-### ink: 支持多窗口
-### ink: 转思维导图
+
+## Bugs
+1. ink: fold 无法折叠图片, 图片后面需要有一个空行
+2. ink: imgs 有些图片无法上传
+3. server: 一级目录不支持中文, 需要修复一下
+
+## Features
+2. editor: 支持$$数学
+2. editor: 支持table编辑
+3. ink: 支持多窗口
+3. ink: 转思维导图
