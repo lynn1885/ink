@@ -1,9 +1,6 @@
 .DS_Store
 node_modules
 /dist
-/passage-backup
-
-
 
 start-client.bat
 start-server.bat
