@@ -8,7 +8,7 @@
   color: $editor-color!important;
   background: $editor-bg!important;
   line-height: 2;
-  padding: 10px;
+  padding: 0px 10px!important;
   caret-color:$cursor;
   font-family: $font-family-main !important;
   span::selection, img::selection {
@@ -61,7 +61,7 @@
 // use padding instead of margin when you want to set a line indentation
 // otherwise you will get a wrong position of cursor(caret) and selection
 .cm-header {
-  font-size: 14px;
+  font-size: $font-size-main;
   margin: 0;
   padding: 0;
   font-weight: normal;

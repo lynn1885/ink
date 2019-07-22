@@ -484,6 +484,7 @@ export default {
       // 弹出创建窗口
       let isCancelCreate = false;
       let newCatName;
+      const catLvLowerCase = this[`catsLv${curContentMenuCatLv}`].map(item => item.toLowerCase());
       await this.$prompt('Create', '', {
         center: true,
         confirmButtonText: 'Create',
@@ -493,7 +494,7 @@ export default {
             return '目录名不能为空';
           } else if (!tools.isFileNameValid(value)) {
             return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 开头或结尾';
-          } else if (this[`catsLv${curContentMenuCatLv}`].includes(value)) {
+          } else if (catLvLowerCase.includes(value.toLowerCase())) {
             return '目录名已存在';
           }
           return true;
@@ -680,6 +681,7 @@ export default {
       // 弹出重命名窗口
       let isCancelRename = false;
       let newName;
+      const catLvLowerCase = this[`catsLv${curContentMenuCatLv}`].map(item => item.toLowerCase());
       await this.$prompt(`Rename: ${curContentMenuCatName}`, '', {
         center: true,
         confirmButtonText: 'Rename',
@@ -691,7 +693,7 @@ export default {
             return '新目录名和旧目录名一样';
           } else if (!tools.isFileNameValid(value)) {
             return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 开头或结尾';
-          } else if (this[`catsLv${curContentMenuCatLv}`].includes(value)) {
+          } else if (catLvLowerCase.includes(value.toLowerCase())) {
             return '目录名已存在';
           }
           return true;

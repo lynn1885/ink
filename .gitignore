@@ -3,6 +3,13 @@ node_modules
 /dist
 /passage-backup
 
+
+
+start-client.bat
+start-server.bat
+ink.vbs
+
+
 # local env files
 .env.local
 .env.*.local
