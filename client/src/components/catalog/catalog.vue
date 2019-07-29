@@ -493,7 +493,7 @@ export default {
           if (!value) {
             return '目录名不能为空';
           } else if (!tools.isFileNameValid(value)) {
-            return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 开头或结尾';
+            return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 空格 开头或结尾';
           } else if (catLvLowerCase.includes(value.toLowerCase())) {
             return '目录名已存在';
           }

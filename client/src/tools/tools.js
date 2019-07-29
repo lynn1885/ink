@@ -15,10 +15,19 @@ const tools = {
     if (fileName.length < 1) {
       return false;
     }
-    // 文件名不能以 . 开头或结尾
-    if (fileName[0] === '.' || fileName[fileName.length - 1] === '.') {
+    // 文件名不能以 . 空格, tab, 换行 开头或结尾
+    if (fileName[0] === '.'
+      || fileName[fileName.length - 1] === '.'
+      || fileName[0] === ' '
+      || fileName[fileName.length - 1] === ' '
+      || fileName[0] === '\t'
+      || fileName[fileName.length - 1] === '\t'
+      || fileName[0] === '\n'
+      || fileName[fileName.length - 1] === '\n'
+    ) {
       return false;
     }
+
     // 文件名不能包含 < > : " / \ | ? *
     const r = /[<>:"'/\\|?*]/;
     if (fileName.match(r)) {
