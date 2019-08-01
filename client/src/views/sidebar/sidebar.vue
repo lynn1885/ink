@@ -73,7 +73,6 @@ export default {
 #side-bar {
   display: flex;
   width: $side-bar-width;
-  background: $side-bar-bg;
   &.side-bar-small { // 小工具栏
     width: $icon-bar-width;
     #tool-pages {
@@ -87,7 +86,7 @@ export default {
   flex-shrink: 0;
   flex-grow: 0;
   height: 100%;
-  background: $icon-bar-bg;
+  background-color: $icon-bar-bg;
 }
 #tool-pages {
   display: block;
@@ -95,6 +94,7 @@ export default {
   flex-grow: 1;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: $tool-page-bar-bg;
 }
 .tool {
   width: 100%;

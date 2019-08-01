@@ -4,9 +4,9 @@
 .CodeMirror {
   height: 100%;
   border: none;
+  background-color: $editor-bg!important;
   font-size: $font-size-main;
   color: $editor-color!important;
-  background: $editor-bg!important;
   line-height: 2;
   padding: 0px 10px!important;
   caret-color:$cursor;
@@ -211,7 +211,6 @@
 .line-cm-image {
   span {
     font-size: 12px;
-    border-radius: 4px;
     background: $cm-image-font-bg;
     padding: 4px 2px;
     cursor: text;
@@ -222,9 +221,11 @@
 }
 .inserted-widget-image {
   display: block;
-  padding-left: 100px;
+  margin-left: 100px;
   box-sizing: border-box;
   max-width: 94%;
+  border-radius: 4px;
+  box-shadow: $cm-img-shadow;
 }
 
 .katex {

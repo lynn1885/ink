@@ -10,18 +10,18 @@ $side-bar-width: 360px;
 $icon-bar-width: 44px;
 
 // color: side-bar
-$side-bar-bg: rgb(249, 248, 247);
-$icon-bar-bg: rgb(235, 234, 233);
+$icon-bar-bg: rgba(234, 233, 232, 0.9);
+$tool-page-bar-bg: rgba(247, 246, 245, 0.85);
 $icon-color: #999;
 $icon-color-active: #333;
 $icon-color-hover: #888;
 
 // color: catalog
 $catalog-color: rgb(102, 84, 72);
-$catalog-active-bg: rgb(234, 231, 243);
+$catalog-active-bg: rgba(233, 230, 242, 0.9);
 $catalog-active-color: rgb(78, 78, 99);
-$catalog-active-border-color: rgb(166, 121, 224);
-$catalog-hover: rgb(236, 236, 241);
+$catalog-active-border-color: rgba(164, 119, 222, 0.9);
+$catalog-hover: rgba(236, 236, 241, 0.9);
 $catalog-modal-bg: rgba(255, 255, 255, 0.1);
 $catalog-jump-bg: rgba(248, 247, 246, 0.9);
 $catalog-jump-input-bg: #f4f4f4;
@@ -30,7 +30,7 @@ $catalog-col-border: none;
 $catalog-jump-li-border: 0.5px solid #eee;
 
 // color: editor
-$editor-bg: rgb(252, 251, 250);
+$editor-bg: rgba(250, 249, 248, 0.8);
 $editor-color: #333;
 
 // color: headers
@@ -47,25 +47,26 @@ $fat-cursor: rgb(229, 203, 247);
 $cursor: #333;
 
 // color: code, link, quote, em
-$code-bg: rgb(245, 241, 235);
+$code-bg: rgba(243, 239, 233, 0.9);
 $code-color: rgb(136, 108, 76);
-$cm-em-bg: rgb(242, 232, 250);
+$cm-em-bg: rgba(240, 230, 248, 0.9);
 $cm-code-comment: #aaa;
-$cm-link-bg: rgb(236, 243, 248);
+$cm-link-bg: rgba(236, 243, 248, 0.9);
 $cm-link-color: rgb(47, 147, 165);
 $cm-quote-color: #999;
 $cm-formatting-color: #ddd;
-$cm-list-bg: rgb(250, 244, 239);
-$cm-list-color: #ccc;
-$cm-foldmarker-bg: rgb(247, 236, 226);
+$cm-list-bg: rgba(247, 241, 236, 0.9);
+$cm-list-color: #bbb;
+$cm-foldmarker-bg: rgba(245, 234, 224, 0.9);
 $cm-foldmarker-color: rgb(247, 214, 183);
 $cm-image-font-bg: #f4f4f4;
 $cm-image-font-color: #ddd;
 $cm-line-char-bg: rgb(216, 234, 253);
 $cm-line-char-color: rgb(78, 54, 8);
+$cm-img-shadow: 0px 0px 2px 0px #eee;
 
 // color: content menu
-$content-menu-bg: $editor-bg;
+$content-menu-bg: rgb(250, 249, 248);
 $content-menu-color: #333;
 $content-menu-border-bottom: 0.5px solid #f4f4f4;
 $content-menu-shadow: 0px 0px 10px #ddd;
