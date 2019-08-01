@@ -10,18 +10,18 @@ $side-bar-width: 360px;
 $icon-bar-width: 44px;
 
 // color: side-bar
-$icon-bar-bg: rgba(235, 234, 233, 0.94);
-$tool-page-bar-bg: rgba(247, 246, 245, 0.87);
+$icon-bar-bg: rgba(235, 234, 233, 0.80);
+$tool-page-bar-bg: rgba(247, 246, 245, 0.85);
 $icon-color: #999;
 $icon-color-active: #333;
 $icon-color-hover: #888;
 
 // color: catalog
 $catalog-color: rgb(102, 84, 72);
-$catalog-active-bg: rgba(233, 230, 242, 0.9);
+$catalog-active-bg: rgba(234, 229, 245, 0.9);
 $catalog-active-color: rgb(78, 78, 99);
 $catalog-active-border-color: rgba(164, 119, 222, 0.9);
-$catalog-hover: rgba(236, 236, 241, 0.9);
+$catalog-hover: rgba(234, 229, 245, 0.6);
 $catalog-modal-bg: rgba(255, 255, 255, 0.1);
 $catalog-jump-bg: rgba(248, 247, 246, 0.9);
 $catalog-jump-input-bg: #f4f4f4;
@@ -30,7 +30,7 @@ $catalog-col-border: none;
 $catalog-jump-li-border: 0.5px solid #eee;
 
 // color: editor
-$editor-bg: rgba(250, 249, 248, 0.8);
+$editor-bg: rgba(250, 249, 248, 0.90);
 $editor-color: #333;
 
 // color: headers

@@ -3,7 +3,10 @@
     <side-bar id="side-bar"></side-bar>
     <note-content id="note-content"></note-content>
     <div id="bgimg-container" v-show="isShowBgImg">
-      <img :src="staticIconUrl + '_background.jpg'">
+      <img
+        :src="`${staticIconUrl}${bgImgName}.${bgImgFormat}`"
+        @error="imgLoadError"
+        >
     </div>
   </div>
 </template>
@@ -23,11 +26,25 @@ export default {
   },
   data() {
     return {
-      staticIconUrl: config.server.staticIconUrl,
-      isShowBgImg: false,
+      staticIconUrl: config.server.staticIconUrl, // 背景图服务器地址
+      isShowBgImg: false, // 是否显示背景图
+      bgImgName: '_background', // 背景图名字
+      bgImgFormat: 'jpg', // 背景图格式
     };
   },
   methods: {
+    // 背景图: jpg格式加载失败时, 尝试加载png, gif格式
+    imgLoadError(e) {
+      if (this.bgImgFormat === 'jpg') {
+        this.bgImgFormat = 'png';
+        e.target.src = `${this.staticIconUrl}${this.bgImgName}.${this.bgImgFormat}`;
+      } else if (this.bgImgFormat === 'png') {
+        this.bgImgFormat = 'gif';
+        e.target.src = `${this.staticIconUrl}${this.bgImgName}.${this.bgImgFormat}`;
+      } else {
+        e.target.style.visibility = 'hidden';
+      }
+    },
   },
   mounted() {
     setTimeout(() => {
