@@ -8,8 +8,6 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 
-public/icons
-
 # Editor directories and files
 .idea
 .vscode
