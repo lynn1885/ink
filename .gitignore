@@ -5,7 +5,7 @@ node_modules
 start-client.bat
 start-server.bat
 ink.vbs
-
+cert/
 
 # local env files
 .env.local

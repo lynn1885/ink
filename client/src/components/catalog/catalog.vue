@@ -19,6 +19,7 @@
       <li
         v-for="(cat, index) of catsLv1"
         :key="cat"
+        :title="cat"
         :class="{
           'cat-active': curCatLv1 === cat,
           'cat-dragover-active': draggedCatLv === 2 && droppedCatLv === 1 && droppedCatName === cat,
@@ -54,6 +55,7 @@
       <li
         v-for="(cat, index) of catsLv2"
         :key="cat"
+        :title="cat"
         :class="{
           'cat-active': curCatLv2 === cat,
           'cat-dragover-active': draggedCatLv === 3 && droppedCatLv === 2 && droppedCatName === cat,
@@ -89,6 +91,7 @@
       <li
         v-for="(cat, index) of catsLv3"
         :key="cat"
+        :title="cat"
         :class="{
           'cat-active': curCatLv3 === cat,
           'cat-dragover-top-active': draggedCatLv === 3 && droppedCatLv === 3 &&  droppedCatName === cat && dropHalf === 'TOP',
