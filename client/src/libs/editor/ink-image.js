@@ -44,7 +44,7 @@ export default function (editor, config) {
               w.clear();
             });
           }
-          const img = $(`<img src="${baseUrl}${imgMatchRes[1]}" class="inserted-widget-image">`)[0];
+          const img = $(`<div class="inserted-widget-image"><img src="${baseUrl}${imgMatchRes[1]}"></div>`)[0];
           editor.cm.getDoc().addLineWidget(line, img);
         }, 0);
       }

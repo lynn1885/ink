@@ -4,9 +4,9 @@
 .CodeMirror {
   height: 100%;
   border: none;
-  background-color: $editor-bg!important;
   font-size: $font-size-main;
   color: $editor-color!important;
+  background-color: $editor-bg!important;
   line-height: 2;
   padding: 0px 10px!important;
   caret-color:$cursor;
@@ -14,9 +14,10 @@
   span::selection, img::selection {
     background: $selection!important;
   }
-  & pre:last-child {
-    margin-bottom: 300px;
-  }
+}
+
+.CodeMirror-code>pre:last-child {
+  margin-bottom: 400px;
 }
 
 // fat cursor
@@ -220,12 +221,15 @@
   }
 }
 .inserted-widget-image {
-  display: block;
-  margin-left: 100px;
+  width: 100%;
+  padding-left: 100px;
   box-sizing: border-box;
-  max-width: 94%;
-  border-radius: 2px;
-  box-shadow: $cm-img-shadow;
+  img {
+    display: block;
+    max-width: 100%;
+    border-radius: 2px;
+    box-shadow: $cm-img-shadow;
+  }
 }
 
 .katex {
