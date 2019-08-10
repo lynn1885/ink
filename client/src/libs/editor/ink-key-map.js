@@ -9,9 +9,12 @@ export default function (editor, keyMap) {
     header5: 'Ctrl-5',
     header6: 'Ctrl-6',
     // format
-    bold: 'Ctrl-B',
+    bold: 'Ctrl-66',
     code: 'Ctrl-;',
     em: 'Ctrl-E',
+    toUpperCase: 'Shift-Ctrl-]',
+    toLowerCase: 'Shift-Ctrl-[',
+    // quotation: "Ctrl-'", // 这个快捷键不能用
     // italic: 'Ctrl-I',
     // link: 'Ctrl-L',
     // insert
@@ -25,8 +28,6 @@ export default function (editor, keyMap) {
     copyCurLineUp: 'Shift-Alt-Up',
     exchangeCurLineUp: 'Alt-Up',
     exchangeCurLineDown: 'Alt-Down',
-    // find
-    find: 'Ctrl-F',
     // other
     alt: 'Alt', // just to prevent the cursor becoming cross when type alt
   };
@@ -339,6 +340,38 @@ export default function (editor, keyMap) {
       }
     },
 
+    [mergedKeyMap.toUpperCase]: (cm) => {
+      const doc = cm.getDoc();
+      const sel = doc.getSelection();
+      if (sel) {
+        doc.replaceSelection(sel.toUpperCase());
+      } else {
+        const cursor = doc.getCursor();
+        const lineText = cm.lineInfo(cursor.line).text;
+        doc.replaceRange(
+          lineText.toUpperCase(),
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineText.length },
+        );
+      }
+    },
+
+    [mergedKeyMap.toLowerCase]: (cm) => {
+      const doc = cm.getDoc();
+      const sel = doc.getSelection();
+      if (sel) {
+        doc.replaceSelection(sel.toLowerCase());
+      } else {
+        const cursor = doc.getCursor();
+        const lineText = cm.lineInfo(cursor.line).text;
+        doc.replaceRange(
+          lineText.toLowerCase(),
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineText.length },
+        );
+      }
+    },
+
     // insert
     [mergedKeyMap.insertMath]: (cm) => {
       const doc = cm.getDoc();
@@ -465,6 +498,7 @@ export default function (editor, keyMap) {
       }
     },
 
+    // other
     [mergedKeyMap.alt]: () => {
     },
   });

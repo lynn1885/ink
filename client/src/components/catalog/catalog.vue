@@ -162,6 +162,7 @@
   </div>
 </template>
 <script>
+import _ from 'lodash';
 import config from '@/config';
 import Directories from '@/models/directories';
 import ContentMenu from '@/components/content-menu/content-menu.vue';
@@ -284,6 +285,8 @@ export default {
     async getCatalog() {
       // 从后端获取目录
       this.catalog = await Directories.get(this.$message);
+      // 上传到vuex (克隆, 防止修改)
+      this.$store.commit('updateCatalog', _.cloneDeep(this.catalog));
       // 标记目录加载完毕
       this.isCatalogLoaded = true;
 
@@ -1147,7 +1150,7 @@ span::selection {
   border-right: $catalog-col-border;
   margin: 0;
   padding: 0;
-  padding-bottom: 40px;
+  padding-bottom: 100px;
   list-style: none;
   li {
     height: 27px;

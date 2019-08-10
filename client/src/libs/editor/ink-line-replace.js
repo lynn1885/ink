@@ -27,26 +27,31 @@ export default function (editor, config) {
         }
       }
 
-      // 读取行内配置指令
-      const matchRes = editor.getCmdInLastLine(/%text-replace:(.+)%/);
-      if (matchRes) {
-        if (matchRes[1] && matchRes[1].length >= 3) {
-          let cmdStr = matchRes[1];
-          const m = {};
-          if (cmdStr[cmdStr.length - 1] === ';') {
-            cmdStr = cmdStr.slice(0, cmdStr.length - 1);
-          }
-          const cmdArr = cmdStr.split(';');
-
-          for (let i = 0; i < cmdArr.length; i += 1) {
-            const kv = cmdArr[i].split('=');
-            if (kv.length === 2) {
-              // eslint-disable-next-line prefer-destructuring
-              m[kv[0]] = kv[1];
+      // 读取stickyNote中的配置
+      const stickyNote = localStorage.getItem('stickyNoteContent'); // 注意这里利用了sticky note模块的内部原理(存储的位置)
+      if (stickyNote) {
+        const lineArr = stickyNote.split('\n');
+        const replaceLineObj = {};
+        let isReplaceLine = false;
+        // eslint-disable-next-line no-restricted-syntax
+        for (const line of lineArr) {
+          if (isReplaceLine && line !== '<===') {
+            const arr = line.split(/,|:/);
+            if (arr.length === 2) {
+              [, replaceLineObj[arr[0]]] = arr;
+            } else if (arr.length === 3) {
+              [, , replaceLineObj[arr[0]]] = arr;
+              [, , replaceLineObj[arr[1]]] = arr;
             }
           }
-          Object.assign(tMap, m);
+          if (line === '===>') {
+            isReplaceLine = true;
+          } else if (line === '<===') {
+            break;
+          }
         }
+        console.log(replaceLineObj);
+        Object.assign(tMap, replaceLineObj);
       }
 
       // 执行替换

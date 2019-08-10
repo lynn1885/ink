@@ -16,6 +16,10 @@ $icon-color: #999;
 $icon-color-active: #333;
 $icon-color-hover: #888;
 
+// color: status-bar
+$status-bar-bg: rgba(247, 246, 245, 0.9);
+$status-bar-color: #444;
+
 // color: catalog
 $catalog-color: rgb(102, 84, 72);
 $catalog-active-bg: rgba(234, 229, 245, 0.9);
@@ -32,6 +36,9 @@ $catalog-jump-li-border: 0.5px solid #eee;
 // color: editor
 $editor-bg: rgba(251, 250, 249, 0.90);
 $editor-color: #333;
+
+// color: sticky note
+$sticky-note-bg: rgb(251, 250, 249);
 
 // color: headers
 $header-1: #963607;

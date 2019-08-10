@@ -141,6 +141,7 @@ export default {
       if (!filePath) {
         throw new Error(`loadFile(), illegal filePath: ${filePath}`);
       }
+      this.$store.commit('updateCurFilePath', filePath);
       if (this.autoSaveTimer) {
         this._turnOffAutoSave();
       }
@@ -263,6 +264,7 @@ export default {
      * 事件: 卸载网页前自动保存
      */
     onbeforeunload(event) {
+      console.log('保存笔记');
       if (this.isFileContentChanged && this.curFilePath) {
         this.saveFile('BEFOREUNLOAD', true);
         event.returnValue = 'has a unsaved file!';
@@ -403,7 +405,7 @@ export default {
     // 监听初始化编辑器
     await this.init();
     // 设置网页卸载前自动保存
-    window.onbeforeunload = this.onbeforeunload;
+    window.addEventListener('beforeunload', this.onbeforeunload);
   },
 };
 

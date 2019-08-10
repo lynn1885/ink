@@ -4,6 +4,7 @@
     <div id="tools">
       <div
         v-for="t of tools"
+        :title="t.name"
         :class="{'tool': true, 'active': t.name === activePage || activeButtons[t.name]}"
         :key="t.name"
         @click="changeTool(t)"
@@ -34,16 +35,21 @@ export default {
       isSideBarSmall: false, // 是否显示为小工具栏状态
       tools: [
         {
-          name: 'catalog', icon: 'torah', url: '/catalog', type: 'page',
+          name: 'catalog', icon: 'torah', type: 'page',
         },
         {
-          name: 'readonly', icon: 'moon', url: '/readonly', type: 'button', onclick: readonly,
+          name: 'readonly', icon: 'moon', type: 'button', onclick: readonly,
+        },
+        {
+          name: 'sticky-note', icon: 'sticky-note', type: 'button', onclick: this.toggleShowStickyNote,
         },
       ],
     };
   },
   methods: {
+    // change tool
     changeTool(tool) {
+      // "page" tool will open a page, like Catalog tool
       if (tool.type === 'page') {
         if (this.activePage === tool.name) {
           this.isSideBarSmall = !this.isSideBarSmall;
@@ -51,8 +57,9 @@ export default {
           this.isSideBarSmall = false;
           this.activePage = tool.name;
         }
-      } else if (tool.type === 'button') {
-        const { isActive } = tool.onclick(this.$store.state.editor);
+      // "button" tool is a button, which will trigger something
+      } else if (tool.type === 'button' && tool.onclick) {
+        const isActive = tool.onclick(this.$store.state.editor);
         if (!this.activeButtons[tool.name]) {
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
         }
@@ -62,6 +69,13 @@ export default {
           this.activeButtons[tool.name] = false;
         }
       }
+    },
+
+    // toggle if show sticky note
+    toggleShowStickyNote() {
+      const isActive = !this.$store.state.isShowStickyNote;
+      this.$store.commit('updateIsShowStickyNote', isActive);
+      return isActive;
     },
   },
 };

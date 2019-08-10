@@ -1,14 +1,12 @@
 export default function (editor) {
-  const res = {
-    isActive: false,
-  };
+  let isActive = false;
   const { cm } = editor;
   if (cm.isReadOnly()) {
     cm.setOption('readOnly', false);
-    res.isActive = false;
+    isActive = false;
   } else {
     cm.setOption('readOnly', 'nocursor');
-    res.isActive = true;
+    isActive = true;
   }
-  return res;
+  return isActive;
 }
