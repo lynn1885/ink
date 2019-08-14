@@ -1137,6 +1137,7 @@ span::selection {
   box-sizing: border-box;
   height: 100%;
   font-size: $font-size-catalog;
+  font-family: $font-family-main;
   color: $catalog-color;
 }
 

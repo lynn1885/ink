@@ -1,8 +1,9 @@
 <template>
   <div id="status-bar">
-    <div class="note-count items">Note: {{ noteCount }}</div>
-    <div class="line-count items">Ln: {{ lineCount }}</div>
-    <div class="word-count items">Ch: {{ wordCount }}</div>
+    <div class="note-properties items" title="set current note properties">Prop</div>
+    <div class="note-count items" title="note count">Note: {{ noteCount }}</div>
+    <div class="line-count items" title="line count">Ln: {{ lineCount }}</div>
+    <div class="word-count items" title="character count">Ch: {{ wordCount }}</div>
   </div>
 </template>
 <script>
@@ -69,6 +70,7 @@ export default {
   box-sizing: border-box;
   font-size: 13px;
   text-align: right;
+  font-family: $font-family-main;
   color: $status-bar-color;
   background-color: $status-bar-bg;
   cursor: default;
@@ -81,4 +83,6 @@ export default {
     background-color: darken($status-bar-bg, 2%);
   }
 }
+
+
 </style>

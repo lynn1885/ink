@@ -1,15 +1,24 @@
 <template>
   <div id="side-bar" :class="{'side-bar-small': isSideBarSmall}">
     <!-- 工具列表 -->
-    <div id="tools">
+    <div id="tool-icons">
       <div
         v-for="t of tools"
         :title="t.name"
-        :class="{'tool': true, 'active': t.name === activePage || activeButtons[t.name]}"
+        :class="{
+          'tool-icon': true,
+          'active': t.name === activePage || activeButtons[t.name],
+          'bottom-icon': t.isBottom
+        }"
         :key="t.name"
         @click="changeTool(t)"
       >
-        <font-awesome-icon :icon="t.icon" />
+        <svg
+          viewBox="0 0 1024 1024"
+          version="1.1"
+          v-html="t.icon"
+          >
+        </svg>
       </div>
     </div>
 
@@ -22,6 +31,8 @@
 <script>
 import Catalog from '@/components/catalog/catalog.vue';
 import readonly from '@/components/readonly/readonly.js';
+// import mindMap from '@/components/mind-map/mind-map.js';
+import { bookSvg, stickyNoteSvg, settingSvg, pluginSvg } from './svg';
 
 export default {
   name: 'side-bar',
@@ -35,13 +46,19 @@ export default {
       isSideBarSmall: false, // 是否显示为小工具栏状态
       tools: [
         {
-          name: 'catalog', icon: 'torah', type: 'page',
+          name: 'catalog', icon: bookSvg, type: 'page',
+        }, {
+          name: 'readonly', icon: readonly.icon, type: 'button', onclick: readonly.handler, lastStatus: false,
+        }, {
+          name: 'sticky note', icon: stickyNoteSvg, type: 'button', onclick: this.toggleShowStickyNote, lastStatus: false,
+        }, {
+          name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
         },
+        // {
+        // name: 'mind map', icon: mindMap.icon, type: 'button', onclick: mindMap.handler, lastStatus: false,
+        // },
         {
-          name: 'readonly', icon: 'moon', type: 'button', onclick: readonly,
-        },
-        {
-          name: 'sticky-note', icon: 'sticky-note', type: 'button', onclick: this.toggleShowStickyNote,
+          name: 'setting', icon: settingSvg, type: 'button', onclick: () => {}, lastStatus: false, isBottom: true, // There can only be one "isBottom"
         },
       ],
     };
@@ -59,11 +76,11 @@ export default {
         }
       // "button" tool is a button, which will trigger something
       } else if (tool.type === 'button' && tool.onclick) {
-        const isActive = tool.onclick(this.$store.state.editor);
+        tool.lastStatus = tool.onclick(this.$store.state.editor, tool.lastStatus);
         if (!this.activeButtons[tool.name]) {
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
         }
-        if (isActive) {
+        if (tool.lastStatus) {
           this.activeButtons[tool.name] = true;
         } else {
           this.activeButtons[tool.name] = false;
@@ -83,9 +100,10 @@ export default {
 
 <style lang="scss" scoped>
 @import "@/themes/craft/var.scss";
-
+// side bar
 #side-bar {
   display: flex;
+  position: relative;
   width: $side-bar-width;
   &.side-bar-small { // 小工具栏
     width: $icon-bar-width;
@@ -95,13 +113,43 @@ export default {
   }
 }
 
-#tools {
+// icons
+#tool-icons {
   flex-basis: $icon-bar-width;
   flex-shrink: 0;
   flex-grow: 0;
   height: 100%;
   background-color: $icon-bar-bg;
+  .tool-icon {
+    width: $icon-bar-width;
+    height: $icon-bar-width;
+    line-height: $icon-bar-width;
+    text-align: center;
+    cursor: pointer;
+    svg {
+      width: 52%;
+      height: 52%;
+      vertical-align: middle;
+      fill: $icon-color;
+    }
+    &.active {
+      svg {
+        fill: $icon-color-active;
+      }
+    }
+    &:not(.active):hover {
+      svg {
+        fill: $icon-color-hover;
+      }
+    }
+  }
+  .bottom-icon {
+    position: absolute;
+    bottom: 0px;
+  }
 }
+
+// pages
 #tool-pages {
   display: block;
   height: 100%;
@@ -110,28 +158,5 @@ export default {
   overflow-y: auto;
   background-color: $tool-page-bar-bg;
 }
-.tool {
-  width: 100%;
-  height: $icon-bar-width;
-  text-align: center;
-  line-height: $icon-bar-width;
-  color: $icon-color;
-  transition: all 0.3s;
-  cursor: pointer;
-  &.active {
-    color: $icon-color-active;
-    transition: all 0.3s;
-  }
-  &:not(.active):hover {
-    color: $icon-color-hover;
-  }
-  svg {
-    text-align: center;
-    line-height: $icon-bar-width;
-    font-size: $icon-size;
-    vertical-align: middle;
-  }
-}
-
 
 </style>

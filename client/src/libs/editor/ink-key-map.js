@@ -9,7 +9,7 @@ export default function (editor, keyMap) {
     header5: 'Ctrl-5',
     header6: 'Ctrl-6',
     // format
-    bold: 'Ctrl-66',
+    bold: 'Ctrl-B',
     code: 'Ctrl-;',
     em: 'Ctrl-E',
     toUpperCase: 'Shift-Ctrl-]',

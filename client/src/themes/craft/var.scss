@@ -1,7 +1,7 @@
 // font
-$font-family-main: 'yahei consolas hybrid';
-$font-size-main: 14px;
-$font-size-catalog: 12px;
+$font-family-main: 'Aa元气满满';
+$font-size-main: 16px;
+$font-size-catalog: 13px;
 $font-size-formatting: 8px;
 $icon-size: 22px;
 
@@ -39,6 +39,8 @@ $editor-color: #333;
 
 // color: sticky note
 $sticky-note-bg: rgb(251, 250, 249);
+$sticky-note-color: #666;
+$sticky-note-box-shadow: 0px 0px 6px 0px #d1d1d1;
 
 // color: headers
 $header-1: #963607;
@@ -55,13 +57,13 @@ $cursor: #333;
 
 // color: code, link, quote, em
 $code-bg: rgba(243, 237, 230, 0.9);
-$code-color: rgb(151, 129, 104);
+$code-color: rgb(133, 114, 90);
 $cm-em-bg: rgba(240, 230, 248, 0.9);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgba(236, 243, 248, 0.9);
 $cm-link-color: rgb(47, 147, 165);
 $cm-quote-color: #999;
-$cm-formatting-color: #ddd;
+$cm-formatting-color: #d9d9d9;
 $cm-list-bg: rgba(248, 242, 234, 0.9);
 $cm-list-color: #bbb;
 $cm-foldmarker-bg: rgba(247, 233, 221, 0.9);

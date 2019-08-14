@@ -35,10 +35,7 @@ export default {
       clearTimeout(this.setNoteTimeoutId);
       this.setNoteTimeoutId = setTimeout(() => {
         localStorage.setItem(this.localStorageKey, this.$refs['sticky-note'].value);
-      }, 2000);
-    },
-
-    _setNoteContent() {
+      }, 3000);
     },
   },
   mounted() {
@@ -47,7 +44,6 @@ export default {
   },
 
   beforeDestroy() {
-    console.log('beforeDestroy');
     clearTimeout(this.setNoteTimeoutId);
     localStorage.setItem(this.localStorageKey, this.$refs['sticky-note'].value);
   },
@@ -64,10 +60,11 @@ export default {
   outline-style: none;
   box-sizing: border-box;
   background: $sticky-note-bg;
-  color: $editor-color;
+  color: $sticky-note-color;
   font-size: $font-size-main;
+  font-family: $font-family-main;
   border-radius: 2px;
-  box-shadow: 0px 0px 4px 0px #ddd;
+  box-shadow: $sticky-note-box-shadow;
   overflow: auto;
   resize: none;
   &::selection {

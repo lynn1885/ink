@@ -415,6 +415,36 @@ export default class {
   }
 
   /**
+   * getHeadersHierarchy: 获取所有headers, 组织成一个对象
+   * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
+   * @param {boolean} isWithLineNum 是否带上行号, 默认`false`
+   */
+  getHeadersHierarchy(text, isWithLineNum) {
+    if (!text) {
+      text = this.cm.getDoc().getValue();
+    }
+    const lineArr = text.split('\n');
+    const hierarchy = {};
+    const lastMeetHeaders = []; // [lastHeader1, lastHeader2....lastHeader6]
+    for (let i = 0; i < lineArr.length; i += 1) {
+      const matchRes = lineArr[i].match(/^(#+)\s(.+)/);
+      if (matchRes && matchRes[1].length > 0) {
+        const headerLv = matchRes[1].length;
+        if (headerLv === 1) {
+          lastMeetHeaders[headerLv] = {};
+          if (isWithLineNum) hierarchy[`${i} ${matchRes[2]}`] = lastMeetHeaders[headerLv];
+          else hierarchy[`${matchRes[2]}`] = lastMeetHeaders[headerLv];
+        } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
+          lastMeetHeaders[headerLv] = {};
+          if (isWithLineNum) lastMeetHeaders[headerLv - 1][`${i} ${matchRes[2]}`] = lastMeetHeaders[headerLv];
+          else lastMeetHeaders[headerLv - 1][`${matchRes[2]}`] = lastMeetHeaders[headerLv];
+        }
+      }
+    }
+    return hierarchy;
+  }
+
+  /**
    * getCmdInLastLine: 从最后一行读取指令
    * @param {Regext} reg 匹配命令的正则表达式
    * @returns {array} 返回匹配结果
