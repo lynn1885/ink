@@ -109,23 +109,39 @@ export default function (editor) {
     // reorder list
     [map.reorderCurHeaderLi]: (cm) => {
       const doc = cm.getDoc();
-      // eslint-disable-next-line prefer-const
-      let { headerLv, headerLineNum } = editor.getHeaderByCursor();
-      if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
-      const lineCount = doc.lineCount();
-      let marker = 1;
-      for (let i = headerLineNum + 1; i < lineCount; i += 1) {
-        const text = doc.getLine(i);
-        if (text.match(/^(#+) /)) {
-          break;
-        }
-        if (text.match(/^\d+. /)) {
-          doc.replaceRange(
-            text.replace(/^\d+. /, `${marker}. `),
-            { line: i, ch: 0 },
-            { line: i, ch: text.length },
-          );
-          marker += 1;
+      const sel = doc.getSelection();
+      if (sel) {
+        let marker;
+        doc.replaceSelection(sel.replace(/^(\d+). /gm, (match, group1) => {
+          let res;
+          if (marker) {
+            marker += 1;
+            res = `${marker}. `;
+          } else {
+            marker = Number.parseInt(group1, 10);
+            res = `${marker}. `;
+          }
+          return res;
+        }));
+      } else {
+        // eslint-disable-next-line prefer-const
+        let { headerLv, headerLineNum } = editor.getHeaderByCursor();
+        if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
+        const lineCount = doc.lineCount();
+        let marker = 1;
+        for (let i = headerLineNum + 1; i < lineCount; i += 1) {
+          const text = doc.getLine(i);
+          if (text.match(/^(#+) /)) {
+            break;
+          }
+          if (text.match(/^\d+. /)) {
+            doc.replaceRange(
+              text.replace(/^\d+. /, `${marker}. `),
+              { line: i, ch: 0 },
+              { line: i, ch: text.length },
+            );
+            marker += 1;
+          }
         }
       }
     },
