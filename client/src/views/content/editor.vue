@@ -8,10 +8,11 @@ import inkImage from '@/libs/editor/ink-image'; // 插件
 import inkMath from '@/libs/editor/ink-math';
 import inkFold from '@/libs/editor/ink-fold';
 import inkKeyMap from '@/libs/editor/ink-key-map';
-import inkFlexibleCursor from '@/libs/editor/ink-flexible-cursor';
-import inkFlexibleCursorLineChar from '@/libs/editor/ink-flexible-cursor-line-char';
+// import inkFlexibleCursor from '@/libs/editor/ink-flexible-cursor';
+// import inkFlexibleCursorLineChar from '@/libs/editor/ink-flexible-cursor-line-char';
 import inkHeaderManager from '@/libs/editor/ink-header-manager';
 import inkLineReplace from '@/libs/editor/ink-line-replace';
+import inkNormalizeWord from '@/libs/editor/ink-normalize-word';
 import Files from '@/models/files';
 import Images from '@/models/images';
 import UserConfig from '@/models/user-config';
@@ -44,14 +45,18 @@ export default {
         .then((data) => { inkLineReplaceConfig = data; })
         .catch(() => { inkLineReplaceConfig = {}; });
 
+      // 创建editor
+      this.editor = new Editor(this.$refs.editor, {
+        messager: this.$message,
+      });
       // 给editor添加插件
-      this.editor = new Editor(this.$refs.editor);
       this.editor.use(inkKeyMap);
       this.editor.use(inkFold);
-      this.editor.use(inkFlexibleCursor);
-      this.editor.use(inkFlexibleCursorLineChar);
+      // this.editor.use(inkFlexibleCursor);
+      // this.editor.use(inkFlexibleCursorLineChar);
       this.editor.use(inkHeaderManager);
       this.editor.use(inkLineReplace, inkLineReplaceConfig);
+      this.editor.use(inkNormalizeWord);
       this.editor.use(inkImage, {
         upload: Images.upload, // 用于上传图片的函数, 会把formData, messager传入这个函数. 需要是个异步函数
         messager: this.$message,

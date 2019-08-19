@@ -50,7 +50,6 @@ export default function (editor, config) {
             break;
           }
         }
-        console.log(replaceLineObj);
         Object.assign(tMap, replaceLineObj);
       }
 
@@ -58,13 +57,16 @@ export default function (editor, config) {
       if (tMap) {
         const cursor = cm.getCursor();
         const doc = cm.getDoc();
-        let lineTextBeforeCursor = cm.lineInfo(cursor.line).text.slice(0, cursor.ch);
+        let lineText = cm.lineInfo(cursor.line).text;
         const tMapKeys = Object.keys(tMap);
         for (let i = 0; i < tMapKeys.length; i += 1) {
-          lineTextBeforeCursor = lineTextBeforeCursor.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
+          lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
         }
-        doc.setSelection({ line: cursor.line, ch: 0 }, { line: cursor.line, ch: cursor.ch });
-        doc.replaceSelection(lineTextBeforeCursor);
+        doc.replaceRange(
+          lineText,
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineText.length },
+        );
       }
     },
   });

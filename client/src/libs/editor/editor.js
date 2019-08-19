@@ -1,4 +1,3 @@
-import $ from 'jquery';
 import _ from 'lodash';
 import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/lib/codemirror.css';
@@ -12,7 +11,7 @@ import 'codemirror/mode/css/css'; // language mode: css
 import 'codemirror/addon/fold/foldcode'; // fold code
 import 'codemirror/mode/sql/sql'; // language mode: sql
 import 'codemirror/addon/fold/markdown-fold'; // fold code method for markdown
-import 'codemirror/addon/display/autorefresh'; // close brackets
+import 'codemirror/addon/display/autorefresh'; // autorefresh
 import 'codemirror/addon/mode/simple'; // mode maker
 import 'codemirror/addon/mode/loadmode'; // load mode
 import 'codemirror/theme/paraiso-light.css'; // 主题包
@@ -23,18 +22,25 @@ import 'codemirror/theme/paraiso-light.css'; // 主题包
 // import 'codemirror/keymap/vim';
 
 export default class {
+  /**
+   * @param {dom} el 原生dom元素, 会在这个元素中初始化editor
+   * @param {Object} config config object
+   * `config.message`: `Object` messager, 用于当editor出现问题时, 以ui的形式向用户发送信息.
+   * 对象中需要包含如下四个函数: success(), info(), warning(), error(), 向函数中传入信息会以ui的形式提示用户
+   * `config.cm`: `Object` CodeMirror()函数接收的配置项, 只有部分参数有效
+   */
   constructor(el, config) {
     config = _.merge({
       cm: {},
     }, config);
     this.el = el;
-    this.$ = $;
     this.lines = [];
+    this.messager = config.messager || {
+      success() {}, info() {}, warning() {}, error() {},
+    };
     this.cm = this._init(el, config.cm);
-    this.CodeMirror = CodeMirror;
-    this.cm.$editor = this;
     this.cm.on('change', this._onChange);
-    this.cm.on('renderLine', this._onRenderLine);
+    this.cm.on('renderLine', this._onRenderLine.bind(this)); // 需要固定下这个函数的this指针
   }
 
   /**
@@ -47,24 +53,26 @@ export default class {
       mode: {
         name: 'text/markdown',
         highlightFormatting: true, // https://.net/mode/markdown/
+        xml: false, // close highlight xml
       },
       theme: 'paraiso-light', // editor theme, mark sure that you have imported this theme
       tabSize: 4,
-      // keyMap: 'vim', // 这个vim不兼容中文输入法, 因为笔记中要大量输入中文, 所以默认不开启
       smartIndent: false, // 并不怎么smart
       indentUnit: 4,
       inputStyle: 'contenteditable',
-      // autoCloseBrackets: true,
       addModeClass: true,
-      lineNumbers: false, // 不兼容
       lineWrapping: true, // auto line wrapping
+      autoRefresh: true, // display/autorefresh.js
+      lineNumbers: false, // 和主题不兼容
+      // autoCloseBrackets: true,
       // scrollbarStyle: null, // show scroll bar
       // autoCloseBrackets: true, // auto close brackets
-      autoRefresh: true, // display/autorefresh.js
+      // keyMap: 'vim', // 这个vim不兼容中文输入法, 因为笔记中要大量输入中文, 所以默认不开启
       // 这个选项只有在第1次加载codemirror的时候会生效
       // 切换codemirror中doc的内容时不会生效. 所以关闭
       // 自己在file-server插件中实现了一个
       // autofocus: true,
+      // 此外, markdown ### , 1. 这样的标记后必须带上空格, 许多api依赖于这种格式
     };
 
     if (typeof config.lineNumbers === 'boolean') {
@@ -118,12 +126,12 @@ export default class {
     }
 
     // record line
-    if (typeof cm.$editor.lines[curLineNum] !== 'object') {
-      cm.$editor.lines[curLineNum] = {
+    if (typeof this.lines[curLineNum] !== 'object') {
+      this.lines[curLineNum] = {
         header: curLineHeader,
       };
     } else {
-      cm.$editor.lines[curLineNum].header = curLineHeader;
+      this.lines[curLineNum].header = curLineHeader;
     }
 
     const codeBlockBoundaryMatchRes = line.text.match(/^```/);

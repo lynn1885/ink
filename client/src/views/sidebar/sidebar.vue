@@ -127,8 +127,8 @@ export default {
     text-align: center;
     cursor: pointer;
     svg {
-      width: 52%;
-      height: 52%;
+      width: 50%;
+      height: 50%;
       vertical-align: middle;
       fill: $icon-color;
     }

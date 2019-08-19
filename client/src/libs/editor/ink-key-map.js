@@ -12,8 +12,8 @@ export default function (editor, keyMap) {
     bold: 'Ctrl-B',
     code: 'Ctrl-;',
     em: 'Ctrl-E',
-    toUpperCase: 'Shift-Ctrl-]',
-    toLowerCase: 'Shift-Ctrl-[',
+    toUpperCase: 'Shift-Ctrl-U',
+    toLowerCase: 'Shift-Ctrl-L',
     // quotation: "Ctrl-'", // 这个快捷键不能用
     // italic: 'Ctrl-I',
     // link: 'Ctrl-L',

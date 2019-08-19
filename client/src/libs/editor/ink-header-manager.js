@@ -3,7 +3,10 @@ const map = {
   insertHeaderNext: 'Ctrl-J',
   insertHeaderChild: 'Ctrl-L',
   insertHeaderNextParent: 'Ctrl-H',
-  insertHeaderNextLi: 'Ctrl-O',
+  insertNextLiUnderHeader: 'Ctrl-O',
+  reorderCurHeaderLi: 'Shift-Ctrl-O',
+  upgradeHeader: 'Shift-Ctrl-[',
+  degrageHeaders: 'Shift-Ctrl-]',
 };
 
 // 导出
@@ -36,8 +39,8 @@ export default function (editor) {
       }
     },
 
-    // 插入下一个list
-    [map.insertHeaderNextLi]: (cm) => {
+    // insert next list
+    [map.insertNextLiUnderHeader]: (cm) => {
       const doc = cm.getDoc();
       const cursor = doc.getCursor();
       const curLineText = cm.lineInfo(cursor.line).text;
@@ -103,6 +106,30 @@ export default function (editor) {
       }
     },
 
+    // reorder list
+    [map.reorderCurHeaderLi]: (cm) => {
+      const doc = cm.getDoc();
+      let { headerLineNum } = editor.getHeaderByCursor();
+      if (!headerLineNum) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
+      const lineCount = doc.lineCount();
+      let marker = 1;
+      for (let i = headerLineNum + 1; i < lineCount; i += 1) {
+        const text = doc.getLine(i);
+        if (text.match(/^(#+) /)) {
+          break;
+        }
+        if (text.match(/^\d+. /)) {
+          doc.replaceRange(
+            text.replace(/^\d+. /, `${marker}. `),
+            { line: i, ch: 0 },
+            { line: i, ch: text.length },
+          );
+          marker += 1;
+        }
+      }
+    },
+
+    // insert header child
     [map.insertHeaderChild]: (cm) => {
       const doc = cm.getDoc();
       const { headerLv, headerLineNum } = editor.getHeaderByCursor();
@@ -117,6 +144,7 @@ export default function (editor) {
       }
     },
 
+    // insert header parent
     [map.insertHeaderNextParent]: (cm) => {
       const doc = cm.getDoc();
       const { headerLv } = editor.getHeaderByCursor();
@@ -131,6 +159,67 @@ export default function (editor) {
         const insertLineCh = cm.lineInfo(insertLineNum).text.length;
         doc.replaceRange(`\n${headerStr} `, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
         doc.setCursor({ line: insertLineNum + 1, ch: headerLv });
+      }
+    },
+
+    // degrageHeaders
+    [map.degrageHeaders]: (cm) => {
+      const doc = cm.getDoc();
+      const sel = doc.getSelection();
+      if (sel) {
+        doc.replaceSelection(replace(sel));
+      } else {
+        const cursor = doc.getCursor();
+        const lineText = cm.lineInfo(cursor.line).text;
+        doc.replaceRange(
+          replace(lineText),
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineText.length },
+        );
+      }
+
+      function replace(text) {
+        if (!text.match(/^(#+) /gm)) {
+          let { headerLv } = editor.getHeaderByCursor();
+          if (!headerLv) headerLv = 0;
+          text = text.replace(/^\d+. /gm, `${'#'.repeat(headerLv + 1)} `);
+        } else {
+          text = text.replace(/^(#+) /gm, (match, group1) => `${'#'.repeat(group1.length + 1)} `);
+        }
+        if (text.match(/^#{7,} /gm)) {
+          editor.messager.warning('有些标题的等级超过6级了, 最多只支持到6级标题');
+        }
+        return text;
+      }
+    },
+
+    [map.upgradeHeader]: (cm) => {
+      const doc = cm.getDoc();
+      const sel = doc.getSelection();
+      if (sel) {
+        doc.replaceSelection(replace(sel));
+      } else {
+        const cursor = doc.getCursor();
+        const lineText = cm.lineInfo(cursor.line).text;
+        doc.replaceRange(
+          replace(lineText),
+          { line: cursor.line, ch: 0 },
+          { line: cursor.line, ch: lineText.length },
+        );
+      }
+
+      function replace(text) {
+        if (text.match(/^# /gm)) {
+          editor.messager.warning('有些标题已经是1级标题了, 将不再提升这些标题');
+        }
+        if (!text.match(/^(#+) /gm)) {
+          let { headerLv } = editor.getHeaderByCursor();
+          if (!headerLv) headerLv = 0;
+          text = text.replace(/^\d+. /gm, `${'#'.repeat(headerLv)} `);
+        } else {
+          text = text.replace(/^(#+) /gm, (match, group1) => `${'#'.repeat(group1.length - 1 >= 1 ? group1.length - 1 : 1)} `);
+        }
+        return text;
       }
     },
   });
