@@ -109,8 +109,9 @@ export default function (editor) {
     // reorder list
     [map.reorderCurHeaderLi]: (cm) => {
       const doc = cm.getDoc();
-      let { headerLineNum } = editor.getHeaderByCursor();
-      if (!headerLineNum) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
+      // eslint-disable-next-line prefer-const
+      let { headerLv, headerLineNum } = editor.getHeaderByCursor();
+      if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
       const lineCount = doc.lineCount();
       let marker = 1;
       for (let i = headerLineNum + 1; i < lineCount; i += 1) {
@@ -187,7 +188,7 @@ export default function (editor) {
           text = text.replace(/^(#+) /gm, (match, group1) => `${'#'.repeat(group1.length + 1)} `);
         }
         if (text.match(/^#{7,} /gm)) {
-          editor.messager.warning('有些标题的等级超过6级了, 最多只支持到6级标题');
+          editor.messager.warning('有些标题超过6级了, 最多只支持到6级标题');
         }
         return text;
       }
