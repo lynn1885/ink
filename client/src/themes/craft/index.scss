@@ -130,11 +130,8 @@
 .cm-em {
   background: $cm-em-bg!important;
   font-style: normal;
-  padding: 2px 0px;
+  padding: 2px;
   border-radius: 2px;
-}
-.cm-em:not(.cm-formatting) {
-  padding: 2px 4px;
 }
 
 .cm-strong {
@@ -146,13 +143,10 @@
 
 // code
 .cm-comment {
-  padding: 2px 0px;
+  padding: 2px;
   background: $code-bg;
   border-radius: 2px;
   color:$code-color!important;
-}
-.cm-comment:not(.cm-formatting) {
-  padding: 2px 4px;
 }
 
 .cm-comment.cm-code-comment { // 代码中的注释
@@ -180,7 +174,7 @@
 }
 .cm-url {
   color: $cm-link-color !important;
-  cursor: pointer;
+  // cursor: pointer;
 }
 
 // quote
@@ -206,15 +200,18 @@
 .cm-formatting-em,
 .cm-formatting-code,
 .cm-formatting-strong {
-  opacity: 0;
+  color: transparent!important;
 }
 .cm-formatting-header {
-  font-size: $font-size-formatting!important;
+  font-size: $font-size-formatting;
 }
 
 .cursor-in-this-line {
-  .cm-formatting {
-    opacity: 1; // visibility"可能"会导致复制失效, 所以使用安全的opacity
+  .cm-formatting-header, 
+  .cm-formatting-em,
+  .cm-formatting-code,
+  .cm-formatting-strong{
+    color: $cm-formatting-color!important; // visibility"可能"会导致复制失效, 所以使用安全的opacity
   }
 }
 
