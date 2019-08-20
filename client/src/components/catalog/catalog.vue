@@ -291,8 +291,8 @@ export default {
       this.isCatalogLoaded = true;
 
       // 设置默认打开的1, 2, 3级目录
-      // 因为设置各级目录时都有对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中
-      // 确保当前目录等级的监听事件发生后, 在设置下一级的目录
+      // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中
+      // 确保当前上一等级的监听事件发生后, 在设置下一级的目录
       // 如果存在waitOpenCatLv1, 则默认打开waitOpenCat系列的目录, 否则默认打开各级的第一个目录
       setTimeout(() => {
         if (this.waitOpenCatLv1) {
@@ -496,10 +496,11 @@ export default {
         confirmButtonText: 'Create',
         cancelButtonText: 'Cancel',
         inputValidator: (value) => {
+          const verifyInfo = tools.isFileNameValid(value);
           if (!value) {
             return '目录名不能为空';
-          } else if (!tools.isFileNameValid(value)) {
-            return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 空格 开头或结尾';
+          } else if (verifyInfo !== true) {
+            return verifyInfo;
           } else if (catLvLowerCase.includes(value.toLowerCase())) {
             return '目录名已存在';
           }
@@ -693,12 +694,13 @@ export default {
         confirmButtonText: 'Rename',
         cancelButtonText: 'Cancel',
         inputValidator: (value) => {
+          const verifyInfo = tools.isFileNameValid(value);
           if (!value) {
             return '目录名不能为空';
           } else if (value === curContentMenuCatName) {
             return '新目录名和旧目录名一样';
-          } else if (!tools.isFileNameValid(value)) {
-            return '目录名中不能包含 < > : " / \\ | ? * 等特殊字符, 且不能以 . 开头或结尾';
+          } else if (verifyInfo !== true) {
+            return verifyInfo;
           } else if (catLvLowerCase.includes(value.toLowerCase())) {
             return '目录名已存在';
           }

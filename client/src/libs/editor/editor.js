@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/markdown/markdown'; // language mode: mark down
+import 'codemirror/mode/markdown/markdown'; // language mode: markdown
 import 'codemirror/mode/javascript/javascript'; // language mode: js
 import 'codemirror/mode/clike/clike'; // language mode: c, c++, oc, java
 import 'codemirror/mode/python/python'; // language mode: python
@@ -34,6 +34,7 @@ export default class {
       cm: {},
     }, config);
     this.el = el;
+    this.curCursorLineNum = undefined; // 当前光标所处的行
     this.lines = [];
     this.messager = config.messager || {
       success() {}, info() {}, warning() {}, error() {},
@@ -41,6 +42,7 @@ export default class {
     this.cm = this._init(el, config.cm);
     this.cm.on('change', this._onChange);
     this.cm.on('renderLine', this._onRenderLine.bind(this)); // 需要固定下这个函数的this指针
+    this.cm.on('cursorActivity', this._onCursorActivity.bind(this)); // 需要固定下这个函数的this指针
   }
 
   /**
@@ -98,7 +100,19 @@ export default class {
     // window.focusedLine = change.from.line; // no!! use vuex;
     // localStorage.setItem('mdText', cm.getValue());
   }
-
+  // eslint-disable-next-line class-methods-use-this
+  _onCursorActivity(cm) {
+    const className = 'cursor-in-this-line'; // 当前行的类名, 和css耦合
+    const doc = cm.getDoc();
+    const { line: curCursorLineNum } = doc.getCursor();
+    if (this.curCursorLineNum === undefined) {
+      doc.addLineClass(curCursorLineNum, 'wrap', className);
+    } else if (this.curCursorLineNum !== curCursorLineNum) {
+      doc.removeLineClass(this.curCursorLineNum, 'wrap', className);
+      doc.addLineClass(curCursorLineNum, 'wrap', className);
+    }
+    this.curCursorLineNum = curCursorLineNum;
+  }
   /**
    * _onRenderLine: event, cm对象render时触发
    * @param {cm} cm

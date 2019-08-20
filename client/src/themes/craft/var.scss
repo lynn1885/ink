@@ -6,7 +6,7 @@ $font-family-main: 'yahei consolas hybrid';
 $font-size-main: 14px;
 $font-size-catalog: 12px;
 
-$font-size-formatting: 8px;
+$font-size-formatting: 9px;
 $icon-size: 22px;
 
 // size
@@ -26,11 +26,11 @@ $status-bar-color: #444;
 
 // color: catalog
 $catalog-color: rgb(102, 84, 72);
-$catalog-active-bg: rgba(234, 229, 245, 0.9);
+$catalog-active-bg: rgba(237, 229, 245, 0.9);
 $catalog-active-color: rgb(78, 78, 99);
 $catalog-active-border-color: rgba(164, 119, 222, 0.9);
-$catalog-hover: rgba(234, 229, 245, 0.6);
-$catalog-modal-bg: rgba(255, 255, 255, 0.1);
+$catalog-hover: rgba(237, 229, 245, 0.6);
+$catalog-modal-bg: transparent;
 $catalog-jump-bg: rgba(248, 247, 246, 0.9);
 $catalog-jump-input-bg: #f4f4f4;
 $catalog-jump-input-color: rgb(176, 149, 206);

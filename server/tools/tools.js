@@ -20,7 +20,7 @@ exports.isFileNameValid = function isFileNameValid(fileName) {
     return false;
   }
   // 文件名不能包含 < > : " / \ | ? *
-  const r = /[<>:"'/\\|?*]/;
+  const r = /[<>:"/\\|?*]/;
   if (fileName.match(r)) {
     return false;
   }

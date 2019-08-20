@@ -8,15 +8,21 @@
   color: $editor-color!important;
   background-color: $editor-bg!important;
   line-height: 2;
-  padding: 0px 10px!important;
+  padding: 0px 2px!important;
   caret-color:$cursor;
   font-family: $font-family-main !important;
   span::selection, img::selection {
     background: $selection!important;
   }
+  pre {
+    padding: 0px;
+  }
 }
 
-.CodeMirror-code>pre:last-child {
+// 最后一行的margin-bottom
+// 可能.codemirror直接包裹pre行, 也可能.codemirror包裹div再包裹pre行
+.CodeMirror-code>pre:last-child,
+.CodeMirror-code>div:last-child>pre:last-child {
   margin-bottom: 400px;
 }
 
@@ -67,23 +73,23 @@
   padding: 0;
   font-weight: normal;
 }
-.cm-formatting-header{
-  font-size: 8px!important;
+.line-cm-header-1 {
+  padding-left: 6px!important; // 这个仅仅是为了让隐藏markdown标签后, 标题1和2在一条垂线上
 }
-.cm-formatting-header-3 {
-  padding-left: 20px;
+.line-cm-header-3 {
+  padding-left: 16px!important;
 }
-.cm-formatting-header-4 {
-  padding-left: 40px;
+.line-cm-header-4 {
+  padding-left: 34px!important;
 }
-.cm-formatting-header-5 {
-  padding-left: 60px;
+.line-cm-header-5 {
+  padding-left: 52px!important;
 }
-.cm-formatting-header-6 {
-  padding-left: 80px;
+.line-cm-header-6 {
+  padding-left: 72px!important;
 }
 .CodeMirror-line:not(.line-cm-header) {
-  padding-left: 100px;
+  padding-left: 130px!important; // 修改这个也要修改图片缩进
 }
 .cm-header-1{
   color: $header-1 !important;
@@ -105,8 +111,14 @@
 .cm-header-6 {
   color: $header-6 !important;
 }
-.line-cm-header-1:not(:first-of-type) {
+.line-cm-header-1 {
   padding-top: 20px!important;
+}
+// 取消第一行top padding
+// 可能.codemirror直接包裹pre行, 也可能.codemirror包裹div再包裹pre行
+.CodeMirror-code>pre.CodeMirror-line:first-child, // 首行没有缩进
+.CodeMirror-code>div:first-child>pre.CodeMirror-line:first-child {
+  padding-top: 0px!important;
 }
 
 // variable
@@ -118,11 +130,14 @@
 .cm-em {
   background: $cm-em-bg!important;
   font-style: normal;
-  padding: 2px;
+  padding: 2px 0px;
   border-radius: 2px;
 }
+.cm-em:not(.cm-formatting) {
+  padding: 2px 4px;
+}
 
-.cm-strong:not(.cm-formatting-strong) {
+.cm-strong {
   font-weight: bold!important;
   padding-bottom: 1.4px;
   border-bottom: 1.6px dashed rgb(238, 114, 114);
@@ -131,11 +146,15 @@
 
 // code
 .cm-comment {
-  padding: 2px;
+  padding: 2px 0px;
   background: $code-bg;
   border-radius: 2px;
   color:$code-color!important;
 }
+.cm-comment:not(.cm-formatting) {
+  padding: 2px 4px;
+}
+
 .cm-comment.cm-code-comment { // 代码中的注释
   background: none;
   color:$cm-code-comment!important;
@@ -168,7 +187,6 @@
 .cm-quote {
   color: $cm-quote-color!important;
   padding: 6px 4px;
-  // border-radius: 4px;
   border-left: 3px solid #ddd;
   padding-left: 10px;
   &::first-line {
@@ -184,9 +202,22 @@
   font-style: normal;
   color: $cm-formatting-color!important;
 }
+.cm-formatting-header, 
+.cm-formatting-em,
+.cm-formatting-code,
 .cm-formatting-strong {
+  opacity: 0;
+}
+.cm-formatting-header {
   font-size: $font-size-formatting!important;
 }
+
+.cursor-in-this-line {
+  .cm-formatting {
+    opacity: 1; // visibility"可能"会导致复制失效, 所以使用安全的opacity
+  }
+}
+
 
 // list
 .cm-formatting-list {
@@ -226,7 +257,7 @@
 }
 .inserted-widget-image {
   width: 100%;
-  padding-left: 100px;
+  padding-left: 130px;
   box-sizing: border-box;
   img {
     display: block;
