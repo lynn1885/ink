@@ -94,7 +94,7 @@ export default {
   display: inline-block;
   padding: 0 10px;
   &:hover {
-    background-color: lighten($status-bar-bg, 2%);
+    background-color: lighten($status-bar-bg, 3%);
   }
 }
 
