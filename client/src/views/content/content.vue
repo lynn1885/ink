@@ -1,6 +1,6 @@
 <template>
   <div id="note-content">
-    <editor></editor>
+    <editor id="editor"></editor>
   </div>
 </template>
 <script>

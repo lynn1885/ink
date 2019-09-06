@@ -37,7 +37,7 @@
         @drop="catalogDropLv1($event, 1, cat, index)"
       >
         <img
-          :src="`${staticIconUrl}/${cat}.png`"
+          :src="`${staticIconUrl}${cat}.png`"
           v-if="isShowCatIcon"
           @error="imgLoadError"
           class="catalog-icon"
@@ -73,7 +73,7 @@
         @drop="catalogDropLv2($event, 2, cat, index)"
       >
         <img
-          :src="`${staticIconUrl}/${cat}.png`"
+          :src="`${staticIconUrl}${cat}.png`"
           v-if="isShowCatIcon"
           @error="imgLoadError"
           class="catalog-icon"
@@ -108,7 +108,7 @@
         @drop="catalogDropLv3($event, 3, cat, index)"
       >
         <img
-          :src="`${staticIconUrl}/${cat}.png`"
+          :src="`${staticIconUrl}${cat}.png`"
           v-if="isShowCatIcon"
           @error="imgLoadError"
           class="catalog-icon"
@@ -119,29 +119,6 @@
 
     <!-- 模态框 -->
     <div id="catalog-modal" v-show="$store.state.isProhibitOperateCat"></div>
-
-    <!-- 目录跳转 -->
-    <div id="catalog-jump" v-show="isShowCatalogJump">
-      <input
-        class="catalog-jump-input"
-        type="text"
-        v-model="catalogJumpSearchStr"
-        ref="catalog-jump-input"
-      >
-      <ul
-        class="catalog-jump-result"
-        v-for="curRes of catalogJumpSearchRes"
-        :key="curRes.toString()"
-      >
-        <li
-          @click="jumpCatalog(curRes)"
-          :class="{'selected-search-res':
-          curRes === catalogJumpSearchRes[0 + curSelectedSearchResBias]}"
-        >
-          {{curRes}}
-        </li>
-      </ul>
-    </div>
 
     <!-- 上下文菜单-->
     <content-menu
@@ -217,11 +194,6 @@ export default {
       catalogDropLv1: null, // 目录的Drop回调
       catalogDropLv2: null,
       catalogDropLv3: null,
-      // 目录跳转
-      isShowCatalogJump: false, // 是否显示目录跳转
-      curSelectedSearchResBias: 0, // 当前选中的目录搜索结果的偏移值, 默认选中第一个搜索结果
-      catalogJumpSearchStr: '', // 目录跳转搜索字符串
-      catalogJumpSearchRes: [], // 目录跳转搜索结果
       // 图标
       isShowCatIcon: true, // 是否显示目录图标
       isHasDefaultIcon: true, // 是否存在默认icon
@@ -242,23 +214,30 @@ export default {
 
     // 监听: 选中的一级路径变更, 更新二级目录
     curCatLv1(value) {
+      if (value && typeof this.catalog[value] === 'object') {
       // 只有选中一级菜单时, 才标记二级菜单容器可用. 比如, 二级菜单未选中时, 不能在二级菜单右键
-      // eslint-disable-next-line no-unneeded-ternary
-      this.isConAvailableLv2 = value ? true : false;
-      this.updateCatalog(2);
+        this.isConAvailableLv2 = true;
+        this.updateCatalog(2);
+      } else {
+        this.isConAvailableLv2 = false;
+      }
     },
 
     // 监听: 选中的二级路径变更, 更新三级目录
     curCatLv2(value) {
-      // 只有选中二级菜单时, 才标记三级菜单容器可用. 比如, 二级菜单未选中时, 不能在三级菜单右键
-      // eslint-disable-next-line no-unneeded-ternary
-      this.isConAvailableLv3 = value ? true : false;
-      this.updateCatalog(3);
+      if (value && typeof this.catalog[this.curCatLv1][value] === 'object') {
+        // 只有选中二级菜单时, 才标记三级菜单容器可用. 比如, 二级菜单未选中时, 不能在三级菜单右键
+        this.isConAvailableLv3 = true;
+        this.updateCatalog(3);
+      } else {
+        this.isConAvailableLv3 = false;
+      }
     },
 
-    // 监听: 选中的三级路径变更时, 更新页面. 此时才会触发真正的文件加载
+    // 监听: 选中的三级路径变更时, 更新笔记. 此时才会触发真正的文件加载
+    // 需要三级**目录**也对应一个对象才行 ⚠️
     async curCatLv3(value) {
-      if (value) {
+      if (value && typeof this.catalog[this.curCatLv1][this.curCatLv2][value] === 'object') {
         await this.$store.state.editor.runCommand(
           'OPENFILE',
           `${this.curCatLv1}/${this.curCatLv2}/${this.curCatLv3}/${this.curCatLv3}.md`,
@@ -266,16 +245,22 @@ export default {
       }
     },
 
-    // 目录跳转: 及时搜索
-    catalogJumpSearchStr() {
-      this.updateCatalogJumpSearchRes(this.catalogJumpSearchStr);
-    },
-
-    // 目录跳转: 关闭时, 做一些清理工作
-    isShowCatalogJump(value) {
-      if (value === false) {
-        this.catalogJumpSearchStr = '';
-        this.catalogJumpSearchRes = [];
+    // 监听: 监听gotoThisCatalog字段, 此字段变更时触发目录跳转
+    // 这个字段常由外部调用. 触发目录变更的两个入口, 一个是getCatalog()之后, 一个是这里
+    '$store.state.gotoThisCatalog': function foo(value) {
+      if (this.$store.state.isProhibitOperateCat) {
+        this.$message.warning('暂时不能操作目录'); // 重要
+        return;
+      }
+      if (Array.isArray(value)) {
+        // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中
+        [this.curCatLv1] = value;
+        setTimeout(() => {
+          [, this.curCatLv2] = value;
+          setTimeout(() => {
+            [, , this.curCatLv3] = value;
+          }, 0);
+        }, 0);
       }
     },
   },
@@ -285,15 +270,16 @@ export default {
     async getCatalog() {
       // 从后端获取目录
       this.catalog = await Directories.get(this.$message);
-      // 上传到vuex (克隆, 防止修改)
+      // 上传到vuex (克隆, 防止误修改)
       this.$store.commit('updateCatalog', _.cloneDeep(this.catalog));
       // 标记目录加载完毕
       this.isCatalogLoaded = true;
 
       // 设置默认打开的1, 2, 3级目录
-      // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中
-      // 确保当前上一等级的监听事件发生后, 在设置下一级的目录
+      // 因为设置this.catalog 和 设置各级目录时都会触发对应的监听事件, 所以把它们放在不同的事件循环中
+      // 确保当前上一等级的监听事件发生后, 再设置下一级的目录
       // 如果存在waitOpenCatLv1, 则默认打开waitOpenCat系列的目录, 否则默认打开各级的第一个目录
+      // 注意是只有存在waitOpenCatLv**1**, 就打开waitOpenCat系列
       setTimeout(() => {
         if (this.waitOpenCatLv1) {
           this.curCatLv1 = this.waitOpenCatLv1;
@@ -327,12 +313,12 @@ export default {
       } else if (lv === 2) { // 一级目录变更, 需要更新当前二级目录列表
         this.curCatLv2 = ''; // 一级目录变更, 则需要把当前选中的二三级目录清空
         this.curCatLv3 = '';
-        this.catsLv2 = this.curCatLv1 && typeof this.catalog[this.curCatLv1] === 'object'
+        this.catsLv2 = this.curCatLv1 && typeof this.catalog[this.curCatLv1] === 'object' // 然后重新赋值
           ? Object.keys(this.catalog[this.curCatLv1])
           : [];
       } else if (lv === 3) { // 二级目录变更, 需要更新当前三级目录列表
         this.curCatLv3 = null; // 三级目录变更, 则需要把当前选中的三级目录清空
-        this.catsLv3 = this.curCatLv2 &&
+        this.catsLv3 = this.curCatLv2 && // 然后重新赋值
           typeof this.catalog[this.curCatLv1][this.curCatLv2] === 'object'
           ? Object.keys(this.catalog[this.curCatLv1][this.curCatLv2])
           : [];
@@ -362,55 +348,6 @@ export default {
     // icon: 默认icon加载失败时
     defaultImgLoadError() {
       this.isHasDefaultIcon = false;
-    },
-
-    // 目录跳转: 搜索目录
-    updateCatalogJumpSearchRes(searchStr) {
-      this.catalogJumpSearchRes = [];
-      const res = [];
-      if (searchStr) {
-        for (const cat1 in this.catalog) {
-          for (const cat2 in this.catalog[cat1]) {
-            for (const cat3 in this.catalog[cat1][cat2]) {
-              if (cat1.toLowerCase().includes(searchStr.toLowerCase())) {
-                const r = cat1;
-                res.push(r);
-              }
-              if (cat2.toLowerCase().includes(searchStr.toLowerCase())) {
-                const r = `${cat1} > ${cat2}`;
-                res.push(r);
-              }
-              if (cat3.toLowerCase().includes(searchStr.toLowerCase())) {
-                const r = `${cat1} > ${cat2} > ${cat3}`;
-                res.push(r);
-              }
-            }
-          }
-        }
-      }
-      this.catalogJumpSearchRes = Array.from(new Set(res));
-    },
-
-    // 目录跳转: 跳转
-    jumpCatalog(catStr) {
-      if (typeof catStr !== 'string') {
-        return;
-      }
-      const aimCats = catStr.split(' > ');
-      if (aimCats[0]) {
-        [this.curCatLv1] = aimCats;
-      }
-      setTimeout(() => {
-        if (aimCats[1]) {
-          [, this.curCatLv2] = aimCats;
-        }
-        setTimeout(() => {
-          if (aimCats[2]) {
-            [, , this.curCatLv3] = aimCats;
-          }
-        }, 0);
-      }, 0);
-      this.isShowCatalogJump = false;
     },
 
     // 右键菜单: 显示右键菜单
@@ -454,9 +391,9 @@ export default {
       });
     },
 
-    // 右键菜单: 处理右键菜单
+    // 右键菜单: 处理右键菜单(入口函数, 重要)
     async handleContentMenu(menu) {
-      // 获取editor, 处理右键菜单前, 我们往往需要调用editor的save方法, 保存当前编辑中的文档
+      // 获取editor, 因为处理右键菜单前, 我们往往需要调用editor的save方法, 保存当前编辑中的文档
       if (!this.$store.state.editor) {
         this.$message({
           type: 'warning',
@@ -465,7 +402,7 @@ export default {
         return;
       }
 
-      // 在处理右键任务时, 锁定菜单栏
+      // 在处理右键任务时, 锁定菜单栏, 禁止操作
       this.$store.commit('updateIsProhibitOperateCat', true);
 
       // 处理右键任务
@@ -1071,46 +1008,10 @@ export default {
 
     // 拖动: 启用默认事件
     enableDefault() {},
-
-    // 其他: 绑定热键
-    bindHotKey() {
-      document.addEventListener('keydown', (e) => {
-        // ctrl + /: 显隐目录跳转
-        if (e.ctrlKey && e.keyCode === 191) {
-          this.isShowCatalogJump = !this.isShowCatalogJump;
-          if (this.isShowCatalogJump) {
-            this.curSelectedSearchResBias = 0;
-            setTimeout(() => {
-              this.$refs['catalog-jump-input'].focus();
-            }, 300);
-          }
-        }
-
-        // 上下切换目录搜索结果
-        if (this.isShowCatalogJump
-          && e.keyCode === 40
-          && this.curSelectedSearchResBias < this.catalogJumpSearchRes.length - 1
-        ) {
-          this.curSelectedSearchResBias += 1;
-        }
-        if (this.isShowCatalogJump
-          && e.keyCode === 38
-          && this.curSelectedSearchResBias > 0
-        ) {
-          this.curSelectedSearchResBias -= 1;
-        }
-
-        // enter键跳转至当前选中的目录
-        if (this.isShowCatalogJump && e.keyCode === 13) {
-          this.jumpCatalog(this.catalogJumpSearchRes[0 + this.curSelectedSearchResBias]);
-        }
-      });
-    },
   },
 
   // 生命周期: dom加载完毕后
   async mounted() {
-    this.bindHotKey(); // 会绑定一些属于此组件的热键
     this.closeCatalogContextMenuOnClick(); // 设置在别的地方点击时会关闭右键菜单
     this.$watch('$store.state.editor', async (editor) => { // 等待editor加载完成
       if (editor) {
@@ -1127,9 +1028,6 @@ export default {
 .catalog-container::-webkit-scrollbar {
   width: 0px!important;
 }
-span::selection {
-  background: $selection!important;
-}
 
 // 容器
 #catalog {
@@ -1139,7 +1037,6 @@ span::selection {
   box-sizing: border-box;
   height: 100%;
   font-size: $font-size-catalog;
-  font-family: $font-family-main;
   color: $catalog-color;
 }
 
@@ -1208,45 +1105,5 @@ span::selection {
   height: 100%;
   background: $catalog-modal-bg;
   cursor: wait;
-}
-
-// 目录跳转
-#catalog-jump {
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  width: 100%;
-  height: 100%;
-  background: $catalog-jump-bg;
-  .catalog-jump-input {
-    width: 100%;
-    height: 30px;
-    background: $catalog-jump-input-bg;
-    border: none;
-    box-sizing: border-box;
-    text-align: center;
-    font-weight: bold;
-    color: $catalog-jump-input-color;
-    outline: none;
-  }
-  .catalog-jump-result {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    li {
-      padding: 5px 8px;
-      box-sizing: border-box;
-      border-bottom: $catalog-jump-li-border;
-      &:hover {
-       background: $catalog-active-bg;
-       color: $catalog-active-color;
-       cursor: default;
-      }
-    }
-  }
-  .selected-search-res {
-    background: $catalog-active-bg;
-    color: $catalog-active-color;
-  }
 }
 </style>

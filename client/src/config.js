@@ -1,10 +1,11 @@
 // 应用程序监听端口参见vue.config.js
+const ip = 'http://localhost';
 
 const config = {
   server: {
-    serverUrl: 'http://localhost:3001/',
-    staticImageUrl: 'http://localhost:3001/images/',
-    staticIconUrl: 'http://localhost:3001/icons/',
+    serverUrl: `${ip}:3001/`,
+    staticImageUrl: `${ip}:3001/images/`, // 最后/不能省略
+    staticIconUrl: `${ip}:3001/icons/`,
   },
 };
 

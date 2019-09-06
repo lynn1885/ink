@@ -32,6 +32,7 @@
 import Catalog from '@/components/catalog/catalog.vue';
 import readonly from '@/components/readonly/readonly.js';
 // import mindMap from '@/components/mind-map/mind-map.js';
+// eslint-disable-next-line no-unused-vars
 import { bookSvg, stickyNoteSvg, settingSvg, pluginSvg } from './svg';
 
 export default {
@@ -51,15 +52,16 @@ export default {
           name: 'readonly', icon: readonly.icon, type: 'button', onclick: readonly.handler, lastStatus: false,
         }, {
           name: 'sticky note', icon: stickyNoteSvg, type: 'button', onclick: this.toggleShowStickyNote, lastStatus: false,
-        }, {
-          name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
         },
+        // {
+        //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
+        // },
         // {
         // name: 'mind map', icon: mindMap.icon, type: 'button', onclick: mindMap.handler, lastStatus: false,
         // },
-        {
-          name: 'setting', icon: settingSvg, type: 'button', onclick: () => {}, lastStatus: false, isBottom: true, // There can only be one "isBottom"
-        },
+        // {
+        //   name: 'setting', icon: settingSvg, type: 'button', onclick: () => {}, lastStatus: false, isBottom: true, // There can only be one "isBottom"
+        // },
       ],
     };
   },
@@ -127,8 +129,8 @@ export default {
     text-align: center;
     cursor: pointer;
     svg {
-      width: 50%;
-      height: 50%;
+      width: 54%;
+      height: 54%;
       vertical-align: middle;
       fill: $icon-color;
     }

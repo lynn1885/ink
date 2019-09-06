@@ -9,19 +9,41 @@ $font-size-catalog: 12px;
 $font-size-formatting: 8px;
 $icon-size: 22px;
 
-// size
+// common
+$selection: rgb(242, 230, 250);
+$float-box-shadow: 0px 0px 4px 0px #ddd;
+$float-bg: rgb(251, 250, 249);
+$scrollbar-width: 6px;
+$scrollbar-height: 6px;
+$scrollbar-bg: #ddd;
+$scrollbar-bg-hover: #ccc;
+$scrollbar-radius: 1px;
+
+// size: side bar
 $side-bar-width: 360px;
-$icon-bar-width: 44px;
+$icon-bar-width: 40px;
+
+// size: header
+$header-1-indent: 5px;
+$header-2-indent: 5px;
+$header-3-indent: 16px;
+$header-4-indent: 34px;
+$header-5-indent: 52px;
+$header-6-indent: 72px;
+$not-header-indent: 130px;
+
+// color: app
+$app-bg: #f6f5f4;
 
 // color: side-bar
-$icon-bar-bg: rgba(230, 229, 228, 0.8);
-$tool-page-bar-bg: rgba(247, 246, 245, 0.85);
+$icon-bar-bg: rgba(233, 232, 231, 0.82);
+$tool-page-bar-bg: rgba(248, 247, 246, 0.87);
 $icon-color: #999;
 $icon-color-active: #333;
 $icon-color-hover: #888;
 
 // color: status-bar
-$status-bar-bg: rgba(247, 246, 245, 0.9);
+$status-bar-bg: rgba(248, 247, 246, 0.92);
 $status-bar-color: #444;
 
 // color: catalog
@@ -31,29 +53,23 @@ $catalog-active-color: rgb(78, 78, 99);
 $catalog-active-border-color: rgba(164, 119, 222, 0.9);
 $catalog-hover: rgba(237, 229, 245, 0.6);
 $catalog-modal-bg: transparent;
-$catalog-jump-bg: rgba(248, 247, 246, 0.9);
-$catalog-jump-input-bg: #f4f4f4;
-$catalog-jump-input-color: rgb(176, 149, 206);
 $catalog-col-border: none;
-$catalog-jump-li-border: 0.5px solid #eee;
 
 // color: editor
-$editor-bg: rgba(251, 250, 249, 0.90);
+$editor-bg: rgba(254, 253, 252, 0.9);
 $editor-color: #333;
 
 // color: sticky note
 $sticky-note-bg: rgb(251, 250, 249);
 $sticky-note-color: #666;
-$sticky-note-box-shadow: 0px 0px 6px 0px #d1d1d1;
 
 // color: headers
-$header-1: #963607;
-$header-2: #339966;
-$header-3: #997B57;
-$header-4: #809174;
+$header-1: #b17a46;
+$header-2: #46b17b;
+$header-3: rgb(160, 129, 91);
+$header-4: rgb(91, 160, 102);
 $header-5: #B2867B;
 $header-6: rgb(150, 142, 140);
-$selection: rgb(242, 230, 250);
 
 // color: cursor
 $fat-cursor: rgb(229, 203, 247);
@@ -62,16 +78,18 @@ $cursor: #333;
 // color: code, link, quote, em
 $code-bg: rgba(243, 237, 230, 0.9);
 $code-color: rgb(133, 114, 90);
+$code-block-bg: rgba(249, 247, 244, 0.9);
 $cm-em-bg: rgba(240, 230, 248, 0.9);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgba(236, 243, 248, 0.9);
 $cm-link-color: rgb(47, 147, 165);
 $cm-quote-color: #999;
+$cm-quote-bg: rgba(245, 245, 245, 0.9);
 $cm-formatting-color: #d2d2d2;
 $cm-list-bg: rgba(248, 242, 234, 0.9);
 $cm-list-color: #bbb;
-$cm-foldmarker-bg: rgba(247, 233, 221, 0.9);
-$cm-foldmarker-color: rgb(238, 204, 172);
+$cm-foldmarker-bg: rgba(252, 240, 230, 0.9);
+$cm-foldmarker-color: rgb(241, 219, 199);
 $cm-image-font-bg: #f4f4f4;
 $cm-image-font-color: #ddd;
 $cm-line-char-bg: rgb(216, 234, 253);

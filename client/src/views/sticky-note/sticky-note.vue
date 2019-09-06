@@ -62,14 +62,10 @@ export default {
   background: $sticky-note-bg;
   color: $sticky-note-color;
   font-size: $font-size-main;
-  font-family: $font-family-main;
   border-radius: 2px;
-  box-shadow: $sticky-note-box-shadow;
+  box-shadow: $float-box-shadow;
   overflow: auto;
   resize: none;
-  &::selection {
-    background: $selection;
-  }
 }
 
 </style>

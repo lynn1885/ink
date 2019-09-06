@@ -126,16 +126,36 @@ export default class {
     const lineInfo = cm.lineInfo(line);
     const curLineNum = lineInfo.line;
     let curLineHeader;
+    let curLineType;
 
-    // add class for header line
-    if (el.querySelector('.cm-formatting-header')) {
+    // add class for line
+    if (el.querySelector('.cm-formatting-header')) { // header line
       const headMatchRes = line.text.match(/^(#+)\s/);
       if (headMatchRes) {
+        curLineType = 'HEADER';
         el.classList.add('line-cm-header');
         el.classList.add(`line-cm-header-${headMatchRes[1].length}`);
         curLineHeader = headMatchRes[1].length;
       } else {
         curLineHeader = 0;
+      }
+    } else if (el.querySelector('.cm-quote')) { // quote line
+      curLineType = 'QUOTE';
+      el.classList.add('line-cm-quote');
+    } else if (el.querySelector('[class^="cm-m-"]:not(.cm-m-markdown)') || el.querySelector('.cm-formatting-code-block')) { // code block line
+      curLineType = 'CODEBLOCK';
+      el.classList.add('line-cm-code-block');
+      if (line.text.slice(0, 3) === '```') {
+        el.classList.add('line-cm-code-block-boundary');
+      }
+      // because both 'markdown code' and 'comment in fenced code block'
+      // have className '.cm-comment' in codemirror
+      // so we need to add a new className for 'comment in fenced code block'
+      const commentSpan = el.querySelector('.cm-comment');
+      if (commentSpan && (commentSpan.innerText.match(/^\/\//) ||
+        commentSpan.innerText.match(/^\/\*/) ||
+        commentSpan.innerText.match(/^#/))) {
+        commentSpan.classList.add('cm-code-comment');
       }
     }
 
@@ -143,26 +163,14 @@ export default class {
     if (typeof this.lines[curLineNum] !== 'object') {
       this.lines[curLineNum] = {
         header: curLineHeader,
+        type: curLineType,
       };
     } else {
       this.lines[curLineNum].header = curLineHeader;
+      this.lines[curLineNum].type = curLineType;
     }
 
-    const codeBlockBoundaryMatchRes = line.text.match(/^```/);
-    if (codeBlockBoundaryMatchRes) {
-      el.classList.add('line-cm-code-block-boundary');
-    }
-
-    // because both 'markdown code' and 'comment in fenced code block'
-    // have className '.cm-comment' in codemirror
-    // so we need to add a new className for 'comment in fenced code block'
-    const commentSpan = el.querySelector('.cm-comment');
-    if (commentSpan && (commentSpan.innerText.match(/^\/\//) ||
-      commentSpan.innerText.match(/^\/\*/) ||
-      commentSpan.innerText.match(/^#/))) {
-      commentSpan.classList.add('cm-code-comment');
-    }
-
+    // count render time
     const t2 = new Date() - t1;
     if (t2 >= 3) {
       console.warn('render line timer: ', t2, el);

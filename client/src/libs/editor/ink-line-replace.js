@@ -58,6 +58,7 @@ export default function (editor, config) {
         const cursor = cm.getCursor();
         const doc = cm.getDoc();
         let lineText = cm.lineInfo(cursor.line).text;
+        const oldLineTextLen = lineText.length;
         const tMapKeys = Object.keys(tMap);
         for (let i = 0; i < tMapKeys.length; i += 1) {
           lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
@@ -65,7 +66,7 @@ export default function (editor, config) {
         doc.replaceRange(
           lineText,
           { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: lineText.length },
+          { line: cursor.line, ch: Math.max(oldLineTextLen, lineText.length) },
         );
       }
     },

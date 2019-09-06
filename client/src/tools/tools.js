@@ -15,10 +15,20 @@ const tools = {
     if (fileName.length < 1) {
       return '目录名不能为空';
     }
+    // 目录名不能超过200个字符
+    if (fileName.length > 200) {
+      return '目录名不能超过200个字符';
+    }
     // 目录名不能为纯数字
     if (fileName.match(/^\d+$/)) {
       return '目录名不能为纯数字';
     }
+    // 目录名不能包含四字节字符
+    // eslint-disable-next-line no-restricted-syntax
+    for (const char of fileName) {
+      if (char.codePointAt(0) > 0xFFFF) return '目录名不能包含特殊字符';
+    }
+
     // 目录名不能以 . 空格, tab, 换行 开头或结尾
     if (fileName[0] === '.'
       || fileName[fileName.length - 1] === '.'

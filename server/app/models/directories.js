@@ -45,7 +45,8 @@ exports.getRecursively = async (filePath, ignorePath, isIncludeFile = false) => 
             }
 
             if (ignorePath.includes(`${newFp}/`)) { // 忽略某些文件夹
-              break;
+              // eslint-disable-next-line no-continue
+              continue;
             }
             // eslint-disable-next-line no-await-in-loop
             await new Promise((res, rej) => {

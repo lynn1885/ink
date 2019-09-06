@@ -8,18 +8,41 @@ const _ = require('lodash');
 exports.isFileNameValid = function isFileNameValid(fileName) {
   // 校验
   if (typeof fileName !== 'string') {
-    console.error(`文件名不是string: ${fileName}`);
+    console.error(`目录名不是string: ${fileName}`);
     return false;
   }
-  // 文件名不能为空
+  // 目录名不能为空
   if (fileName.length < 1) {
     return false;
   }
-  // 文件名不能以 . 开头或结尾
-  if (fileName[0] === '.' || fileName[fileName.length - 1] === '.') {
+  // 目录名不能超过200个字符
+  if (fileName.length > 200) {
     return false;
   }
-  // 文件名不能包含 < > : " / \ | ? *
+  // 目录名不能为纯数字
+  if (fileName.match(/^\d+$/)) {
+    return false;
+  }
+  // 目录名不能包含四字节字符
+  // eslint-disable-next-line no-restricted-syntax
+  for (const char of fileName) {
+    if (char.codePointAt(0) > 0xFFFF) return false;
+  }
+
+  // 目录名不能以 . 空格, tab, 换行 开头或结尾
+  if (fileName[0] === '.'
+    || fileName[fileName.length - 1] === '.'
+    || fileName[0] === ' '
+    || fileName[fileName.length - 1] === ' '
+    || fileName[0] === '\t'
+    || fileName[fileName.length - 1] === '\t'
+    || fileName[0] === '\n'
+    || fileName[fileName.length - 1] === '\n'
+  ) {
+    return false;
+  }
+
+  // 目录名不能包含 < > : " / \ | ? *
   const r = /[<>:"/\\|?*]/;
   if (fileName.match(r)) {
     return false;

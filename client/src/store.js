@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userConfig: null, // 用户配置
     catalog: null, // 目录
     isShowStickyNote: false, // 是否显示sticky note
+    gotoThisCatalog: [], // 要跳转到的目录, catalog组件会监听该目录
   },
   mutations: {
     // 更新编辑器对象
@@ -41,6 +42,11 @@ export default new Vuex.Store({
     // 更新是否显示sticky note
     updateIsShowStickyNote(state, data) {
       state.isShowStickyNote = data;
+    },
+
+    // 更新要跳转到的目录
+    updateGotoThisCatalog(state, data) {
+      state.gotoThisCatalog = data;
     },
   },
   actions: {

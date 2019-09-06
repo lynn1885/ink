@@ -1,5 +1,6 @@
 <template>
   <div id="status-bar">
+    <div class="cur-note items" :title="filePath">{{ filePath }}</div>
     <div class="note-properties items" title="set current note properties">Prop</div>
     <div class="note-count items" title="note count">Note: {{ noteCount }}</div>
     <div class="line-count items" title="line count">Ln: {{ lineCount }}</div>
@@ -31,6 +32,12 @@ export default {
     '$store.state.catalog': function (value) {
       if (value) {
         this.getNoteCount(value);
+      }
+    },
+    // eslint-disable-next-line func-names
+    '$store.state.curFilePath': function (value) {
+      if (value) {
+        this.filePath = value.replace(/\/[^/]+.md/, '');
       }
     },
   },
@@ -70,17 +77,24 @@ export default {
   box-sizing: border-box;
   font-size: 13px;
   text-align: right;
-  font-family: $font-family-main;
   color: $status-bar-color;
   background-color: $status-bar-bg;
+  overflow: hidden;
   cursor: default;
 }
-
+.cur-note {
+  float: left;
+  width: 180px;
+  text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 .items {
   display: inline-block;
   padding: 0 10px;
   &:hover {
-    background-color: darken($status-bar-bg, 2%);
+    background-color: lighten($status-bar-bg, 2%);
   }
 }
 

@@ -48,7 +48,7 @@ exports.update = async (req, res) => {
   const files = await Directories.get(filePathDir);
   const backupTimes = [];
   files.forEach((file) => {
-    const matchRes = file.match(/([0-9]+?)\.md/);
+    const matchRes = file.match(/^([0-9]+?)\.md$/);
     if (matchRes) {
       backupTimes.push(Number(matchRes[1]));
     }
