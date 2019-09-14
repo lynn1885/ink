@@ -5,7 +5,7 @@ const map = {
   insertHeaderNextParent: 'Ctrl-H',
   insertNextLiUnderHeader: 'Ctrl-O',
   reorderCurHeaderLi: 'Shift-Ctrl-O',
-  upgradeHeader: 'Shift-Ctrl-[',
+  upgradeHeaders: 'Shift-Ctrl-[',
   degrageHeaders: 'Shift-Ctrl-]',
 };
 
@@ -210,7 +210,7 @@ export default function (editor) {
       }
     },
 
-    [map.upgradeHeader]: (cm) => {
+    [map.upgradeHeaders]: (cm) => {
       const doc = cm.getDoc();
       const sel = doc.getSelection();
       if (sel) {

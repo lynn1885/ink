@@ -310,12 +310,15 @@ export default {
         this.curCatLv2 = '';
         this.curCatLv3 = '';
         this.catsLv1 = this.catalog ? Object.keys(this.catalog) : [];
+        this.catsLv2 = [];
+        this.catsLv3 = [];
       } else if (lv === 2) { // 一级目录变更, 需要更新当前二级目录列表
         this.curCatLv2 = ''; // 一级目录变更, 则需要把当前选中的二三级目录清空
         this.curCatLv3 = '';
         this.catsLv2 = this.curCatLv1 && typeof this.catalog[this.curCatLv1] === 'object' // 然后重新赋值
           ? Object.keys(this.catalog[this.curCatLv1])
           : [];
+        this.catsLv3 = [];
       } else if (lv === 3) { // 二级目录变更, 需要更新当前三级目录列表
         this.curCatLv3 = null; // 三级目录变更, 则需要把当前选中的三级目录清空
         this.catsLv3 = this.curCatLv2 && // 然后重新赋值
