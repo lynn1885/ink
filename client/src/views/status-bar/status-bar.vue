@@ -1,6 +1,6 @@
 <template>
   <div id="status-bar">
-    <div class="cur-note items" :title="filePath">{{ filePath }}</div>
+    <div class="cur-note-path items" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
     <div class="note-properties items" title="set current note properties">Prop</div>
     <div class="note-count items" title="note count">Note: {{ noteCount }}</div>
     <div class="line-count items" title="line count">Ln: {{ lineCount }}</div>
@@ -8,6 +8,7 @@
   </div>
 </template>
 <script>
+import $ from 'jquery';
 
 export default {
   name: 'status-bar',
@@ -17,7 +18,7 @@ export default {
       wordCount: 0, // cur note word count
       lineCount: 0, // cur note line count
       noteCount: 0, // cour note count
-      filePath: '', // current file path
+      notePath: '', // current file path
     };
   },
   watch: {
@@ -37,7 +38,7 @@ export default {
     // eslint-disable-next-line func-names
     '$store.state.curFilePath': function (value) {
       if (value) {
-        this.filePath = value.replace(/\/[^/]+.md/, '');
+        this.notePath = value.replace(/\/[^/]+.md/, '');
       }
     },
   },
@@ -67,6 +68,16 @@ export default {
       }
       this.noteCount = count;
     },
+
+    // copy current note path
+    copyNotePath() {
+      const text = this.notePath;
+      const element = $(`<textarea>${text}</textarea>`); // This element cannot be display none or hidden
+      $('body').append(element);
+      element[0].select();
+      document.execCommand('Copy');
+      element.remove();
+    },
   },
 };
 </script>
@@ -82,7 +93,7 @@ export default {
   overflow: hidden;
   cursor: default;
 }
-.cur-note {
+.cur-note-path {
   float: left;
   width: 180px;
   text-align: left;

@@ -29,5 +29,6 @@ function replace(text) {
   return text
     .replace(/[a-zA-Z][a-zA-Z, ，]+/g, match => match.replace(/[, ，]+/g, '').toLowerCase())
     .replace(/大写开始，?([a-z]+)大写结束，?/g, (match, group1) => group1.toUpperCase())
+    .replace(/全部大写，?([a-z]+)/g, (match, group1) => group1.toUpperCase())
     .replace(/大写，?([a-z])/g, (match, group1) => group1.toUpperCase());
 }

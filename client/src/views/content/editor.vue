@@ -269,7 +269,6 @@ export default {
      * 事件: 卸载网页前自动保存
      */
     onbeforeunload(event) {
-      console.log('保存笔记');
       if (this.isFileContentChanged && this.curFilePath) {
         this.saveFile('BEFOREUNLOAD', true);
         event.returnValue = 'has a unsaved file!';
