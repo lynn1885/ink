@@ -3,6 +3,7 @@ const Files = require('../models/files');
 const Directories = require('../models/directories');
 const config = require('../../config');
 
+const isEnableConsole = false;
 /**
  * get 获取文件
  */
@@ -10,7 +11,7 @@ exports.get = async (req, res) => {
   if (!req.query.path) {
     res.status(400).send('错误的path参数');
   }
-  console.log('[read file] ', req.query.path);
+  console.log(`${new Date().toLocaleString()}: [read file] `, req.query.path);
   await Files.read(config.notesDir + req.query.path)
     .then((data) => {
       res.send(data);
@@ -35,7 +36,7 @@ exports.update = async (req, res) => {
   const filePath = config.notesDir + req.body.path;
   await Files.write(filePath, req.body.data)
     .then((data) => {
-      console.log('[update file] ', req.body.path);
+      console.log(`${new Date().toLocaleString()}: [update file] `, req.body.path);
       res.send(data);
     })
     .catch((e) => {
@@ -69,4 +70,154 @@ exports.update = async (req, res) => {
         console.error(`backup file failed: ${path}, ${err}`);
       });
   }
+};
+
+// search all files
+exports.searchAllFiles = async (req, res) => {
+  if (!req.query.fromPath
+    || !req.query.isRegExp
+    || !req.query.isSensitiveToCase
+    || !req.query.searchText
+    || !req.query.searchedTextClass
+  ) {
+    res.status(400).send('错误的参数');
+    return;
+  }
+
+  const startTime = new Date();
+  const allDir = await Directories.getRecursively(config.notesDir);
+  // sort directories
+  req.query.searchPath = req.query.searchPath.toLowerCase();
+  let sortedPathArr = [];
+  const fromPathArr = req.query.fromPath.split('/').slice(0, 3);
+  if (isEnableConsole) {
+    console.log('fromPathArr: ', fromPathArr);
+  }
+  if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}`.toLowerCase().includes(req.query.searchPath)) {
+    sortedPathArr.push(`${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}/${fromPathArr[2]}.md`);
+  }
+  if (isEnableConsole) {
+    console.log('first path: ', sortedPathArr[0]);
+  }
+  Object.keys(allDir[fromPathArr[0]][fromPathArr[1]]).forEach((file) => {
+    if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+      sortedPathArr.push(`${fromPathArr[0]}/${fromPathArr[1]}/${file}/${file}.md`);
+    }
+  });
+  Object.keys(allDir[fromPathArr[0]]).forEach((dir2) => {
+    Object.keys(allDir[fromPathArr[0]][dir2]).forEach((file) => {
+      if (!req.query.searchPath || `${fromPathArr[0]}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+        sortedPathArr.push(`${fromPathArr[0]}/${dir2}/${file}/${file}.md`);
+      }
+    });
+  });
+  Object.keys(allDir).forEach((dir1) => {
+    Object.keys(allDir[dir1]).forEach((dir2) => {
+      Object.keys(allDir[dir1][dir2]).forEach((file) => {
+        if (!req.query.searchPath || `${dir1}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+          sortedPathArr.push(`${dir1}/${dir2}/${file}/${file}.md`);
+        }
+      });
+    });
+  });
+  sortedPathArr = Array.from(new Set(sortedPathArr));
+  if (isEnableConsole) {
+    console.log('sortedPathArr: ', sortedPathArr, sortedPathArr.length);
+  }
+  if (sortedPathArr.length === 0) {
+    res.status(223).send(`要搜索的路径不存在${req.query.searchPath}`);
+    if (isEnableConsole) {
+      console.log(`要搜索的路径不存在${req.query.searchPath}`);
+    }
+    return;
+  }
+  // search
+  const searchRes = [];
+  let searchedItemsNum = 0;
+  let fileIndex = 0;
+  async function _search() {
+    let fileContent;
+    const curFileRes = {
+      dir: `${path.dirname(sortedPathArr[fileIndex])}/`,
+      items: [],
+    };
+    try {
+      fileContent = await Files.read(path.join(config.notesDir, sortedPathArr[fileIndex]));
+    } catch (e) {
+      console.log(`${new Date().toLocaleString()}: [search all file warning]: cannot open `, sortedPathArr[fileIndex]);
+    }
+    if (fileContent && typeof fileContent === 'string') {
+      const lines = fileContent.split('\n');
+      let { searchText } = req.query;
+      if (req.query.isSensitiveToCase === 'false') {
+        searchText = searchText.toLowerCase();
+      }
+      // eslint-disable-next-line no-labels
+      search: for (let index = 0; index < lines.length; index += 1) {
+        let lineText = lines[index];
+        const oriLineText = lineText;
+        if (req.query.isSensitiveToCase === 'false') {
+          lineText = lineText.toLowerCase();
+        }
+        let lastIndex = -1;
+        let isFirstSearch = true;
+        do {
+          // eslint-disable-next-line no-labels
+          if (searchedItemsNum >= config.maxSearchNum) break search;
+          lastIndex = lineText.indexOf(
+            searchText,
+            isFirstSearch ? 0 : lastIndex + searchText.length,
+          );
+          isFirstSearch = false;
+          if (lastIndex > -1) {
+            // Intercept 40 words
+            const start = lastIndex - 30 < 0 ? 0 : lastIndex - 30;
+            const preview = [
+              lineText.slice(start, lastIndex),
+              `<span class="${req.query.searchedTextClass}">`,
+              oriLineText.slice(lastIndex, lastIndex + searchText.length),
+              '</span>',
+              lineText.slice(
+                lastIndex + searchText.length,
+                lastIndex + searchText.length + 30,
+              ),
+            ].join('');
+            curFileRes.items.push({
+              noteDir: `${path.dirname(sortedPathArr[fileIndex])}/`,
+              line: index,
+              char: [lastIndex, lastIndex + searchText.length],
+              preview,
+            });
+            searchedItemsNum += 1;
+          }
+        } while (lastIndex > -1);
+      }
+    }
+
+    if (curFileRes.items.length > 0) {
+      searchRes.push(curFileRes);
+    }
+
+    if ((fileIndex + 1) < sortedPathArr.length && searchRes.length < config.maxSearchNum) {
+      fileIndex += 1;
+      await _search(fileIndex);
+    }
+  }
+  await _search();
+  const timeConsumption = new Date() - startTime;
+
+  // search
+  console.log(
+    `${new Date().toLocaleString()}: [search all file] `,
+    'Number of files searched:', fileIndex + 1,
+    '\nSearch directory:', req.query.searchPath,
+    '\nSearched items number:', searchedItemsNum,
+    '\nTime consumption:', timeConsumption,
+  );
+  res.send({
+    searchedFilesNum: fileIndex + 1,
+    timeConsumption,
+    searchedItemsNum,
+    res: searchRes,
+  });
 };

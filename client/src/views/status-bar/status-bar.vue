@@ -88,8 +88,8 @@ export default {
   box-sizing: border-box;
   font-size: 13px;
   text-align: right;
-  color: $status-bar-color;
-  background-color: $status-bar-bg;
+  color: $tool-page-color;
+  background-color: $tool-page-bg;
   overflow: hidden;
   cursor: default;
 }
@@ -105,7 +105,7 @@ export default {
   display: inline-block;
   padding: 0 10px;
   &:hover {
-    background-color: lighten($status-bar-bg, 3%);
+    background-color: darken($tool-page-bg, 3%);
   }
 }
 

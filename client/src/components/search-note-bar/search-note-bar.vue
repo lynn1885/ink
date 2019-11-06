@@ -1,29 +1,48 @@
 <template>
-  <div id="search-note-bar" v-show="isShowSearchNoteBar">
+  <div id="search-note-bar" ref="search-note-bar">
     <div class="wrapper">
-      <input class="search-input" type="text" v-model="searchText" ref="search-input" />
+      <input
+        class="search-input"
+        type="text"
+        v-model="searchText"
+        ref="search-input"
+        onfocus="this.select();"
+      />
       <div class="placeholder"></div>
-      <div class="max-search-res-length-warn" v-show="maxSearchResLengthWarn">{{maxSearchResLengthWarn}}</div>
+      <div
+        class="max-search-res-length-warn"
+        v-show="maxSearchResLengthWarn"
+      >{{maxSearchResLengthWarn}}</div>
       <ul class="search-res">
         <li
-          v-for="res of searchRes" :key="res.toString()"
+          v-for="res of searchRes"
+          :key="res.toString()"
           @click="gotoNote(res)"
           :class="{'selected-search-res': res === searchRes[0 + curSelectedSearchResBias]}"
           :title="res"
-        >{{res}}</li>
+          :ref="res === searchRes[0 + curSelectedSearchResBias] ? 'selected-search-res' : ''"
+        >
+          <note-icon class="note-icon" :note-name="res.split('/')[2]"></note-icon>
+          {{res}}
+        </li>
       </ul>
     </div>
   </div>
 </template>
 <script>
-import $ from 'jquery';
 import _ from 'lodash';
+import config from '@/config';
+import NoteIcon from '@/components/note-icon/note-icon.vue';
+
+const isEnableConsole = false;
 
 export default {
   name: 'search-note-bar',
+  components: {
+    NoteIcon
+  },
   data() {
     return {
-      isShowSearchNoteBar: false,
       catalogArr: [], // catalog array
       searchText: '', // search text
       searchRes: [], // search results
@@ -32,6 +51,8 @@ export default {
       maxSearchResLength: 20,
       maxSearchResLengthWarn: '',
       curSelectedSearchResBias: 0, // current selected search results bias, press ↑, bias += 1, press ↓, bias -= 1
+      staticIconUrl: config.server.staticIconUrl,
+      defaultIconUrl: `${config.server.staticIconUrl}${config.defaultIconName}`, // 默认图标地址, 没有对应图标时会使用该图标
     };
   },
   watch: {
@@ -42,7 +63,6 @@ export default {
   methods: {
     // open bar
     open() {
-      this.isShowSearchNoteBar = true;
       const catalog = _.cloneDeep(this.$store.state.catalog);
       for (const cat1 in catalog) {
         for (const cat2 in catalog[cat1]) {
@@ -51,16 +71,21 @@ export default {
           }
         }
       }
+      if (this.$store.state.curFilePath) {
+        this.searchText = this.$store.state.curFilePath
+          .split('/')
+          .slice(0, 2)
+          .join('/');
+      }
       setTimeout(() => {
         if (this.$refs['search-input']) {
           this.$refs['search-input'].focus();
         }
-      }, 300);
+      }, 100);
     },
 
     // close bar
     close() {
-      this.isShowSearchNoteBar = false;
       this.catalogArr = [];
       this.searchText = '';
       this.searchRes = [];
@@ -79,7 +104,7 @@ export default {
         if (!searchText) {
           return;
         } else if (searchText.includes(' ') && searchText[0] !== ' ') {
-          const reg = new RegExp(searchText.replace(/ +/, '.+'), 'i');
+          const reg = new RegExp(searchText.replace(/ +/g, '.+'), 'i');
           for (const cat of this.catalogArr) {
             if (reg.test(cat)) {
               i += 1;
@@ -109,53 +134,64 @@ export default {
     // goto selected note
     gotoNote(path) {
       this.close();
+      this.$emit('close');
       if (path) {
         this.$store.commit('updateGotoThisCatalog', path.split('/'));
       }
     },
 
-    // bind hotkey
-    bindHotKey() {
-      document.addEventListener('keydown', (e) => {
-        // ctrl + p: toggle isShowSearchNoteBar
-        if (e.ctrlKey && e.keyCode === 80) {
-          e.preventDefault();
-          if (this.isShowSearchNoteBar) {
-            this.close();
-          } else {
-            this.open();
-          }
-        }
-        // 上下切换目录搜索结果
-        if (this.isShowSearchNoteBar
-          && e.keyCode === 40
-          && this.curSelectedSearchResBias < this.searchRes.length - 1
-        ) {
-          e.preventDefault();
-          this.curSelectedSearchResBias += 1;
-        }
-        if (this.isShowSearchNoteBar
-          && e.keyCode === 38
-          && this.curSelectedSearchResBias > 0
-        ) {
-          e.preventDefault();
-          this.curSelectedSearchResBias -= 1;
-        }
+    imgLoadError(e) {
+      e.target.src = this.defaultIconUrl;
+    },
 
-        try {
-          $('.selected-search-res')[0].scrollIntoView({ block: 'center' });
-        } catch (err) {
-          //
-        }
-        // enter键跳转至当前选中的目录
-        if (this.isShowSearchNoteBar && e.keyCode === 13) {
-          this.gotoNote(this.searchRes[0 + this.curSelectedSearchResBias]);
+    // bind hotkey
+    bindHotKey(el) {
+      el.addEventListener('keydown', (e) => {
+        if (e.keyCode === 40 || e.keyCode === 38 || e.keyCode === 13) {
+          e.preventDefault();
+          // 上下键切换目录搜索结果
+          if (
+            e.keyCode === 40 &&
+            this.curSelectedSearchResBias < this.searchRes.length - 1
+          ) {
+            this.curSelectedSearchResBias += 1;
+          }
+          if (e.keyCode === 38 && this.curSelectedSearchResBias > 0) {
+            this.curSelectedSearchResBias -= 1;
+          }
+          // scroll
+          if (this.$refs['selected-search-res'][0]) {
+            this.$refs['selected-search-res'][0].scrollIntoView({
+              block: 'center',
+            });
+          }
+          // try {
+          //   this.$refs['selected-search-res'][0].scrollIntoView({
+          //     block: 'center',
+          //   });
+          // } catch (err) {
+          //   // nothing
+          // }
+          // enter键跳转至当前选中的目录
+          if (e.keyCode === 13) {
+            this.gotoNote(this.searchRes[0 + this.curSelectedSearchResBias]);
+          }
         }
       });
     },
   },
   mounted() {
-    this.bindHotKey();
+    if (isEnableConsole) {
+      console.log('search note bar mounted');
+    }
+    this.bindHotKey(this.$refs['search-note-bar']);
+    this.open();
+  },
+  destroyed() {
+    this.close();
+    if (isEnableConsole) {
+      console.log('search note bar destroyed');
+    }
   },
 };
 </script>
@@ -165,22 +201,25 @@ export default {
 #search-note-bar {
   background: $float-bg;
   box-shadow: $float-box-shadow;
-  font-size: $font-size-catalog;
-  .wrapper { // necessary. without this, ".search-input" cannot "fixed"
+  font-size: $font-size-sidebar;
+  color: $tool-page-color;
+  .wrapper {
+    // necessary. without this, ".search-input" cannot "fixed"
     width: 100%;
     max-height: 400px;
     overflow-x: hidden;
     overflow-y: auto;
-    .placeholder { // placeholder: Just to hold up the line-hight, becasue "absolute .search-input" will out of standard flow
+    .placeholder {
+      // placeholder: Just to hold up the line-hight, becasue "absolute .search-input" will out of standard flow
       width: 100%;
       height: 30px;
     }
   }
 }
 .max-search-res-length-warn {
-  color: rgb(221, 191, 157);
-  padding: 6px 0px;
-  font-size: 12px;
+  color: $warning-color;
+  background: $warning-bg;
+  padding: 4px 0px;
   text-align: center;
 }
 .search-input {
@@ -191,7 +230,7 @@ export default {
   height: 30px;
   line-height: 30px;
   border: none;
-  font-size: $font-size-catalog;
+  font-size: $font-size-sidebar;
   background: lighten($float-bg, 1%);
   box-sizing: border-box;
   padding: 0px 6px;
@@ -203,19 +242,25 @@ export default {
   padding: 0;
   margin: 0;
   li {
-    padding: 6px;
+    height: 27px;
+    line-height: 27px;
+    padding-left: 4px;
     box-sizing: border-box;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     &:hover {
       cursor: pointer;
-      background: lighten($catalog-active-bg, 3%);
+      background: lighten($sidebar-item-active-bg, 3%);
     }
+  }
+  .note-icon {
+    height: 54%;
+    vertical-align: middle;
   }
 }
 
 .selected-search-res {
-  background: $catalog-active-bg;
+  background: $sidebar-item-active-bg;
 }
 </style>

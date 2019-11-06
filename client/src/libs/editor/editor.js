@@ -8,13 +8,15 @@ import 'codemirror/mode/python/python'; // language mode: python
 import 'codemirror/mode/php/php'; // language mode: php
 import 'codemirror/mode/shell/shell'; // language mode: shell
 import 'codemirror/mode/css/css'; // language mode: css
-import 'codemirror/addon/fold/foldcode'; // fold code
 import 'codemirror/mode/sql/sql'; // language mode: sql
+import 'codemirror/addon/fold/foldcode'; // fold code
 import 'codemirror/addon/fold/markdown-fold'; // fold code method for markdown
 import 'codemirror/addon/display/autorefresh'; // autorefresh
 import 'codemirror/addon/mode/simple'; // mode maker
 import 'codemirror/addon/mode/loadmode'; // load mode
 import 'codemirror/theme/paraiso-light.css'; // 主题包
+import 'codemirror/addon/dialog/dialog';
+import 'codemirror/addon/dialog/dialog.css';
 // import 'codemirror/addon/edit/closebrackets'; // close brackets 好像不兼容markdown
 // import 'codemirror/addon/hint/show-hint'; // hint逻辑, 使用hint时必须引入
 // import 'codemirror/addon/hint/show-hint.css'; // hint样式, 使用hint时必须引入
@@ -35,9 +37,9 @@ export default class {
     }, config);
     this.el = el;
     this.curCursorLineNum = undefined; // 当前光标所处的行
-    this.lines = [];
+    this.shortcutKeyMap = {};
     this.messager = config.messager || {
-      success() {}, info() {}, warning() {}, error() {},
+      success() { }, info() { }, warning() { }, error() { },
     };
     this.cm = this._init(el, config.cm);
     this.cm.on('change', this._onChange);
@@ -100,6 +102,7 @@ export default class {
     // window.focusedLine = change.from.line; // no!! use vuex;
     // localStorage.setItem('mdText', cm.getValue());
   }
+
   // eslint-disable-next-line class-methods-use-this
   _onCursorActivity(cm) {
     const className = 'cursor-in-this-line'; // 当前行的类名, 和css耦合
@@ -113,6 +116,7 @@ export default class {
     }
     this.curCursorLineNum = curCursorLineNum;
   }
+
   /**
    * _onRenderLine: event, cm对象render时触发
    * @param {cm} cm
@@ -123,27 +127,16 @@ export default class {
   // Fired right after the DOM element is built, before it is added to the document.
   _onRenderLine(cm, line, el) { // eslint-disable-line class-methods-use-this
     const t1 = new Date();
-    const lineInfo = cm.lineInfo(line);
-    const curLineNum = lineInfo.line;
-    let curLineHeader;
-    let curLineType;
-
-    // add class for line
+    // add class to lines
     if (el.querySelector('.cm-formatting-header')) { // header line
       const headMatchRes = line.text.match(/^(#+)\s/);
       if (headMatchRes) {
-        curLineType = 'HEADER';
         el.classList.add('line-cm-header');
         el.classList.add(`line-cm-header-${headMatchRes[1].length}`);
-        curLineHeader = headMatchRes[1].length;
-      } else {
-        curLineHeader = 0;
       }
     } else if (el.querySelector('.cm-quote')) { // quote line
-      curLineType = 'QUOTE';
       el.classList.add('line-cm-quote');
     } else if (el.querySelector('[class^="cm-m-"]:not(.cm-m-markdown)') || el.querySelector('.cm-formatting-code-block')) { // code block line
-      curLineType = 'CODEBLOCK';
       el.classList.add('line-cm-code-block');
       if (line.text.slice(0, 3) === '```') {
         el.classList.add('line-cm-code-block-boundary');
@@ -159,21 +152,54 @@ export default class {
       }
     }
 
-    // record line
-    if (typeof this.lines[curLineNum] !== 'object') {
-      this.lines[curLineNum] = {
-        header: curLineHeader,
-        type: curLineType,
-      };
-    } else {
-      this.lines[curLineNum].header = curLineHeader;
-      this.lines[curLineNum].type = curLineType;
-    }
-
     // count render time
     const t2 = new Date() - t1;
     if (t2 >= 3) {
       console.warn('render line timer: ', t2, el);
+    }
+  }
+
+  /**
+   * on: add event listener
+   * @param {String} eventName eventName
+   * @param {Function} handler handler
+   */
+  on(eventName, handler) {
+    switch (eventName) {
+      case 'renderLine':
+        this.cm.on('renderLine', handler);
+        break;
+      case 'change':
+        this.cm.on('change', handler);
+        break;
+      case 'changes':
+        this.cm.on('changes', handler);
+        break;
+      default:
+        console.error('unsupported event: ', eventName);
+        break;
+    }
+  }
+
+  /**
+   * off: remove event listener
+   * @param {String} eventName eventName
+   * @param {Function} handler handler
+   */
+  off(eventName, handler) {
+    switch (eventName) {
+      case 'renderLine':
+        this.cm.off('renderLine', handler);
+        break;
+      case 'change':
+        this.cm.off('change', handler);
+        break;
+      case 'changes':
+        this.cm.off('changes', handler);
+        break;
+      default:
+        console.error('unsupported event: ', eventName);
+        break;
     }
   }
 
@@ -184,6 +210,64 @@ export default class {
    */
   use(plugin, config) {
     plugin(this, config);
+  }
+
+  /**
+   * bind shortcut key map
+   * @param {Object} target Which object to bind the key map to
+   * @param {Array} keyArr key array
+   * @param {Function} handler
+   */
+  bindShortcutKeyMap(target, keyArr, handler) {
+    if (keyArr.length > 4) {
+      throw new Error(`The maximum length of keyArr is 4: ${keyArr}`);
+    }
+    // eslint-disable-next-line newline-per-chained-call
+    const keyId = keyArr.join('').split('').sort().join('').toUpperCase();
+    if (this.shortcutKeyMap[keyId]) {
+      console.warn('This shortcut key has been occupied: ', keyArr, handler, 'This shortcut key corresponds to: ', this.shortcutKeyMap[keyId]);
+    } else {
+      this.shortcutKeyMap[keyId] = {
+        keyArr,
+        handler,
+      };
+      target.addEventListener('keydown', (e) => {
+        if (e.ctrlKey || e.altKey) {
+          let isTrigger = true;
+          let i = 0;
+          if (e.ctrlKey) {
+            i += 1;
+          }
+          if (e.altKey) {
+            i += 1;
+          }
+          if (e.shiftKey) {
+            i += 1;
+          }
+          if (keyArr.length !== i + 1) { return; }
+
+          for (const key of keyArr) {
+            if (key.toUpperCase() === 'CTRL' && e.ctrlKey) {
+              // do nothing
+            } else if (key.toUpperCase() === 'SHIFT' && e.shiftKey) {
+              // do nothing
+            } else if (key.toUpperCase() === 'ALT' && e.altKey) {
+              // do nothing
+            } else if (key.toUpperCase() === e.key.toUpperCase()) {
+              // do nothing
+            } else {
+              isTrigger = false;
+              break;
+            }
+          }
+
+          if (isTrigger) {
+            e.preventDefault();
+            handler();
+          }
+        }
+      });
+    }
   }
 
   /**
@@ -211,6 +295,19 @@ export default class {
   }
 
   /**
+   * toggleFold
+   * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
+   * @param {boolean} scanUp 是否向上扫描
+   */
+  toggleFold(line, scanUp = false) {
+    this.cm.foldCode(line, {
+      widget: '+',
+      minFoldSize: 1,
+      scanUp,
+    });
+  }
+
+  /**
    * fold 折叠
    * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
    * @param {boolean} scanUp 是否向上扫描
@@ -220,7 +317,7 @@ export default class {
       widget: '+',
       minFoldSize: 1,
       scanUp,
-    });
+    }, 'fold');
   }
 
   /**
@@ -236,28 +333,28 @@ export default class {
 
   /**
    * getHeaderAncestors: 获取当前Header的祖先Header
-   * @param {pos} cursor 光标. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
+   * @param {pos} pos 位置. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
    * @param {num} depth 向上检索的层级. 比如传入1, 就只检索到父级, 不检索爷爷级. 可选, 如果不填, 则默认一直检索到一级标题
    * @returns {array} 检索结果数组, 数组第一项是父级, 第二项是爷爷级...
    * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
    * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
    */
-  getHeaderAncestors(cursor, depth) {
+  getHeaderAncestors(pos, depth) {
     const res = [];
-    if (!cursor) {
-      cursor = this.cm.getCursor();
+    if (!pos) {
+      pos = this.cm.getCursor();
     }
     if (!depth) {
       depth = 99; // just a big number
     }
     // first line res
     let curLineRes;
-    const curLineText = this.cm.lineInfo(cursor.line).text;
+    const curLineText = this.cm.lineInfo(pos.line).text;
     const firstLineHeaderLv = this.getHeaderLvByStr(curLineText);
     if (firstLineHeaderLv) {
       curLineRes = {
         headerLv: firstLineHeaderLv,
-        headerLineNum: cursor.line,
+        headerLineNum: pos.line,
         headerLineText: curLineText,
         isCursorInThisLine: true,
       };
@@ -267,7 +364,7 @@ export default class {
     // other line res
     let lastHeaderLv = firstLineHeaderLv || 99; // just a big number
     let curDetectDepth = 0;
-    let curDetectLineNum = cursor.line - 1;
+    let curDetectLineNum = pos.line - 1;
     while (curDetectLineNum >= 0 && curDetectDepth < depth && lastHeaderLv >= 1) {
       const curDetectLineText = this.cm.lineInfo(curDetectLineNum).text;
       const curDetectLineHeaderLv = this.getHeaderLvByStr(curDetectLineText);
@@ -447,31 +544,105 @@ export default class {
   /**
    * getHeadersHierarchy: 获取所有headers, 组织成一个对象
    * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
-   * @param {boolean} isWithLineNum 是否带上行号, 默认`false`
    */
-  getHeadersHierarchy(text, isWithLineNum) {
+  getHeadersHierarchy(text) {
     if (!text) {
       text = this.cm.getDoc().getValue();
     }
     const lineArr = text.split('\n');
-    const hierarchy = {};
+    const hierarchy = [];
     const lastMeetHeaders = []; // [lastHeader1, lastHeader2....lastHeader6]
     for (let i = 0; i < lineArr.length; i += 1) {
       const matchRes = lineArr[i].match(/^(#+)\s(.+)/);
       if (matchRes && matchRes[1].length > 0) {
         const headerLv = matchRes[1].length;
         if (headerLv === 1) {
-          lastMeetHeaders[headerLv] = {};
-          if (isWithLineNum) hierarchy[`${i} ${matchRes[2]}`] = lastMeetHeaders[headerLv];
-          else hierarchy[`${matchRes[2]}`] = lastMeetHeaders[headerLv];
+          lastMeetHeaders[headerLv] = [];
+          hierarchy.push({
+            lineNum: i,
+            lv: headerLv,
+            text: matchRes[0],
+            children: lastMeetHeaders[headerLv],
+          });
         } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
-          lastMeetHeaders[headerLv] = {};
-          if (isWithLineNum) lastMeetHeaders[headerLv - 1][`${i} ${matchRes[2]}`] = lastMeetHeaders[headerLv];
-          else lastMeetHeaders[headerLv - 1][`${matchRes[2]}`] = lastMeetHeaders[headerLv];
+          lastMeetHeaders[headerLv] = [];
+          lastMeetHeaders[headerLv - 1].push({
+            lineNum: i,
+            lv: headerLv,
+            text: matchRes[0],
+            children: lastMeetHeaders[headerLv],
+          });
         }
       }
     }
     return hierarchy;
+  }
+
+  /**
+   * getHeadersArray
+   * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
+   */
+  getHeadersArray(text) {
+    if (!text) {
+      text = this.cm.getDoc().getValue();
+    }
+    const lines = text.split('\n');
+    const headers = [];
+    for (let i = 0; i < lines.length; i += 1) {
+      const headerLv = this.getHeaderLvByStr(lines[i]);
+      if (headerLv && headerLv > 0) {
+        headers.push({
+          lineNum: i,
+          lv: headerLv,
+          text: lines[i],
+        });
+      }
+    }
+    return headers;
+  }
+
+  /**
+   * scroll note to this line
+   * @param {Number} lineNum scroll to this line
+   * @param {String} highlightLineClass Highlight the line that scroll to with this class name
+   * @param {String} unfoldWay the way to unfold note content. 'unfoldAll' (default)| 'intelligently' | 'keepFold'
+   * @param {Boolean} isMoveCursorToThisLine Do you want to move the cursor to this line? default is "false"
+   */
+  scrollNoteToThisLine(lineNum, highlightLineClass, unfoldWay = 'unfoldAll', isMoveCursorToThisLine = false) {
+    const doc = this.cm.getDoc();
+    if (unfoldWay === 'unfoldAll') {
+      this.cm.execCommand('unfoldAll');
+    } else if (unfoldWay === 'intelligently') {
+      doc.setCursor({ line: lineNum, ch: 0 });
+      this.foldPlugin.foldIntelligently(this.cm, true);
+    } else if (unfoldWay === 'keepFold') {
+      // do nothing
+    } else {
+      console.warn('Wrong parameter, unfoldWay: ', unfoldWay);
+    }
+    if (isMoveCursorToThisLine) {
+      setTimeout(() => {
+        this.cm.focus();
+        doc.setCursor({ line: lineNum, ch: 0 });
+      }, 0);
+    }
+    this.cm.scrollIntoView({ line: lineNum, ch: 0 }, 300);
+    doc.addLineClass(lineNum, 'background', highlightLineClass);
+    // Try to scroll to this line many times.
+    // Because expanding widgets may cause the note page to scroll
+    setTimeout(() => {
+      doc.removeLineClass(lineNum, 'background', highlightLineClass);
+      this.cm.scrollIntoView({ line: lineNum, ch: 0 }, 300);
+      doc.addLineClass(lineNum, 'background', highlightLineClass);
+      setTimeout(() => {
+        doc.removeLineClass(lineNum, 'background', highlightLineClass);
+        this.cm.scrollIntoView({ line: lineNum, ch: 0 }, 300);
+        doc.addLineClass(lineNum, 'background', highlightLineClass);
+        setTimeout(() => {
+          doc.removeLineClass(lineNum, 'background', highlightLineClass);
+        }, 200);
+      }, 200);
+    }, 200);
   }
 
   /**

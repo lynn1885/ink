@@ -4,7 +4,7 @@ const map = {
   insertHeaderChild: 'Ctrl-L',
   insertHeaderNextParent: 'Ctrl-H',
   insertNextLiUnderHeader: 'Ctrl-O',
-  reorderCurHeaderLi: 'Shift-Ctrl-O',
+  reorderCurHeaderLi: 'Ctrl-Alt-O',
   upgradeHeaders: 'Shift-Ctrl-[',
   degrageHeaders: 'Shift-Ctrl-]',
 };
@@ -15,7 +15,7 @@ export default function (editor) {
     // insert header by hierarchy: next
     [map.insertHeaderNext]: (cm) => {
       const doc = cm.getDoc();
-      const { headerLv } = editor.getHeaderByCursor();
+      const { headerLv, headerLineText } = editor.getHeaderByCursor();
       if (headerLv > 0) { // 只有当前已经位于某个header中时, 才会执行下面的操作
         // 找到下一个同级header所在行, 或当前所在行的父级header的最后一行, 这是要插入的位置
         const { nextSiblingHeaderlineNum, parentHeaderLastLineNum }
@@ -26,16 +26,27 @@ export default function (editor) {
         } else if (parentHeaderLastLineNum) {
           insertLineNum = parentHeaderLastLineNum;
         }
-
+        console.log(headerLineText);
         // 插入
         let headerStr = '';
         for (let i = 0; i < headerLv; i += 1) {
           headerStr += '#';
         }
-
+        headerStr += ' ';
+        // reuse
+        if (headerLineText) {
+          const matchRes = headerLineText.match(/^#+ (.+: |.+：)/);
+          if (matchRes && matchRes[1]) {
+            headerStr += matchRes[1];
+          }
+        }
+        // set cursor
         const insertLineCh = cm.lineInfo(insertLineNum).text.length;
         doc.replaceRange(`\n${headerStr} `, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
-        doc.setCursor({ line: insertLineNum + 1, ch: headerLv + 1 });
+        doc.setSelection(
+          { line: insertLineNum + 1, ch: headerLv + 1 },
+          { line: insertLineNum + 1, ch: headerStr.length },
+        );
       }
     },
 

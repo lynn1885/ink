@@ -1,6 +1,7 @@
 const path = require('path');
 const config = require('../../config');
 const Images = require('../models/images');
+const Directories = require('../models/directories');
 
 exports.create = async (req, res) => {
   if (!req.body.fileDir) {
@@ -10,21 +11,31 @@ exports.create = async (req, res) => {
     throw new Error(`create(), cannot find req.file: ${req.file}`);
   }
 
+  const dateMs = new Date().valueOf();
   const { fileDir } = req.body;
-  const { fileName } = req.body;
   const { file } = req;
-  const dir = config.noteImagesDir;
+  const imageDir = config.noteImagesDir;
+  // images will be placed in different directories
+  // create new directories base on time
+  // averagely, create a new directory each month
+  // 30 * 24 * 3600 * 1000 = 2592000000
+  const middleDirNum = Math.floor(dateMs / 2592000000);
+  const middleDir = String(middleDirNum);
+  const name = (dateMs - middleDirNum * 2592000000).toString();
   const ext = `.${file.mimetype.split('/')[1]}`;
-  let name = new Date().valueOf().toString();
-  if (fileName) {
-    name += path.parse(fileName).name;
-  }
-  const wholePath = dir + name + ext;
 
-  await Images.create(wholePath, file)
+  // create a image file
+  // or create a new directory, then create a new image file
+  const fullDir = path.join(imageDir, middleDir);
+  const fullPath = path.format({ dir: fullDir, base: name + ext });
+  await Directories.isExist(fullDir)
+    .catch(async () => {
+      await Directories.create(fullDir);
+    });
+  await Images.create(fullPath, file)
     .then(() => {
       res.json({
-        fileDir,
+        dir: middleDir,
         fileName: name + ext,
       });
     })
@@ -33,7 +44,3 @@ exports.create = async (req, res) => {
       res.status(500).json(err);
     });
 };
-
-// exports.delete = async (req, res) => {
-
-// };

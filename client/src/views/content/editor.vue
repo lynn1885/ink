@@ -30,7 +30,7 @@ export default {
       curFileDir: null, // 当前文件路径, 不含最后一个文件. 如: a/b/c/
       curFilePath: null, // 当前文件路径, 含最后一个文件. 如: a/b/c/some.md. 在打开文件时记录
       autoSaveInterval: 40 * 1000, // 自动存储间隔: 单位ms
-      autoFoldDelay: 200, // auto fold document after openning. unit: ms. no delay: -1
+      autoFoldDelay: 100, // auto fold document after openning. unit: ms. no delay: -1
       autoFoldLv: 2, // 自动折叠到哪个等级
       minAutoSaveInterval: 10 * 1000, // 最小自动存储间隔
     };
@@ -90,6 +90,8 @@ export default {
      * runCommand: 执行命令 这是editor组件对外暴露的唯一接口, 会挂载到this.editor上
      * 所有外部可使用的操作, 都通过这个api进行. 受这个api的集中管理, 来降低耦合性
      * 这些操作包括: 保存当前文件, 清理时钟, 打开新文件; 清理编辑器; 触发保存等一系列操作
+     * ⚠️ 格外注意: 这些命令应该只在catalog组件中调用, 其他组件应调用catalog组件暴露的功能. 尤其是open命令
+     * ⚠️ 这个函数是保证笔记不会丢失的一个大门, 执行该函数时一定要有模态框来防止其他操作
      * @param {string} command 指令名
      * @param {any} info 提供的额外指令信息, 有些指令会要求传入这些信息
      */
@@ -99,14 +101,11 @@ export default {
         console.warn(`editor.runCommand(), 参数错误, command为空或不是string: ${command}`);
         return;
       }
-
-      // 禁止使用目录
-      this.$store.commit('updateIsProhibitOperateCat', true);
-
+      // 禁止其他操作
+      this.$store.commit('updateIsProhibitOperation', true);
       // 指令: 清空编辑器. 清空编辑器不会保存当前文件未保存的内容, 也不会删除后台的物理文件
       if (command === 'CLEAN') {
         this.cleanEditor();
-
       // 指令: 保存
       } else if (command === 'SAVE') {
         // 保存
@@ -115,13 +114,13 @@ export default {
         } else {
           await this.saveFile();
         }
-
       // 指令: 打开新文件
       } else if (command === 'OPENFILE') {
         if (typeof info !== 'string') {
           console.error(`runCommand(): 参数错误. OPEN指令需要传入要打开的文件路径作为第二个参数: ${info}`);
           return;
         }
+        let isSuccess = true;
         try {
           if (this.isFileContentChanged) {
             this._turnOffAutoSave();
@@ -130,12 +129,15 @@ export default {
           await this._loadFile(info);
         } catch (e) {
           console.error(e);
+          isSuccess = false;
         }
-        this.isFileLoaded = true;
+        if (isSuccess) {
+          this.isFileLoaded = true;
+        }
       }
 
       // 可以使用目录
-      this.$store.commit('updateIsProhibitOperateCat', false);
+      this.$store.commit('updateIsProhibitOperation', false);
     },
 
     /**
@@ -146,7 +148,6 @@ export default {
       if (!filePath) {
         throw new Error(`loadFile(), illegal filePath: ${filePath}`);
       }
-      this.$store.commit('updateCurFilePath', filePath);
       if (this.autoSaveTimer) {
         this._turnOffAutoSave();
       }
@@ -162,6 +163,7 @@ export default {
       this._turnOnAutoSave();
       this._autoFold(this.curFilePath);
       this._markCmdLine();
+      this.$store.commit('updateCurFilePath', filePath);
     },
 
     /**

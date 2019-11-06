@@ -6,6 +6,7 @@ start-client.bat
 start-server.bat
 ink.vbs
 cert/
+tools/
 
 # local env files
 .env.local

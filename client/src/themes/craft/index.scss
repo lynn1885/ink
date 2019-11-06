@@ -138,7 +138,6 @@
   border-bottom: 1.6px dashed rgb(238, 114, 114);
 }
 
-
 // code
 .cm-comment {
   padding: 2px;
@@ -272,7 +271,7 @@
     color: #aaa!important;
     background: #f4f4f4!important;
     padding: 2px 4px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 }
 .inserted-widget-math {
@@ -283,6 +282,15 @@
   margin-left: 100px;
 }
 
+// highlight
+.cm-searched-text {
+  background: $cm-searched-text-bg;
+}
+.cm-highlight-line {
+  background: $cm-highlight-line-bg!important;
+  transition: all 0.4s!important;
+}
+
 // cmd line
 .line-cm-cmd {
   span {
@@ -290,3 +298,4 @@
     color: #ccc!important;
   }
 }
+

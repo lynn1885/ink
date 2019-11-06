@@ -6,8 +6,9 @@ const config = require('./config');
 const task = require('./tools/tasks');
 
 (async function fn() {
-// 任务: 一致化用户设置中的catalog
-  await task.uniformizeUserConfigCatalog();
+  // TASKS AT STARTUP
+  // unify catalog
+  await task.unifyCatalog();
 
   // 基础设置
   app.use((req, res, next) => {
@@ -19,7 +20,7 @@ const task = require('./tools/tasks');
 
   // 基础路由 & 托管静态资源
   app.use('/', router);
-  app.use('/images', express.static('notes/_images'));
-  app.use('/icons', express.static('notes/_icons'));
-  app.listen(config.port, () => console.log(`server listening on port ${config.port}`));
+  app.use('/images', express.static(config.noteImagesDir));
+  app.use('/icons', express.static(config.noteIconsDir));
+  app.listen(config.port, () => console.log(`${new Date().toLocaleString()}: server listening on port ${config.port}`));
 }());

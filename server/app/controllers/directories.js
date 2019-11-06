@@ -17,7 +17,7 @@ const tools = require('../../tools/tools');
 exports.get = async (req, res) => {
   await UserConfig.getUserConfig(['catalog', 'order'])
     .then((data) => {
-      console.log('[get catalog]');
+      console.log(`${new Date().toLocaleString()}: [get catalog]`);
       res.json(data);
     })
     .catch((err) => {
@@ -51,7 +51,7 @@ exports.create = async (req, res) => {
   // 创建目录: 创建文件夹
   await Directories.create(newFilePath)
     .then(() => {
-      console.log('[create catalog] ', newFilePath);
+      console.log(`${new Date().toLocaleString()}: [create catalog] `, newFilePath);
     })
     .catch((err) => {
       errRecord = err;
@@ -62,7 +62,7 @@ exports.create = async (req, res) => {
   if (!errRecord && req.body.catLv === 3) {
     await Files.create(`${newFilePath}${req.body.catName}.md`)
       .then(() => {
-        console.log('[create catalog] create file ', `${newFilePath}${req.body.catName}.md`);
+        console.log(`${new Date().toLocaleString()}: [create catalog] create file `, `${newFilePath}${req.body.catName}.md`);
       })
       .catch((err) => {
         errRecord = err;
@@ -80,7 +80,7 @@ exports.create = async (req, res) => {
     // 这里把newConfig放在前面, 是为了让merge之后的配置报错newConfig对象的属性顺序, 把userConfig对象中的数据merge进入newConfig中
     await UserConfig.setUserConfig(props, newConfig, 'new-old')
       .then(() => {
-        console.log('[create catalog] update user config: ', JSON.stringify(req.body.catOrderAfterCreate));
+        console.log(`${new Date().toLocaleString()}: [create catalog] update user config: `, JSON.stringify(req.body.catOrderAfterCreate));
       })
       .catch((err) => {
         errRecord = err;
@@ -120,8 +120,8 @@ exports.delete = async (req, res) => {
   );
   await Directories.rename(catPath, backupPath)
     .then(() => {
-      console.log(`[delete catalog] ${catPath}`);
-      console.log(`[delete catalog] move to deleted folder: ${backupPath}`);
+      console.log(`${new Date().toLocaleString()}: [delete catalog] ${catPath}`);
+      console.log(`${new Date().toLocaleString()}: [delete catalog] move to deleted folder: ${backupPath}`);
     })
     .catch((err) => {
       deleteErr = err;
@@ -144,7 +144,7 @@ exports.delete = async (req, res) => {
     // 获取用户配置中的catlog.order
     const userConfigCatOrder = await UserConfig.getUserConfig(['catalog', 'order']);
     // 获取真实目录
-    const realDir = await Directories.getRecursively(config.notesDir, config.ignoreNoteDir);
+    const realDir = await Directories.getRecursively(config.notesDir);
     // 根据真实目录, 生成干净且完整的catalog.order
     const uniformizedCatalog = tools.uniformizeCatalogObj(userConfigCatOrder, realDir);
     // 写入配置文件
@@ -157,7 +157,7 @@ exports.delete = async (req, res) => {
     await UserConfig.deleteUserConfig(['catalog', 'order'].concat(req.query.paths))
       .then(() => {
         res.send();
-        console.log(`[delete catalog] update user config: ${req.query.paths}`);
+        console.log(`${new Date().toLocaleString()}: [delete catalog] update user config: ${req.query.paths}`);
       })
       .catch((err) => {
         console.error(`delete(): 删除成功, 但同步删除用户配置失败: ${JSON.stringify(err)}`);
@@ -172,8 +172,8 @@ exports.delete = async (req, res) => {
 exports.update = async (req, res) => {
   // 校验
   if (!req.body || !req.body.task) {
-    console.log(`update(): 参数不匹配, 未找到task名: ${req.body.task}`);
-    res.status(500).send(`update(): 参数不匹配, 未找到task名: ${req.body.task}`);
+    console.log(`${new Date().toLocaleString()}: update(): 参数不匹配, 未找到task名: ${req.body.task}`);
+    res.status(500).send(`${new Date().toLocaleString()}: update(): 参数不匹配, 未找到task名: ${req.body.task}`);
     return;
   }
 
@@ -198,7 +198,7 @@ exports.update = async (req, res) => {
       req.body.newName,
     )
       .then(() => {
-        console.log(`[catalog rename] ${req.body.ancestorCatNames}, ${req.body.oldName} → ${req.body.newName}`);
+        console.log(`${new Date().toLocaleString()}: [rename catalog] ${req.body.ancestorCatNames}: ${req.body.oldName} → ${req.body.newName}`);
         res.send();
       })
       .catch((err) => {
@@ -239,7 +239,7 @@ exports.update = async (req, res) => {
     // 调用
     await _reorder(req.body.affectedCatalogs, req.body.catName)
       .then(() => {
-        console.log(`[catalog reorder] ${JSON.stringify(req.body.affectedCatalogs)}`);
+        console.log(`${new Date().toLocaleString()}: [catalog reorder] ${JSON.stringify(req.body.affectedCatalogs)}`);
         res.send();
       })
       .catch((err) => {
@@ -306,7 +306,7 @@ async function _reorder(affectedCatalogs, catName) {
     const newPath = path.join(config.notesDir, ...affectedCatalogs[1].ancestorCatNames, catName);
     await Directories.rename(oldPath, newPath)
       .then(() => {
-        console.log(`[catalog reorder] move file. from: ${oldPath} to ${newPath}`);
+        console.log(`${new Date().toLocaleString()}: [catalog reorder] move file. from: ${oldPath} to ${newPath}`);
       });
   }
 

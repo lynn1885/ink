@@ -19,11 +19,10 @@ exports.get = async filePath => new Promise((resolve, reject) => {
 /**
  * getRecursively: 递归的获取目录
  * @param {string} filePath 要获取目录的路径
- * @param {array} ignorePath 忽略的路径
- * @param {boolean} isIncludeFile 是否获取目录是也文件, 默认为false
+ * @param {boolean} isIncludeFile 是否获取目录时, 也获取文件, 默认为false
  * @return {object} 操作成功时: `获取到的目录结构`, 操作失败时: `Throw new Error(错误对象)`, 需要在外界进行捕获
  */
-exports.getRecursively = async (filePath, ignorePath, isIncludeFile = false) => {
+exports.getRecursively = async (filePath, isIncludeFile = false) => {
   const result = await r(filePath);
   return result;
 
@@ -44,10 +43,6 @@ exports.getRecursively = async (filePath, ignorePath, isIncludeFile = false) => 
               newFp = `${fp}/${f}`;
             }
 
-            if (ignorePath.includes(`${newFp}/`)) { // 忽略某些文件夹
-              // eslint-disable-next-line no-continue
-              continue;
-            }
             // eslint-disable-next-line no-await-in-loop
             await new Promise((res, rej) => {
               fs.stat(newFp, async (e, stats) => {
@@ -73,8 +68,22 @@ exports.getRecursively = async (filePath, ignorePath, isIncludeFile = false) => 
 };
 
 /**
+ * isExist: check if a file or a directory exists
+ * @param {String} filePath the directory or file to check
+ */
+exports.isExist = async filePath => new Promise((resolve, reject) => {
+  fs.access(filePath, fs.constants.F_OK, (err) => {
+    if (err) {
+      reject(err);
+    } else {
+      resolve();
+    }
+  });
+});
+
+/**
  * create: 创建目录, 不支持递归创建
- * @param {string} filePath 要创建的目录
+ * @param {String} filePath 要创建的目录
  */
 exports.create = async filePath => new Promise((resolve, reject) => {
   fs.mkdir(filePath, (err) => {

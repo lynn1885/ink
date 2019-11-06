@@ -31,6 +31,7 @@ export default {
         "> </div>
       `);
       $('body').append(mindMapContainer);
+      // ❌ getHeadersHierarchy的api已经改动了
       const data = buildMindMapData(editor.getHeadersHierarchy(null, true), { id: 'root', isroot: true, topic: '' });
       const jm = new JsMind({
         container: mindMapContainerId,

@@ -7,9 +7,6 @@
 
 <template>
   <div id="catalog" v-if="isCatalogLoaded">
-    <!-- 仅用于测试是否存在默认icon -->
-    <img :src="defaultIconUrl" @error="defaultImgLoadError" v-show="false">
-
     <!-- 一级目录 -->
     <ul
       class="catalog-container"
@@ -36,13 +33,8 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv1($event, 1, cat, index)"
       >
-        <img
-          :src="`${staticIconUrl}${cat}.png`"
-          v-if="isShowCatIcon"
-          @error="imgLoadError"
-          class="catalog-icon"
-        >
-          {{cat}}
+        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
+        {{cat}}
       </li>
     </ul>
 
@@ -72,12 +64,7 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv2($event, 2, cat, index)"
       >
-        <img
-          :src="`${staticIconUrl}${cat}.png`"
-          v-if="isShowCatIcon"
-          @error="imgLoadError"
-          class="catalog-icon"
-        >
+        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
         {{cat}}
       </li>
     </ul>
@@ -107,18 +94,10 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv3($event, 3, cat, index)"
       >
-        <img
-          :src="`${staticIconUrl}${cat}.png`"
-          v-if="isShowCatIcon"
-          @error="imgLoadError"
-          class="catalog-icon"
-        >
+        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
         {{cat}}
       </li>
     </ul>
-
-    <!-- 模态框 -->
-    <div id="catalog-modal" v-show="$store.state.isProhibitOperateCat"></div>
 
     <!-- 上下文菜单-->
     <content-menu
@@ -140,15 +119,17 @@
 </template>
 <script>
 import _ from 'lodash';
-import config from '@/config';
 import Directories from '@/models/directories';
 import ContentMenu from '@/components/content-menu/content-menu.vue';
+import NoteIcon from '@/components/note-icon/note-icon.vue';
 import tools from '@/tools/tools';
+
 
 export default {
   name: 'catalog',
   components: {
     ContentMenu,
+    NoteIcon,
   },
   data() {
     return {
@@ -196,9 +177,6 @@ export default {
       catalogDropLv3: null,
       // 图标
       isShowCatIcon: true, // 是否显示目录图标
-      isHasDefaultIcon: true, // 是否存在默认icon
-      staticIconUrl: config.server.staticIconUrl, // 图标url, 从这个地址读取catalog中的图标
-      defaultIconUrl: `${config.server.staticIconUrl}_default.png`, // 默认图标地址, 没有对应图标时会使用该图标
     };
   },
 
@@ -248,17 +226,19 @@ export default {
     // 监听: 监听gotoThisCatalog字段, 此字段变更时触发目录跳转
     // 这个字段常由外部调用. 触发目录变更的两个入口, 一个是getCatalog()之后, 一个是这里
     '$store.state.gotoThisCatalog': function foo(value) {
-      if (this.$store.state.isProhibitOperateCat) {
-        this.$message.warning('暂时不能操作目录'); // 重要
+      if (this.$store.state.isProhibitOperation) {
+        this.$message.error('暂时不能操作目录'); // 重要
         return;
       }
+      this.$store.commit('updateIsProhibitOperation', true);
       if (Array.isArray(value)) {
-        // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中
+        // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中, 给监听事件留出时间
         [this.curCatLv1] = value;
         setTimeout(() => {
           [, this.curCatLv2] = value;
           setTimeout(() => {
             [, , this.curCatLv3] = value;
+            this.$store.commit('updateIsProhibitOperation', false);
           }, 0);
         }, 0);
       }
@@ -339,20 +319,6 @@ export default {
       }
     },
 
-    // icon: icon加载失败时, 尝试加载默认icon, 或不显示icon
-    imgLoadError(e) {
-      if (this.isHasDefaultIcon) {
-        e.target.src = this.defaultIconUrl;
-      } else {
-        e.target.style.visibility = 'hidden';
-      }
-    },
-
-    // icon: 默认icon加载失败时
-    defaultImgLoadError() {
-      this.isHasDefaultIcon = false;
-    },
-
     // 右键菜单: 显示右键菜单
     showCatalogContextMenu(e, catLv, catName, catIndex) {
       this.isShowContentMenu = false; // 首先关闭其他右键菜单
@@ -406,7 +372,7 @@ export default {
       }
 
       // 在处理右键任务时, 锁定菜单栏, 禁止操作
-      this.$store.commit('updateIsProhibitOperateCat', true);
+      this.$store.commit('updateIsProhibitOperation', true);
 
       // 处理右键任务
       if (menu === 'create' || menu === 'create before' || menu === 'create after') {
@@ -418,7 +384,7 @@ export default {
       }
 
       // 关闭菜单栏锁定
-      this.$store.commit('updateIsProhibitOperateCat', false);
+      this.$store.commit('updateIsProhibitOperation', false);
     },
 
     // 右键菜单: 创建目录
@@ -1039,8 +1005,8 @@ export default {
   width: 100%;
   box-sizing: border-box;
   height: 100%;
-  font-size: $font-size-catalog;
-  color: $catalog-color;
+  font-size: $font-size-sidebar;
+  color: $tool-page-color;
 }
 
 // 目录
@@ -1064,28 +1030,26 @@ export default {
     box-sizing: border-box;
     overflow: hidden;
     border: 0.5px solid transparent; // 给拖动预留的border
-    cursor: default;
+    cursor: pointer;
   }
   li:hover {
-    background: $catalog-hover;
+    background: $sidebar-item-hover-bg;
   }
   li.cat-active {
-    background: $catalog-active-bg;
-    color: $catalog-active-color;
+    background: $sidebar-item-active-bg;
   }
   li.cat-dragover-active {
-    border: 0.5px solid $catalog-active-border-color;
+    border: 0.5px solid $sidebar-item-active-border-color;
   }
   li.cat-dragover-top-active {
-    border-top: 0.5px solid $catalog-active-border-color;
+    border-top: 0.5px solid $sidebar-item-active-border-color;
   }
   li.cat-dragover-bottom-active {
-    border-bottom: 0.5px solid $catalog-active-border-color;
+    border-bottom: 0.5px solid $sidebar-item-active-border-color;
   }
-  .catalog-icon {
+  .note-icon {
     position: relative;
     height: 100%;
-    vertical-align: middle;
     margin-right: 4px;
   }
 }
@@ -1097,16 +1061,5 @@ export default {
 }
 #catalog-level-3 {
   flex-basis: 40%;
-}
-
-// 目录模态框
-#catalog-modal {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background: $catalog-modal-bg;
-  cursor: wait;
 }
 </style>

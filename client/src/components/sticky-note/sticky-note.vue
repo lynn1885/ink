@@ -10,13 +10,15 @@
   </textarea>
 </template>
 <script>
+const isEnableConsole = true;
 
 export default {
   name: 'sticky-note',
   data() {
     return {
       maxlength: 1000, // max length
-      setNoteTimeoutId: null, // save sticky note timeout id
+      setNoteTimer: null, // save sticky note timeout id
+      setNoteInterval: 2000,
       localStorageKey: 'stickyNoteContent',
     };
   },
@@ -32,20 +34,26 @@ export default {
         e.preventDefault();
         return;
       }
-      clearTimeout(this.setNoteTimeoutId);
-      this.setNoteTimeoutId = setTimeout(() => {
+      clearTimeout(this.setNoteTimer);
+      this.setNoteTimer = setTimeout(() => {
         localStorage.setItem(this.localStorageKey, this.$refs['sticky-note'].value);
-      }, 3000);
+      }, this.setNoteInterval);
     },
   },
   mounted() {
+    if (isEnableConsole) {
+      console.log('sticky note mounted');
+    }
     this.getNoteContent();
     this.$refs['sticky-note'].focus();
   },
 
   beforeDestroy() {
-    clearTimeout(this.setNoteTimeoutId);
+    clearTimeout(this.setNoteTimer);
     localStorage.setItem(this.localStorageKey, this.$refs['sticky-note'].value);
+    if (isEnableConsole) {
+      console.log('sticky note destroy');
+    }
   },
 };
 </script>
@@ -61,7 +69,7 @@ export default {
   box-sizing: border-box;
   background: $sticky-note-bg;
   color: $sticky-note-color;
-  font-size: $font-size-main;
+  font-size: $font-size-main - 1px;
   border-radius: 2px;
   box-shadow: $float-box-shadow;
   overflow: auto;

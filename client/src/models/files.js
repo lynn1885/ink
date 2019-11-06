@@ -1,3 +1,7 @@
+// All interface functions must throw an error when meeting an error
+// To prevent the code from continuing to execute
+// Here, errors are captured in catch statement only to inform the user.
+
 import axios from 'axios';
 import config from '@/config';
 
@@ -67,10 +71,53 @@ const Files = {
       })
       .catch((err) => {
         if (messager) {
-          messager.error('文件保存失败: Update Failed');
+          messager.error(`文件保存失败: Update Failed${err}`);
         }
-        throw new Error(`File.update(), Update Failed: ${err}`);
+        throw new Error(`File.update(), Update Failed: ${err}. 文件保存失败: 可能是文件体积超限, 或服务器出现了问题. 请先妥善复制保管好您的笔记`);
       });
+  },
+
+  /**
+ * 获取文件
+ * @param {String} fromPath 从哪个文件发起的搜索
+ * @param {String} searchPath 搜索哪个路径
+ * @param {String} searchText 搜索的文字
+ * @param {String} searchedTextClass 给搜索到的文字添加的类名
+ * @param {Boolean} isRegExp 是否使用正则
+ * @param {Boolean} isSensitiveToCase 是否对大小写敏感
+ * @param {Function} messager 通知器
+ * @returns {Object} 搜索的内容
+ */
+  async searchAllFiles(fromPath, searchPath, searchText, searchedTextClass, isRegExp, isSensitiveToCase, messager) {
+    let searchRes = null;
+
+    await axios.get(`${serverUrl}search-all-files`, {
+      params: {
+        fromPath,
+        searchPath,
+        searchText,
+        searchedTextClass,
+        isRegExp,
+        isSensitiveToCase,
+      },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          searchRes = res.data;
+        } else {
+          if (messager) {
+            messager.error(`searchAllFiles(): Bad HTTP status: ${res}`);
+          }
+          throw new Error(`searchAllFiles(): Bad HTTP status: ${res.data}`);
+        }
+      })
+      .catch((err) => {
+        if (messager) {
+          messager.error(`searchAllFiles failed: ${err}`);
+        }
+        throw new Error(`searchAllFiles failed: ${err}`);
+      });
+    return searchRes;
   },
 };
 

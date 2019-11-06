@@ -1,29 +1,80 @@
 // font
-// $font-family-main: 'Aa元气满满';
-// $font-size-main: 16px;
-// $font-size-catalog: 13px;
-$font-family-main: 'yahei consolas hybrid';
-$font-size-main: 14px;
-$font-size-catalog: 12px;
+$font-family-main: 'Aa元气满满';
+$font-size-main: 16px;
+$font-size-sidebar: 13px;
+// $font-family-main: 'yahei consolas hybrid';
+// $font-size-main: 14px;
+// $font-size-sidebar: 12px;
 
 $font-size-formatting: 8px;
 $icon-size: 22px;
 
 // common
 $selection: rgb(242, 230, 250);
-$float-box-shadow: 0px 0px 4px 0px #ddd;
-$float-bg: rgb(251, 250, 249);
+$comment-color: #aaa;
+$warning-color: #e6a23c;
+$warning-bg: #fdf6ec;
+$active-color: rgb(164, 119, 222);
+
+// scrollbar
 $scrollbar-width: 4px;
 $scrollbar-height: 4px;
 $scrollbar-bg: #ddd;
 $scrollbar-bg-hover: #bbb;
 $scrollbar-radius: 1px;
 
-// size: side bar
-$side-bar-width: 360px;
+// z-index
+$float-window-index: 100;
+$above-float-window-index: 200;
+
+// app
+$app-bg: #f6f5f4;
+
+// sidebar: size
+$sidebar-width: 350px;
 $icon-bar-width: 40px;
 
-// size: header
+// sidebar: color
+$icon-bar-bg: rgba(233, 232, 231, 0.82);
+$tool-page-color: #444;
+// $tool-page-bg: rgba(248, 247, 246, 0.87);
+$tool-page-bg: rgba(249, 248, 247, 0.87);
+$icon-color: #999;
+$icon-color-active: #464646;
+$icon-color-hover: #888;
+
+// sidebar: element
+$sidebar-button-bg: lighten($color: $tool-page-bg, $amount: 10);
+$sidebar-button-border-color: darken($color: $tool-page-bg, $amount: 2);
+$sidebar-button-disabled-bg: lighten($color: $tool-page-bg, $amount: 1);
+$sidebar-button-disabled-color: $comment-color;
+$sidebar-input-bg: $sidebar-button-bg;
+$sidebar-input-border-color: $sidebar-button-border-color;
+$sidebar-input-disabled-bg: $sidebar-button-disabled-bg;
+$sidebar-input-font-size: $font-size-sidebar + 1px;
+$sidebar-input-margin-left: 10px;
+$sidebar-item-active-bg: rgba(239, 230, 248, 0.9);
+$sidebar-item-hover-bg: rgba(237, 229, 245, 0.6);
+$sidebar-item-active-border-color: rgba(164, 119, 222, 0.9);
+$sidebar-line-height: 1.8;
+
+// sidebar: catalog
+$catalog-modal-bg: transparent;
+$catalog-col-border: none;
+
+// editor
+$editor-bg: rgba(254, 253, 252, 0.9);
+$editor-color: #333;
+
+// headers: color
+$header-1: #b17a46;
+$header-2: #46b17b;
+$header-3: rgb(160, 129, 91);
+$header-4: rgb(91, 160, 102);
+$header-5: #B2867B;
+$header-6: rgb(150, 142, 140);
+
+// header: size
 $header-1-indent: 5px;
 $header-2-indent: 5px;
 $header-3-indent: 16px;
@@ -32,50 +83,11 @@ $header-5-indent: 52px;
 $header-6-indent: 72px;
 $not-header-indent: 130px;
 
-// color: app
-$app-bg: #f6f5f4;
-
-// color: side-bar
-$icon-bar-bg: rgba(233, 232, 231, 0.82);
-$tool-page-bar-bg: rgba(248, 247, 246, 0.87);
-$icon-color: #999;
-$icon-color-active: #333;
-$icon-color-hover: #888;
-
-// color: status-bar
-$status-bar-bg: rgba(248, 247, 246, 0.92);
-$status-bar-color: #444;
-
-// color: catalog
-$catalog-color: rgb(102, 84, 72);
-$catalog-active-bg: rgba(237, 229, 245, 0.9);
-$catalog-active-color: rgb(78, 78, 99);
-$catalog-active-border-color: rgba(164, 119, 222, 0.9);
-$catalog-hover: rgba(237, 229, 245, 0.6);
-$catalog-modal-bg: transparent;
-$catalog-col-border: none;
-
-// color: editor
-$editor-bg: rgba(254, 253, 252, 0.9);
-$editor-color: #333;
-
-// color: sticky note
-$sticky-note-bg: rgb(251, 250, 249);
-$sticky-note-color: #666;
-
-// color: headers
-$header-1: #b17a46;
-$header-2: #46b17b;
-$header-3: rgb(160, 129, 91);
-$header-4: rgb(91, 160, 102);
-$header-5: #B2867B;
-$header-6: rgb(150, 142, 140);
-
-// color: cursor
+// cursor
 $fat-cursor: rgb(229, 203, 247);
 $cursor: #333;
 
-// color: code, link, quote, em
+// code, link, quote, em, searched
 $code-bg: rgba(243, 237, 230, 0.9);
 $code-color: rgb(133, 114, 90);
 $code-block-bg: rgba(249, 247, 244, 0.9);
@@ -95,11 +107,21 @@ $cm-image-font-color: #ddd;
 $cm-line-char-bg: rgb(216, 234, 253);
 $cm-line-char-color: rgb(78, 54, 8);
 $cm-img-shadow: 0px 0px 2px 0px #eee;
+$cm-searched-text-bg: rgb(247, 248, 172);
+$cm-highlight-line-bg: $sidebar-item-active-bg;
 
-// color: content menu
+// content menu
 $content-menu-bg: rgb(250, 249, 248);
 $content-menu-color: #333;
 $content-menu-border-bottom: 0.5px solid #f4f4f4;
 $content-menu-shadow: 0px 0px 10px #ddd;
-$content-menu-active-bg: $catalog-active-bg;
+$content-menu-active-bg: $sidebar-item-active-bg;
 $content-menu-active-color: $content-menu-color;
+
+// tool: sticky note
+$sticky-note-bg: rgb(251, 250, 249);
+$sticky-note-color: $editor-color;
+
+// tool: float window
+$float-box-shadow: 0px 0px 4px 0px #ddd;
+$float-bg: rgb(251, 250, 249);

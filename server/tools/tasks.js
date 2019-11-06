@@ -4,18 +4,23 @@ const config = require('../config');
 const tools = require('./tools');
 
 /**
- * uniformizeUserConfigCatalog: 一致化用户配置中的目录
- * 根据真实目录清理用户配置中的catalog.order, 因为catalog.order中可能会记录一些实际上并不存在的幽灵目录
- * 此方法会生成干净的catalog.order
+ * unifyCatalog: make the catalog in user's config.json consistent with the real catalog
+ * Because the user's config.json file will record some directories that do not actually exist.
  */
-exports.uniformizeUserConfigCatalog = async () => {
-  // 获取用户配置中的catlog.order
+exports.unifyCatalog = async () => {
+  // get the catalog in user's config file
   const userConfigCatOrder = await UserConfig.getUserConfig(['catalog', 'order']);
-  // 获取真实目录
-  const realDir = await Directories.getRecursively(config.notesDir, config.ignoreNoteDir);
-  // 根据真实目录, 生成干净且完整的catalog.order
+  // get the real catalog in user's note directory
+  const realDir = await Directories.getRecursively(config.notesDir);
+  // generate a new catalog from the real catalog
   const uniformizedCatalog = tools.uniformizeCatalogObj(userConfigCatOrder, realDir);
-  // 写入配置, 并调用下一个中间件
+  // write to user's config file
   await UserConfig.setUserConfig(['catalog', 'order'], uniformizedCatalog);
-  console.log('[task] standardize user config');
+  console.log(`${new Date().toLocaleString()}: [task] unify catalog`);
 };
+
+// clear logs
+
+// clear deleted notes
+
+// clear images

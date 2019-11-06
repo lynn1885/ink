@@ -20,6 +20,7 @@ const tools = {
       return '目录名不能超过200个字符';
     }
     // 目录名不能为纯数字
+    // 纯数字会和备份文件名冲突
     if (fileName.match(/^\d+$/)) {
       return '目录名不能为纯数字';
     }

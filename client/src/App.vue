@@ -2,26 +2,26 @@
   <div id="app">
     <!-- main body -->
     <div id="main">
-      <side-bar class="side-bar" v-show="isShowSideBar"></side-bar>
-      <note-content :class="{ 'note-content': true, 'zen-mode': isZenMode }"></note-content>
+      <side-bar id="side-bar" v-show="isShowSideBar"></side-bar>
+      <note-content id="note-content" :class="{'zen-mode': isZenMode }"></note-content>
     </div>
 
     <!-- status-bar-->
     <status-bar id="status-bar" v-show="isShowStatusBar"></status-bar>
 
-    <!-- search-note-bar -->
-    <search-note-bar id="search-note-bar"></search-note-bar>
-
-    <!-- sticky note -->
-    <sticky-note v-if="isShowStickyNote"></sticky-note>
-
     <!-- background image -->
     <div id="bgimg-container" v-show="isShowBgImg">
-      <img
-        :src="`${staticIconUrl}${bgImgName}.${bgImgFormat}`"
-        @error="imgLoadError"
-        >
+      <img :src="`${staticIconUrl}${bgImgName}.${bgImgFormat}`" @error="imgLoadError" />
     </div>
+
+    <!-- modal -->
+    <!--tabindex="1" is a trick, enables div to bind keydown event-->
+    <div
+      id="modal"
+      v-show="$store.state.isProhibitOperation"
+      ref="modal"
+      tabindex="1"
+    ></div>
   </div>
 </template>
 
@@ -29,8 +29,6 @@
 import SideBar from '@/views/sidebar/sidebar.vue';
 import NoteContent from '@/views/content/content.vue';
 import StatusBar from '@/views/status-bar/status-bar.vue';
-import StickyNote from '@/views/sticky-note/sticky-note.vue';
-import SearchNoteBar from '@/views/search-note-bar/search-note-bar.vue';
 import store from '@/store';
 import config from '@/config';
 
@@ -41,25 +39,17 @@ export default {
     SideBar,
     NoteContent,
     StatusBar,
-    StickyNote,
-    SearchNoteBar,
   },
   data() {
     return {
       staticIconUrl: config.server.staticIconUrl, // 背景图服务器地址
       isShowBgImg: false, // 是否显示背景图
-      bgImgName: '_background', // 背景图名字
+      bgImgName: config.bgImgName, // 背景图名字
       bgImgFormat: 'jpg', // 背景图格式
       isZenMode: false, // is zen mode
       isShowSideBar: true,
       isShowStatusBar: true,
     };
-  },
-  computed: {
-    // is show sticky note
-    isShowStickyNote() {
-      return this.$store.state.isShowStickyNote;
-    },
   },
   methods: {
     // 背景图: jpg格式加载失败时, 尝试加载png, gif格式
@@ -108,6 +98,18 @@ export default {
     }
   },
   mounted() {
+    // this is the first keydown event
+    // we can set window.IS_PORHIBIT_KEY_DOWN to true to block all keydown events
+    // eslint-disable-next-line consistent-return
+    // ⚠️ Unable to block keydown event for pop-up window
+    // eslint-disable-next-line consistent-return
+    this.$refs.modal.addEventListener('keydown', (e) => {
+      if (window.IS_PORHIBIT_KEY_DOWN) {
+        e.stopPropagation();
+        e.preventDefault();
+        return false;
+      }
+    });
     this.bindHotKey();
     setTimeout(() => {
       this.isShowBgImg = true;
@@ -117,13 +119,13 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/themes/craft/var.scss";
+@import '@/themes/craft/var.scss';
 // common
 * {
   font-family: $font-family-main;
 }
 ::selection {
-  background: $selection!important;
+  background: $selection !important;
 }
 ::-webkit-scrollbar {
   width: $scrollbar-width;
@@ -131,14 +133,15 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: $scrollbar-bg!important;
-  border-radius: $scrollbar-radius!important;
-  &:hover{
-   background: $scrollbar-bg-hover!important;
+  background: $scrollbar-bg !important;
+  border-radius: $scrollbar-radius !important;
+  &:hover {
+    background: $scrollbar-bg-hover !important;
   }
 }
 
-input, textarea {
+input,
+textarea {
   font-size: $font-size-main;
 }
 
@@ -159,16 +162,16 @@ input, textarea {
   height: 10%;
   flex-grow: 1;
   z-index: 10;
-  .side-bar {
+  #side-bar {
     float: left;
     height: 100%;
     overflow: auto;
   }
-  .note-content {
+  #note-content {
     display: block;
     height: 100%;
   }
-  .note-content.zen-mode {
+  #note-content.zen-mode {
     max-width: 1040px;
     margin: 0 auto;
   }
@@ -184,23 +187,6 @@ input, textarea {
   z-index: 10;
 }
 
-// search-note-bar
-#search-note-bar {
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  width: 300px;
-  z-index: 100;
-}
-
-// sticky-note
-#sticky-note {
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  z-index: 100;
-}
-
 // background image
 #bgimg-container {
   position: fixed;
@@ -214,6 +200,18 @@ input, textarea {
     height: 100%;
     object-fit: cover;
   }
+}
+
+// modal
+#modal {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: $catalog-modal-bg;
+  cursor: wait;
+  z-index: 500; // Do not cover the pop-up window used to create the file
 }
 </style>
 

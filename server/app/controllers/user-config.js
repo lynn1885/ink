@@ -11,7 +11,7 @@ exports.get = async (req, res) => {
       res.send(JSON.stringify(data));
     })
     .catch((err) => {
-      console.log('[config] get default & user config');
+      console.log(`${new Date().toLocaleString()}: [config] get default & user config`);
       res.status(500).json(err);
       console.error(err);
     });

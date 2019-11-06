@@ -8,8 +8,9 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 
-notes/
-user-config/user-config.json
+user/
+backup/ 
+logs/
 
 # Editor directories and files
 .idea

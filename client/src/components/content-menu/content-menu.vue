@@ -29,7 +29,7 @@ export default {
   list-style: none;
   margin: 10px 0;
   padding: 0;
-  z-index: 100;
+  z-index: 200;
   li {
     padding: 6px 10px;
     border-bottom: $content-menu-border-bottom;

@@ -1,10 +1,11 @@
 module.exports = {
-  notesDir: './notes/',
-  noteImagesDir: './notes/_images/', // 图片文件夹, 需要手动创建这个文件
-  noteDeletedDir: './notes/_deleted/', // 被删除的文件临时存放的文件夹, 需要手动创建这个文件
-  ignoreNoteDir: ['./notes/_images/', './notes/_icons/', './notes/_deleted/'], // 忽略的笔记文件夹, 不会返回给前端
-  port: 3001,
+  notesDir: './user/notes/', // notes directory
+  noteImagesDir: './user/images/', // images directory
+  noteIconsDir: './user/icons/', // icons directory
+  noteDeletedDir: './user/deleted/', // deleted notes directory
+  port: 3001, // server will listen on this port
   backupInterval: 300, // seconds
   maxBackupFilesNumber: 6,
-  fileSizeLimit: 2000, // KB
+  fileSizeLimit: 200, // KB
+  maxSearchNum: 200, // when searching globally, how many results can you find at most
 };

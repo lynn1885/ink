@@ -15,7 +15,6 @@ export default function (editor, config) {
     if (file) {
       const formData = new FormData();
       formData.append('file', file); // don't modify the argu value 'file', sever will use this value to receive file
-      formData.append('fileName', file.name);
       await _upload(formData, editor, config.upload, config.messager);
     }
   });
@@ -44,8 +43,19 @@ export default function (editor, config) {
               w.clear();
             });
           }
-          const img = $(`<div class="inserted-widget-image"><img src="${baseUrl}${imgMatchRes[1]}"></div>`)[0];
-          editor.cm.getDoc().addLineWidget(line, img);
+          const img = $('<img style="visibility:hidden"></img>');
+          const imgWidget = $('<div class="inserted-widget-image"></div>');
+          imgWidget.append(img);
+          // don't know why the picture is bigger than the real size
+          // scale it to 82% here
+          img.on('load', () => {
+            img.css({
+              width: `${img[0].naturalWidth * 0.82}px`,
+              visibility: 'visible',
+            });
+          });
+          img.attr('src', baseUrl + imgMatchRes[1]);
+          editor.cm.getDoc().addLineWidget(line, imgWidget[0]);
         }, 0);
       }
     }
@@ -64,6 +74,28 @@ async function _upload(formData, editor, upload, messager) {
   const imgInfo = await upload(formData, messager);
   const doc = editor.cm.getDoc();
   const cursor = doc.getCursor();
-  doc.replaceRange(`![](${imgInfo.fileName})\n`, { line: cursor.line, ch: 0 }, { line: cursor.line, ch: 999 });
+  const lineNum = cursor.line;
+  const lineText = doc.getLine(lineNum);
+  let beforeText = '';
+  let endText = '';
+  let addLineNum;
+  let startChar = lineText.length;
+  if (!lineText) {
+    // empty line
+    beforeText = '';
+    addLineNum = 1;
+  } else if (cursor.ch === lineText.length) {
+    // The cursor is at the end of a line.
+    beforeText = '\n';
+    addLineNum = 2;
+  } else {
+    // The cursor is in the middle of a line.
+    beforeText = `${lineText.slice(0, cursor.ch)}\n`;
+    endText = lineText.slice(cursor.ch, lineText.length);
+    startChar = 0;
+    addLineNum = 2;
+  }
+  doc.replaceRange(`${beforeText}![](${imgInfo.dir}/${imgInfo.fileName})\n${endText}`, { line: lineNum, ch: startChar }, { line: lineNum, ch: lineText.length });
+  doc.setCursor({ line: lineNum + addLineNum, ch: 0 });
 }
 

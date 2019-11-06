@@ -18,7 +18,8 @@ module.exports = {
     'no-continue': 'off',
     'import/no-unresolved': 'warn',
     'import/extensions': 'warn',
-    'max-len': 'warn',
+    'max-len': 'off',
+    'comma-dangle': 'off',
   },
   parserOptions: {
     parser: 'babel-eslint',

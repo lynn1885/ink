@@ -3,8 +3,8 @@ const path = require('path');
 const _ = require('lodash');
 
 // 配置路径
-const defaultConfigPath = path.join(__dirname, '../../user-config/default-config.json');
-const userConfigPath = path.join(__dirname, '../../user-config/user-config.json');
+const defaultConfigPath = path.join(__dirname, '../../default-config.json');
+const userConfigPath = path.join(__dirname, '../../user/config/user.json');
 
 /**
  * getDefault: 获取默认配置

@@ -5,9 +5,10 @@ const { serverUrl } = config.server;
 
 const Images = {
   /**
-  * uploadImage: 上传图片
-  * @param formData formData 图片对象
-  */
+   * uploadImage
+   * @param {Object} formData image object
+   * @param {Function} messager messager function
+   */
   async upload(formData, messager) {
     let data;
     if (!formData) {

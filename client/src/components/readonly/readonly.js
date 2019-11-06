@@ -6,9 +6,11 @@ export default {
     if (cm.isReadOnly()) {
       cm.setOption('readOnly', false);
       isActive = false;
+      editor.messager.warning('退出只读模式');
     } else {
       cm.setOption('readOnly', 'nocursor');
       isActive = true;
+      editor.messager.warning('进入只读模式');
     }
     return isActive;
   },

@@ -1,10 +1,11 @@
 <template>
-  <div id="side-bar" :class="{'side-bar-small': isSideBarSmall}">
-    <!-- 工具列表 -->
+  <div id="side-bar" :class="{'side-bar-small-mode': isSideBarSmallMode}">
+    <!-- tool icons -->
     <div id="tool-icons">
       <div
         v-for="t of tools"
-        :title="t.name"
+        v-show="t.icon"
+        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '')"
         :class="{
           'tool-icon': true,
           'active': t.name === activePage || activeButtons[t.name],
@@ -13,45 +14,121 @@
         :key="t.name"
         @click="changeTool(t)"
       >
-        <svg
-          viewBox="0 0 1024 1024"
-          version="1.1"
-          v-html="t.icon"
-          >
-        </svg>
+        <svg viewBox="0 0 1024 1024" version="1.1" v-html="t.icon" />
       </div>
     </div>
 
     <!-- page -->
     <div id="tool-pages">
       <catalog v-show="activePage === 'catalog'"></catalog>
+      <!--never close catalog-->
+      <search v-if="activePage === 'search'"></search>
+      <outline v-if="activePage === 'outline'"></outline>
+      <todo v-if="activePage === 'todo'"></todo>
     </div>
+
+    <!-- other components -->
+    <sticky-note v-if="isShowStickyNote"></sticky-note>
+    <search-note-bar v-if="isShowSearchNoteBar" @close="isShowSearchNoteBar = false"></search-note-bar>
   </div>
 </template>
 <script>
 import Catalog from '@/components/catalog/catalog.vue';
+import Search from '@/components/search/search.vue';
+import Outline from '@/components/outline/outline.vue';
+import Todo from '@/components/todo/todo.vue';
+import StickyNote from '@/components/sticky-note/sticky-note.vue';
+import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
 import readonly from '@/components/readonly/readonly.js';
 // import mindMap from '@/components/mind-map/mind-map.js';
 // eslint-disable-next-line no-unused-vars
-import { bookSvg, stickyNoteSvg, settingSvg, pluginSvg } from './svg';
+import {
+  bookSvg,
+  searchSvg,
+  stickyNoteSvg,
+  // settingSvg,
+  // pluginSvg,
+  outlineSvg,
+  todoSvg,
+} from './svg';
+
+const isEnableConsole = false;
 
 export default {
   name: 'side-bar',
   components: {
     Catalog,
+    Search,
+    Outline,
+    Todo,
+    StickyNote,
+    SearchNoteBar,
   },
   data() {
     return {
-      activePage: 'catalog', // 当前激活的工具
-      activeButtons: {}, // 当前激活的按钮
-      isSideBarSmall: false, // 是否显示为小工具栏状态
+      editor: null,
+      activePage: 'catalog', // current active page
+      activeButtons: {}, // current active buttons
+      isSideBarSmallMode: false, // whether to display side bar in small mode
+      isShowStickyNote: false,
+      isShortcutKeyBinded: false,
+      isShowSearchNoteBar: false,
+      toggleToolPageShortcut: ['Ctrl', 'Shift', 'B'],
+      // tool name must be unique
       tools: [
         {
-          name: 'catalog', icon: bookSvg, type: 'page',
-        }, {
-          name: 'readonly', icon: readonly.icon, type: 'button', onclick: readonly.handler, lastStatus: false,
-        }, {
-          name: 'sticky note', icon: stickyNoteSvg, type: 'button', onclick: this.toggleShowStickyNote, lastStatus: false,
+          name: 'catalog',
+          icon: bookSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'Shift', 'E'],
+        },
+        {
+          name: 'readonly',
+          icon: readonly.icon,
+          type: 'button',
+          onclick: readonly.handler,
+          lastStatus: false,
+        },
+        {
+          name: 'sticky note',
+          icon: stickyNoteSvg,
+          type: 'button',
+          onclick: () => {
+            this.isShowStickyNote = !this.isShowStickyNote;
+            return this.isShowStickyNote;
+          },
+          lastStatus: false,
+        },
+        {
+          name: 'search-note-bar',
+          icon: null,
+          type: 'button',
+          onclick: () => {
+            this.isShowSearchNoteBar = !this.isShowSearchNoteBar;
+            return this.isShowSearchNoteBar;
+          },
+          keyMap: ['Ctrl', 'P'],
+          onEsc: () => {
+            this.isShowSearchNoteBar = false;
+          },
+          lastStatus: false,
+        },
+        {
+          name: 'todo',
+          icon: todoSvg,
+          type: 'page',
+        },
+        {
+          name: 'outline',
+          icon: outlineSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'Shift', 'O'],
+        },
+        {
+          name: 'search',
+          icon: searchSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'F'],
         },
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
@@ -60,25 +137,57 @@ export default {
         // name: 'mind map', icon: mindMap.icon, type: 'button', onclick: mindMap.handler, lastStatus: false,
         // },
         // {
-        //   name: 'setting', icon: settingSvg, type: 'button', onclick: () => {}, lastStatus: false, isBottom: true, // There can only be one "isBottom"
+        //   name: 'setting',
+        //   icon: settingSvg,
+        //   type: 'button',
+        //   onclick: () => {},
+        //   lastStatus: false,
+        //   isBottom: true, // There can only be one "isBottom"
         // },
       ],
     };
   },
+
+  watch: {
+    '$store.state.editor': {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.editor = value;
+          if (isEnableConsole) {
+            console.log('get editor');
+          }
+          if (!this.isShortcutKeyBinded) {
+            this.bindShortcuKey();
+            this.isShortcutKeyBinded = true;
+            if (isEnableConsole) {
+              console.log('bind shortcut key');
+            }
+          }
+        }
+      },
+    },
+  },
+
   methods: {
-    // change tool
-    changeTool(tool) {
+    changeTool(tool, isOpenSideBar) {
+      if (isEnableConsole) {
+        console.log('change tool: ', tool);
+      }
       // "page" tool will open a page, like Catalog tool
       if (tool.type === 'page') {
-        if (this.activePage === tool.name) {
-          this.isSideBarSmall = !this.isSideBarSmall;
-        } else {
-          this.isSideBarSmall = false;
-          this.activePage = tool.name;
+        if (isOpenSideBar || tool.name !== this.activePage) {
+          this.isSideBarSmallMode = false;
+        } else if (tool.name === this.activePage) {
+          this.isSideBarSmallMode = !this.isSideBarSmallMode;
         }
-      // "button" tool is a button, which will trigger something
+        this.activePage = tool.name;
+        // "button" tool is a button, which will trigger something
       } else if (tool.type === 'button' && tool.onclick) {
-        tool.lastStatus = tool.onclick(this.$store.state.editor, tool.lastStatus);
+        tool.lastStatus = tool.onclick(
+          this.$store.state.editor,
+          tool.lastStatus
+        );
         if (!this.activeButtons[tool.name]) {
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
         }
@@ -90,24 +199,47 @@ export default {
       }
     },
 
-    // toggle if show sticky note
-    toggleShowStickyNote() {
-      const isActive = !this.$store.state.isShowStickyNote;
-      this.$store.commit('updateIsShowStickyNote', isActive);
-      return isActive;
+    bindShortcuKey() {
+      // toggle side page
+      this.editor.bindShortcutKeyMap(
+        document,
+        this.toggleToolPageShortcut,
+        () => {
+          this.isSideBarSmallMode = !this.isSideBarSmallMode;
+        }
+      );
+
+      // bind shortcut key for tools
+      for (const tool of this.tools) {
+        // esc
+        if (tool.onEsc) {
+          document.addEventListener('keydown', (e) => {
+            if (e.keyCode === 27) {
+              tool.onEsc();
+            }
+          });
+        }
+        // change tool
+        if (!tool.keyMap) {
+          continue;
+        } else {
+          this.editor.bindShortcutKeyMap(document, tool.keyMap, () =>
+            this.changeTool(tool, true));
+        }
+      }
     },
   },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "@/themes/craft/var.scss";
+@import '@/themes/craft/var.scss';
 // side bar
 #side-bar {
   display: flex;
   position: relative;
-  width: $side-bar-width;
-  &.side-bar-small { // 小工具栏
+  width: $sidebar-width;
+  &.side-bar-small-mode {
     width: $icon-bar-width;
     #tool-pages {
       display: none;
@@ -125,6 +257,7 @@ export default {
   .tool-icon {
     width: $icon-bar-width;
     height: $icon-bar-width;
+    margin-bottom: 2px;
     line-height: $icon-bar-width;
     text-align: center;
     cursor: pointer;
@@ -158,7 +291,24 @@ export default {
   flex-grow: 1;
   overflow-x: hidden;
   overflow-y: auto;
-  background-color: $tool-page-bar-bg;
+  background-color: $tool-page-bg;
 }
 
+// other components
+// sticky-note
+#sticky-note {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  z-index: $float-window-index;
+}
+
+// search-note-bar
+#search-note-bar {
+  position: fixed;
+  right: 10px;
+  top: 10px;
+  width: 300px;
+  z-index: $above-float-window-index;
+}
 </style>
