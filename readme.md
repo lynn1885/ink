@@ -74,6 +74,7 @@
 48. 颜色不应该写死在vue文件中, 包括darken()这种也应放在var里
 49. 把default.json迁出user, 让user中纯粹是用户自己的文件
 50. 通过快捷键新建一个标题时: 如果跨度过大, 这标题也不会滚动到屏幕中间来
+51. github的邮件报错
 
 ## Features
 2. editor: 支持$$数学
