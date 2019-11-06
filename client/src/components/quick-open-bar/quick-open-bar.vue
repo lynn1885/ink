@@ -8,6 +8,7 @@
       }"
       v-show="noteDir"
       :key="noteDir"
+      :title="noteDir.slice(0, noteDir.length - 1)"
       v-for="noteDir of allNoteDirs"
       @click="switchNote($event, noteDir)"
       @dblclick="fixThisNoteDir(noteDir)"
