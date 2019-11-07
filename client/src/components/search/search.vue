@@ -260,6 +260,10 @@ export default {
       this.updateTimer = setTimeout(() => {
         const startTime = new Date();
         if (this.isGlobal) {
+          let searchText = this.lastSearchText;
+          if (this.searchText.includes('|')) {
+            [, searchText] = this.lastSearchText.split('|');
+          }
           // global
           // after the global search, you will get a result set
           // when you are updating your note content(instead of jumping to another note)
@@ -274,7 +278,7 @@ export default {
             }
             for (let i = 0; i < this.searchResults.length; i += 1) {
               if (this.searchResults[i].dir === this.curFileDir) {
-                const searchRes = this.searchCurrent(this.lastSearchText);
+                const searchRes = this.searchCurrent(searchText);
                 if (searchRes && searchRes.res && searchRes.res[0]) {
                   this.searchedItemsNum =
                     // eslint-disable-next-line no-mixed-operators
