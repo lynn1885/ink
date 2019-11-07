@@ -42,7 +42,7 @@ export default function (editor) {
         }
         // set cursor
         const insertLineCh = cm.lineInfo(insertLineNum).text.length;
-        doc.replaceRange(`\n${headerStr} `, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
+        doc.replaceRange(`\n${headerStr}`, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
         doc.setSelection(
           { line: insertLineNum + 1, ch: headerLv + 1 },
           { line: insertLineNum + 1, ch: headerStr.length },
