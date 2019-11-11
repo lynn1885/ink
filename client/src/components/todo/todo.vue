@@ -115,13 +115,13 @@ export default {
         const updateConsumption = new Date() - startTime;
         if (updateConsumption > 50) {
           console.warn(
-            'It took too long to update todos(without delay, ms): ',
+            'It took too long to update todos: ',
             updateConsumption
           );
         }
         if (isEnableConsole) {
           console.log(
-            'cumulative update consumption(without delay, ms): ',
+            'cumulative update consumption: ',
             updateConsumption
           );
         }
@@ -207,8 +207,7 @@ export default {
     box-sizing: border-box;
     box-shadow: 0px 0px 2px 0px darken($color: $tool-page-bg, $amount: 4);
     cursor: pointer;
-    .header,
-    .line-number {
+    .header {
       color: $comment-color;
       overflow: hidden;
       text-overflow: ellipsis;

@@ -57,7 +57,7 @@
       <div class="note" :key="note.dir" v-for="note of searchResults">
         <div
           class="note-dir"
-          :title="note.dir"
+          :title="`${note.dir} (${note.items.length})`"
           v-if="note.items.length > 0"
           @click="closedSearchRes[note.dir] ? $set(closedSearchRes, note.dir, false) : $set(closedSearchRes, note.dir, true)"
           @dblclick="closedSearchRes[note.dir] ? searchResults.forEach(note =>  $set(closedSearchRes, note.dir, false)) : searchResults.forEach(note =>  $set(closedSearchRes, note.dir, true))"

@@ -47,10 +47,10 @@ export default function (editor, config) {
           const imgWidget = $('<div class="inserted-widget-image"></div>');
           imgWidget.append(img);
           // don't know why the picture is bigger than the real size
-          // scale it to 82% here
+          // scale it to 81% here
           img.on('load', () => {
             img.css({
-              width: `${img[0].naturalWidth * 0.82}px`,
+              width: `${img[0].naturalWidth * 0.81}px`,
               visibility: 'visible',
             });
           });

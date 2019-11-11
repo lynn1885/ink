@@ -20,11 +20,11 @@
 
     <!-- page -->
     <div id="tool-pages">
-      <catalog v-show="activePage === 'catalog'"></catalog>
+      <catalog v-show="activePage === 'Catalog'"></catalog>
       <!--never close catalog-->
-      <search v-if="activePage === 'search'"></search>
-      <outline v-if="activePage === 'outline'"></outline>
-      <todo v-if="activePage === 'todo'"></todo>
+      <search v-if="activePage === 'Search'"></search>
+      <outline v-if="activePage === 'Outline'"></outline>
+      <todo v-if="activePage === 'Todo'"></todo>
     </div>
 
     <!-- other components -->
@@ -67,7 +67,7 @@ export default {
   data() {
     return {
       editor: null,
-      activePage: 'catalog', // current active page
+      activePage: 'Catalog', // current active page
       activeButtons: {}, // current active buttons
       isSideBarSmallMode: false, // whether to display side bar in small mode
       isShowStickyNote: false,
@@ -77,20 +77,20 @@ export default {
       // tool name must be unique
       tools: [
         {
-          name: 'catalog',
+          name: 'Catalog',
           icon: bookSvg,
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'E'],
         },
         {
-          name: 'readonly',
+          name: 'Read Only',
           icon: readonly.icon,
           type: 'button',
           onclick: readonly.handler,
           lastStatus: false,
         },
         {
-          name: 'sticky note',
+          name: 'Sticky Note',
           icon: stickyNoteSvg,
           type: 'button',
           onclick: () => {
@@ -100,7 +100,7 @@ export default {
           lastStatus: false,
         },
         {
-          name: 'search-note-bar',
+          name: 'Search Note Bar',
           icon: null,
           type: 'button',
           onclick: () => {
@@ -114,18 +114,18 @@ export default {
           lastStatus: false,
         },
         {
-          name: 'todo',
+          name: 'Todo',
           icon: todoSvg,
           type: 'page',
         },
         {
-          name: 'outline',
+          name: 'Outline',
           icon: outlineSvg,
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
         {
-          name: 'search',
+          name: 'Search',
           icon: searchSvg,
           type: 'page',
           keyMap: ['Ctrl', 'F'],
