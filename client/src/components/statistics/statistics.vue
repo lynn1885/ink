@@ -3,8 +3,16 @@
     <!-- top bar -->
     <div id="top-bar">
       <div class="buttons">
-        <button class="get-statistics" @click="getStatistics" :disabled="isGettingStatistics">Get Statistics</button>
-        <button class="sort" :disabled="!isGetStatisticsDone" @click="sort">{{isSorted ? 'Unsort': ' Sort'}}</button>
+        <button
+          class="get-statistics"
+          @click="getStatistics"
+          :disabled="isGettingStatistics"
+        >Get Statistics</button>
+        <button
+          class="sort"
+          :disabled="!isGetStatisticsDone"
+          @click="sort"
+        >{{isSorted ? 'Unsort': ' Sort'}}</button>
       </div>
       <div class="tips">
         <div
@@ -259,54 +267,59 @@ export default {
      * @param {String} curSelectedPath current selected note path
      */
     updateDisplayFilesInfo(curSelectedPath) {
-      if (
-        !this.allFilesInfoProcessed ||
-        !curSelectedPath ||
-        this.allFilesInfoProcessed[curSelectedPath].lv === 3
-      ) {
-        return;
-      }
-      const res = {};
-      if (curSelectedPath === '/') {
-        for (const notePath in this.allFilesInfoProcessed) {
-          if (this.allFilesInfoProcessed[notePath].lv <= 1) {
-            res[notePath] = this.allFilesInfoProcessed[notePath];
-          }
-        }
-        this.lastSelectedPath = curSelectedPath;
-      } else if (curSelectedPath === this.lastSelectedPath || this.lastSelectedPath.includes(`${curSelectedPath}/`)) {
-        Object.keys(this.displayFileInfo).forEach((notePath) => {
-          if (!notePath.includes(`${curSelectedPath}/`)) {
-            res[notePath] = this.displayFileInfo[notePath];
-          }
-        });
-        this.lastSelectedPath = '';
-      } else if (curSelectedPath !== this.lastSelectedPath) {
-        const notePathArr = curSelectedPath.split('/');
-        for (const notePath in this.allFilesInfoProcessed) {
-          if (this.allFilesInfoProcessed[notePath].lv <= 1) {
-            res[notePath] = this.allFilesInfoProcessed[notePath];
-          } else if (
-            notePath.includes(`${curSelectedPath}/`) &&
-            this.allFilesInfoProcessed[notePath].lv ===
-              this.allFilesInfoProcessed[curSelectedPath].lv + 1
-          ) {
-            res[notePath] = this.allFilesInfoProcessed[notePath];
-          } else if (notePath === curSelectedPath) {
-            res[notePath] = this.allFilesInfoProcessed[notePath];
-          } else if (notePathArr.length === 2) {
-            if (
-              notePath === notePathArr[0] ||
-              (notePath.includes(`${notePathArr[0]}/`) &&
-                this.allFilesInfoProcessed[notePath].lv === 2)
-            ) {
+      if (!this.allFilesInfoProcessed || !curSelectedPath) {
+        // do nothing
+      } else if (this.allFilesInfoProcessed[curSelectedPath].lv === 3) {
+        this.$store.commit(
+          'updateGotoThisCatalog',
+          curSelectedPath.split('/').slice(0, 3)
+        );
+      } else {
+        const res = {};
+        if (curSelectedPath === '/') {
+          for (const notePath in this.allFilesInfoProcessed) {
+            if (this.allFilesInfoProcessed[notePath].lv <= 1) {
               res[notePath] = this.allFilesInfoProcessed[notePath];
             }
           }
+          this.lastSelectedPath = curSelectedPath;
+        } else if (
+          curSelectedPath === this.lastSelectedPath ||
+          this.lastSelectedPath.includes(`${curSelectedPath}/`)
+        ) {
+          Object.keys(this.displayFileInfo).forEach((notePath) => {
+            if (!notePath.includes(`${curSelectedPath}/`)) {
+              res[notePath] = this.displayFileInfo[notePath];
+            }
+          });
+          this.lastSelectedPath = '';
+        } else if (curSelectedPath !== this.lastSelectedPath) {
+          const notePathArr = curSelectedPath.split('/');
+          for (const notePath in this.allFilesInfoProcessed) {
+            if (this.allFilesInfoProcessed[notePath].lv <= 1) {
+              res[notePath] = this.allFilesInfoProcessed[notePath];
+            } else if (
+              notePath.includes(`${curSelectedPath}/`) &&
+              this.allFilesInfoProcessed[notePath].lv ===
+                this.allFilesInfoProcessed[curSelectedPath].lv + 1
+            ) {
+              res[notePath] = this.allFilesInfoProcessed[notePath];
+            } else if (notePath === curSelectedPath) {
+              res[notePath] = this.allFilesInfoProcessed[notePath];
+            } else if (notePathArr.length === 2) {
+              if (
+                notePath === notePathArr[0] ||
+                (notePath.includes(`${notePathArr[0]}/`) &&
+                  this.allFilesInfoProcessed[notePath].lv === 2)
+              ) {
+                res[notePath] = this.allFilesInfoProcessed[notePath];
+              }
+            }
+          }
+          this.lastSelectedPath = curSelectedPath;
         }
-        this.lastSelectedPath = curSelectedPath;
+        this.displayFileInfo = res;
       }
-      this.displayFileInfo = res;
     },
 
     /**

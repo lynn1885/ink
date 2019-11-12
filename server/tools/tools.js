@@ -75,6 +75,7 @@ exports.uniformizeCatalogObj = function uniformizeCatalogObj(userCatalog, realDi
 
 /**
  * calWordCount
+ * ⚠️ This algorithm is coupled with the front-end word count algorithm.
  * @param {String} text
  */
 exports.calWordCount = function calWordCount(text) {
@@ -83,5 +84,6 @@ exports.calWordCount = function calWordCount(text) {
     englishWordCount += 1;
     return '';
   });
+  text = text.replace(/\s+/g, '');
   return text.length + englishWordCount;
 };

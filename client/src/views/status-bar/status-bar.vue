@@ -59,7 +59,11 @@ export default {
         this.getWordAndLineCount();
       }, this.updateDelay);
     },
-    // calculate word count & line count
+
+    /**
+     * calculate word count & line count
+     * ⚠️ This algorithm is coupled with the back-end word count algorithm.
+     */
     getWordAndLineCount() {
       const startTime = new Date();
       const doc = this.editor.cm.getDoc();
@@ -71,6 +75,7 @@ export default {
         englishWordCount += 1;
         return '';
       });
+      text = text.replace(/\s+/g, '');
       this.wordCount = text.length + englishWordCount;
       const updateConsumption = new Date() - startTime;
       if (updateConsumption > 10) {
