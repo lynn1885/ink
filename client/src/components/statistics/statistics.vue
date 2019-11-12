@@ -7,12 +7,12 @@
           class="get-statistics"
           @click="getStatistics"
           :disabled="isGettingStatistics"
-        >Get Statistics</button>
+        >获取</button>
         <button
           class="sort"
           :disabled="!isGetStatisticsDone"
           @click="sort"
-        >{{isSorted ? 'Unsort': ' Sort'}}</button>
+        >{{isSorted ? '取消排序': ' 排序'}}</button>
       </div>
       <div class="tips">
         <div
@@ -415,7 +415,7 @@ export default {
       margin-right: 3px;
     }
     button {
-      padding: 4px 0px;
+      padding: 3px 0px;
       border: 1px solid $sidebar-button-border-color;
       font-size: $font-size-sidebar;
       box-sizing: border-box;

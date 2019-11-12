@@ -38,12 +38,14 @@ export default {
       }
     },
     // eslint-disable-next-line func-names
-    '$store.state.catalog': function (value) {
-      if (value) {
-        if (this.editor && this.editor.catalog) {
+    '$store.state.catalog': {
+      immediate: true,
+      deep: true,
+      handler(value) {
+        if (value && this.editor && this.editor.catalogPlugin) {
           this.noteCount = this.editor.catalogPlugin.getNoteCount();
         }
-      }
+      },
     },
     // eslint-disable-next-line func-names
     '$store.state.curFilePath': function (value) {
