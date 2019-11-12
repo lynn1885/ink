@@ -977,6 +977,23 @@ export default {
 
     // 拖动: 启用默认事件
     enableDefault() {},
+
+    // get note count
+    _getNoteCount(catalog = this.catalog) {
+      let count = 0;
+      // eslint-disable-next-line no-restricted-syntax
+      for (const lv1 in catalog) {
+        if (catalog[lv1]) {
+          // eslint-disable-next-line no-restricted-syntax
+          for (const lv2 in catalog[lv1]) {
+            if (catalog[lv1][lv2]) {
+              count += Object.keys(catalog[lv1][lv2]).length;
+            }
+          }
+        }
+      }
+      return count;
+    },
   },
 
   // 生命周期: dom加载完毕后
@@ -984,6 +1001,9 @@ export default {
     this.closeCatalogContextMenuOnClick(); // 设置在别的地方点击时会关闭右键菜单
     this.$watch('$store.state.editor', async (editor) => { // 等待editor加载完成
       if (editor) {
+        this.$store.state.editor.catalogPlugin = { // mount method
+          getNoteCount: this._getNoteCount,
+        };
         await this.getCatalog(); // 获取目录结构
       }
     }, { immediate: true });

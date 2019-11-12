@@ -11,7 +11,7 @@ $icon-size: 22px;
 
 // common
 $selection: rgb(242, 230, 250);
-$comment-color: #aaa;
+$comment-color: #a6a6a6;
 $warning-color: #e6a23c;
 $warning-bg: #fdf6ec;
 $active-color: rgb(164, 119, 222);
@@ -46,8 +46,8 @@ $icon-color-hover: #888;
 // sidebar: element
 $sidebar-button-bg: lighten($color: $tool-page-bg, $amount: 10);
 $sidebar-button-border-color: darken($color: $tool-page-bg, $amount: 2);
-$sidebar-button-disabled-bg: lighten($color: $tool-page-bg, $amount: 1);
-$sidebar-button-disabled-color: $comment-color;
+$sidebar-button-disabled-bg: lighten($color: $tool-page-bg, $amount: 2);
+$sidebar-button-disabled-color: #ccc;
 $sidebar-input-bg: $sidebar-button-bg;
 $sidebar-input-border-color: $sidebar-button-border-color;
 $sidebar-input-disabled-bg: $sidebar-button-disabled-bg;

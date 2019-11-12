@@ -53,8 +53,8 @@ exports.isFileNameValid = function isFileNameValid(fileName) {
 /**
  * uniformizeCatalogObj: 一致化catalog对象
  * 会根据传入的realDir, 对userCatalog对象进行补全和移除, 返回生成的新catalog记录
- * @param {object} userCatalog 用户配置中的目录, 和user-config.json中的catalog.order对象的格式强耦合
- * @param {object} realDir 真实目录, 需要和userCatalog的格式保持一致
+ * @param {Object} userCatalog 用户配置中的目录, 和user-config.json中的catalog.order对象的格式强耦合
+ * @param {Object} realDir 真实目录, 需要和userCatalog的格式保持一致
  */
 exports.uniformizeCatalogObj = function uniformizeCatalogObj(userCatalog, realDir) {
   const allDir = _.merge(userCatalog, realDir); // 会改变recordDir
@@ -71,4 +71,17 @@ exports.uniformizeCatalogObj = function uniformizeCatalogObj(userCatalog, realDi
       }
     }
   }
+};
+
+/**
+ * calWordCount
+ * @param {String} text
+ */
+exports.calWordCount = function calWordCount(text) {
+  let englishWordCount = 0;
+  text = text.replace(/\b[a-zA-Z]+\b/g, () => {
+    englishWordCount += 1;
+    return '';
+  });
+  return text.length + englishWordCount;
 };

@@ -119,6 +119,33 @@ const Files = {
       });
     return searchRes;
   },
+
+  /**
+   * get all files info
+   * @param {Function} messager 通知器
+   */
+  async getAllFilesInfo(messager) {
+    let fileInfo = null;
+
+    await axios.get(`${serverUrl}get-all-files-info`)
+      .then((res) => {
+        if (res.status === 200) {
+          fileInfo = res.data;
+        } else {
+          if (messager) {
+            messager.error(`getAllFilesInfo(): Bad HTTP status: ${res}`);
+          }
+          throw new Error(`getAllFilesInfo(): Bad HTTP status: ${res}`);
+        }
+      })
+      .catch((err) => {
+        if (messager) {
+          messager.error(`getAllFilesInfo failed: ${err}`);
+        }
+        throw new Error(`getAllFilesInfo failed: ${err}`);
+      });
+    return fileInfo;
+  },
 };
 
 export default Files;

@@ -25,6 +25,7 @@
       <search v-if="activePage === 'Search'"></search>
       <outline v-if="activePage === 'Outline'"></outline>
       <todo v-if="activePage === 'Todo'"></todo>
+      <statistics v-if="activePage === 'Statistics'"></statistics>
     </div>
 
     <!-- other components -->
@@ -39,6 +40,7 @@ import Outline from '@/components/outline/outline.vue';
 import Todo from '@/components/todo/todo.vue';
 import StickyNote from '@/components/sticky-note/sticky-note.vue';
 import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
+import Statistics from '@/components/statistics/statistics.vue';
 import readonly from '@/components/readonly/readonly.js';
 // import mindMap from '@/components/mind-map/mind-map.js';
 // eslint-disable-next-line no-unused-vars
@@ -50,6 +52,7 @@ import {
   // pluginSvg,
   outlineSvg,
   todoSvg,
+  statisticsSvg,
 } from './svg';
 
 const isEnableConsole = false;
@@ -63,6 +66,7 @@ export default {
     Todo,
     StickyNote,
     SearchNoteBar,
+    Statistics,
   },
   data() {
     return {
@@ -129,6 +133,10 @@ export default {
           icon: searchSvg,
           type: 'page',
           keyMap: ['Ctrl', 'F'],
+        }, {
+          name: 'Statistics',
+          icon: statisticsSvg,
+          type: 'page',
         },
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
@@ -292,6 +300,8 @@ export default {
   overflow-x: hidden;
   overflow-y: auto;
   background-color: $tool-page-bg;
+  color: $tool-page-color;
+  font-size: $font-size-sidebar;
 }
 
 // other components

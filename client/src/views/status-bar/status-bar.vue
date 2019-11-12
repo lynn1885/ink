@@ -7,9 +7,7 @@
     <div
       :class="{ 'word-count': true, items: true, warning: wordCount >= recommendedMaxNumOfWords }"
       :title="`Word Count: ${wordCount}${wordCount >= recommendedMaxNumOfWords ? '\nThe number of words in this note exceeds ' + recommendedMaxNumOfWords + ', which may cause performance problems. It is recommended to split this note.' : ''}`"
-    >
-      Words: {{ wordCount }}
-    </div>
+    >Words: {{ wordCount }}</div>
   </div>
 </template>
 <script>
@@ -33,20 +31,22 @@ export default {
   },
   watch: {
     // eslint-disable-next-line func-names
-    '$store.state.editor': function(value) {
+    '$store.state.editor': function (value) {
       if (value) {
         this.editor = value;
         this.editor.on('changes', this.changesHandler);
       }
     },
     // eslint-disable-next-line func-names
-    '$store.state.catalog': function(value) {
+    '$store.state.catalog': function (value) {
       if (value) {
-        this.getNoteCount(value);
+        if (this.editor && this.editor.catalog) {
+          this.noteCount = this.editor.catalogPlugin.getNoteCount();
+        }
       }
     },
     // eslint-disable-next-line func-names
-    '$store.state.curFilePath': function(value) {
+    '$store.state.curFilePath': function (value) {
       if (value) {
         this.notePath = value.replace(/\/[^/]+.md/, '');
       }
@@ -82,23 +82,6 @@ export default {
       if (isEnableConsole) {
         console.log('cumulative update consumption: ', updateConsumption);
       }
-    },
-
-    // get note count
-    getNoteCount(catalog) {
-      let count = 0;
-      // eslint-disable-next-line no-restricted-syntax
-      for (const lv1 in catalog) {
-        if (catalog[lv1]) {
-          // eslint-disable-next-line no-restricted-syntax
-          for (const lv2 in catalog[lv1]) {
-            if (catalog[lv1][lv2]) {
-              count += Object.keys(catalog[lv1][lv2]).length;
-            }
-          }
-        }
-      }
-      this.noteCount = count;
     },
 
     // copy current note path

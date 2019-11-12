@@ -20,6 +20,7 @@ module.exports = {
     'import/extensions': 'warn',
     'max-len': 'off',
     'comma-dangle': 'off',
+    'function-paren-newline': 'warn',
   },
   parserOptions: {
     parser: 'babel-eslint',

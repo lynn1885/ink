@@ -2,6 +2,7 @@ const path = require('path');
 const Files = require('../models/files');
 const Directories = require('../models/directories');
 const config = require('../../config');
+const tools = require('../../tools/tools');
 
 const isEnableConsole = false;
 /**
@@ -220,4 +221,41 @@ exports.searchAllFiles = async (req, res) => {
     searchedItemsNum,
     res: searchRes,
   });
+};
+
+/**
+ * getAllFilesInfoList
+ */
+exports.getAllFilesInfoList = async (req, res) => {
+  console.log(`${new Date().toLocaleString()}: [get all files info]`);
+  const allDir = await Directories.getRecursively(config.notesDir);
+  const pathArr = [];
+  Object.keys(allDir).forEach((dir1) => {
+    Object.keys(allDir[dir1]).forEach((dir2) => {
+      Object.keys(allDir[dir1][dir2]).forEach(async (file) => {
+        pathArr.push(`${dir1}/${dir2}/${file}/${file}.md`);
+      });
+    });
+  });
+
+  // read
+  let readIndex = 0;
+  async function _read() {
+    if (readIndex < pathArr.length) {
+      const notePath = pathArr[readIndex];
+      let fileContent = '';
+      try {
+        fileContent = await Files.read(path.join(config.notesDir, notePath));
+      } catch (e) {
+        console.log(`${new Date().toLocaleString()}: [WARNING: get all files info]: cannot open `, notePath);
+      }
+      const curNotePathSegment = notePath.split('.md')[0].split('/');
+      allDir[curNotePathSegment[0]][curNotePathSegment[1]][curNotePathSegment[2]].wordCount = tools.calWordCount(fileContent);
+      readIndex += 1;
+      await _read();
+    }
+  }
+  await _read();
+
+  res.send(allDir);
 };

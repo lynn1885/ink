@@ -25,6 +25,7 @@ router.delete('/directories', directories.delete);
 // file
 router.get('/files', files.get);
 router.get('/search-all-files', files.searchAllFiles);
+router.get('/get-all-files-info', files.getAllFilesInfoList);
 router.put('/files', bodyParser.json({ limit: `${config.fileSizeLimit}kb` }), files.update);
 
 // image
