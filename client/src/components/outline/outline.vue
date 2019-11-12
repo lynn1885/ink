@@ -145,6 +145,7 @@ export default {
     // calculate headers to disply in the outline area
     calDisplayHeaders(curCursorLineNum) {
       if (!this.allHeaders || this.allHeaders.length === 0) {
+        this.displayHeaders = [];
         return;
       }
       // calculate the active header
@@ -192,6 +193,7 @@ export default {
         }
       }
       if (!activeHeader) {
+        this.displayHeaders = [];
         return;
       }
 
