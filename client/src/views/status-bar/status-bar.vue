@@ -26,7 +26,14 @@ export default {
       notePath: '', // current file path
       updateTimer: null,
       updateDelay: 2000,
+      changeSeasonTimeInterval: 3000,
       recommendedMaxNumOfWords: 30000,
+      season: '',
+      time: '',
+      curSeasonTimeType: 'season',
+      seasonTimeTypes: ['season', 'time', 'icon'],
+      seasonTimeIcons: ['___spring1___', '___summer1___', '___autumn1___', '___winter___'],
+      seasonTimeIcon: '',
     };
   },
   watch: {
@@ -91,7 +98,9 @@ export default {
       }
     },
 
-    // copy current note path
+    /**
+     * copy current note path
+     */
     copyNotePath() {
       const text = this.notePath;
       const element = $(`<textarea>${text}</textarea>`); // This element cannot be display none or hidden
@@ -108,7 +117,7 @@ export default {
 @import '@/themes/craft/var.scss';
 #status-bar {
   box-sizing: border-box;
-  font-size: 13px;
+  font-size: $font-size-sidebar;
   text-align: right;
   color: $tool-page-color;
   background-color: $tool-page-bg;
@@ -133,5 +142,13 @@ export default {
 .warning {
   background: $warning-bg;
   color: $warning-color;
+}
+.season-time {
+  .icon {
+    height: $font-size-sidebar;
+  }
+  .autumn {
+    color:rgb(240, 214, 167);
+  }
 }
 </style>

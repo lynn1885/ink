@@ -37,7 +37,7 @@ export default {
       curFileDir: '',
       fixedNoteDirs: [],
       tempNoteDir: '',
-      maxFixedNum: 5,
+      maxFixedNum: 7,
       closeButtonClass: 'close-button',
     };
   },
@@ -106,12 +106,13 @@ export default {
           }
           // clear tempNoteDir
           if (this.tempNoteDir) {
+            const dirArr = this.tempNoteDir.split('/').slice(0, 3);
             let isExist = false;
             if (
-              typeof value[this.tempNoteDir[0]] === 'object' &&
-              typeof value[this.tempNoteDir[0]][this.tempNoteDir[1]] &&
-              typeof value[this.tempNoteDir[0]][this.tempNoteDir[1]][
-                this.tempNoteDir[2]
+              typeof value[dirArr[0]] === 'object' &&
+              typeof value[dirArr[0]][dirArr[1]] &&
+              typeof value[dirArr[0]][dirArr[1]][
+                dirArr[2]
               ] === 'object'
             ) {
               isExist = true;

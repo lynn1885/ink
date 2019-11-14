@@ -48,7 +48,7 @@ export default {
       searchRes: [], // search results
       searchTimeoutId: null, // search timeout id (for search function throttle)
       searchDealy: 240, // ms (for search function throttle)
-      maxSearchResLength: 20,
+      maxSearchResLength: 30,
       maxSearchResLengthWarn: '',
       curSelectedSearchResBias: 0, // current selected search results bias, press ↑, bias += 1, press ↓, bias -= 1
       staticIconUrl: config.server.staticIconUrl,
