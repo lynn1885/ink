@@ -9,14 +9,14 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "codemirror": "^5.40.2",
     "codemirror-widgets": "^1.4.2",
     "element-ui": "^2.4.8",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "jsmind": "^0.4.6",
     "katex": "^0.10.0-rc.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "markdown-it": "^8.4.2",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
@@ -27,7 +27,9 @@
     "@vue/cli-plugin-eslint": "^3.0.3",
     "@vue/cli-service": "^3.0.3",
     "@vue/eslint-config-airbnb": "^3.0.3",
-    "node-sass": "^4.9.0",
+    "browserslist": "^4.7.2",
+    "caniuse-lite": "^1.0.30001010",
+    "node-sass": "^4.13.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17"
   }

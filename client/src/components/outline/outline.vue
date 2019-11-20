@@ -315,7 +315,7 @@ export default {
     margin-top: 10px;
   }
   .header1:first-of-type {
-    margin-top: 4px;
+    padding-top: 4px;
   }
   .header1 {
     color: $header-1;

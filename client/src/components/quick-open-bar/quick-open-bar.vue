@@ -10,6 +10,7 @@
       :key="noteDir"
       :title="noteDir.slice(0, noteDir.length - 1)"
       v-for="noteDir of allNoteDirs"
+      @mousedown="closeNoteByMidBtn($event, noteDir)"
       @click="switchNote($event, noteDir)"
       @dblclick="fixThisNoteDir(noteDir)"
     >
@@ -157,6 +158,12 @@ export default {
       }
     },
 
+    closeNoteByMidBtn(e, noteDir) {
+      if (e.which === 2 && noteDir) {
+        this.closeNote(noteDir);
+      }
+    },
+
     async closeNote(noteDir) {
       // Can it still be closed
       if (this.allNoteDirs.length <= 1) {
@@ -292,7 +299,7 @@ export default {
     }
   }
   .active {
-    background: $editor-bg;
+    background: $editor-bg!important;
   }
   .fixed {
     font-style: normal;
