@@ -80,7 +80,7 @@ exports.uniformizeCatalogObj = function uniformizeCatalogObj(userCatalog, realDi
  */
 exports.calWordCount = function calWordCount(text) {
   let englishWordCount = 0;
-  text = text.replace(/\b[a-zA-Z]+\b/g, () => {
+  text = text.replace(/\b[a-zA-Z-]+\b/g, () => {
     englishWordCount += 1;
     return '';
   });

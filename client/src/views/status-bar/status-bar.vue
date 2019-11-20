@@ -80,7 +80,7 @@ export default {
       this.wordCount = text.length;
       this.lineCount = doc.lineCount();
       let englishWordCount = 0;
-      text = text.replace(/\b[a-zA-Z]+\b/g, () => {
+      text = text.replace(/\b[a-zA-Z-]+\b/g, () => {
         englishWordCount += 1;
         return '';
       });
