@@ -19,14 +19,14 @@
     </div>
 
     <!-- page -->
-    <div id="tool-pages">
-      <catalog v-show="activePage === 'Catalog'"></catalog>
-      <!--never close catalog-->
-      <search v-if="activePage === 'Search'"></search>
-      <outline v-if="activePage === 'Outline'"></outline>
-      <todo v-if="activePage === 'Todo'"></todo>
-      <statistics v-if="activePage === 'Statistics'"></statistics>
-    </div>
+      <div id="tool-pages">
+          <catalog v-show="activePage === 'Catalog'"></catalog>
+          <!--never close catalog-->
+          <search v-if="activePage === 'Search'"></search>
+          <outline v-if="activePage === 'Outline'"></outline>
+          <todo v-if="activePage === 'Todo'"></todo>
+          <statistics v-if="activePage === 'Statistics'"></statistics>
+      </div>
 
     <!-- other components -->
     <sticky-note v-if="isShowStickyNote"></sticky-note>

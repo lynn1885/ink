@@ -6,7 +6,7 @@
     <div class="line-count items" :title="`Line Count: ${lineCount}`">Lines: {{ lineCount }}</div>
     <div
       :class="{ 'word-count': true, items: true, warning: wordCount >= recommendedMaxNumOfWords }"
-      :title="`Word Count: ${wordCount}${wordCount >= recommendedMaxNumOfWords ? '\nThe number of words in this note exceeds ' + recommendedMaxNumOfWords + ', which may cause performance problems. It is recommended to split this note.' : ''}`"
+      :title="`Word Count: ${wordCount}${wordCount >= recommendedMaxNumOfWords ? '\nThe number of words in this note exceeds ' + recommendedMaxNumOfWords + ', which may cause performance problems. It is recommended to split this note into several notes.' : ''}`"
     >Words: {{ wordCount }}</div>
   </div>
 </template>

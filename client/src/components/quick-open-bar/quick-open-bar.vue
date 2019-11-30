@@ -268,7 +268,7 @@ export default {
 @import '@/themes/craft/var.scss';
 #quick-open-bar {
   display: flex;
-  height: 28px;
+  height: 30px;
   width: 100%;
   padding: 0px;
   margin: 0px;
@@ -283,7 +283,7 @@ export default {
     flex-basis: 160px;
     flex-grow: 0;
     height: 100%;
-    line-height: 28px;
+    line-height: 30px;
     padding: 0px 12px 0px 4px;
     text-align: center;
     box-sizing: border-box;
@@ -335,4 +335,3 @@ export default {
   }
 }
 </style>
-

@@ -76,6 +76,7 @@ export default {
           .split('/')
           .slice(0, 2)
           .join('/');
+        this.searchText += '/';
       }
       setTimeout(() => {
         if (this.$refs['search-input']) {
@@ -103,19 +104,7 @@ export default {
         const res = [];
         if (!searchText) {
           return;
-        } else if (searchText.includes(' ') && searchText[0] !== ' ') {
-          const reg = new RegExp(searchText.replace(/ +/g, '.+'), 'i');
-          for (const cat of this.catalogArr) {
-            if (reg.test(cat)) {
-              i += 1;
-              res.push(cat);
-              if (i >= this.maxSearchResLength) {
-                this.maxSearchResLengthWarn = `Only the top ${this.maxSearchResLength} results are displayed`;
-                break;
-              }
-            }
-          }
-        } else {
+        } else if (searchText) {
           for (const cat of this.catalogArr) {
             if (cat.toLowerCase().includes(searchText.toLowerCase())) {
               i += 1;

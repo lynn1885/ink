@@ -29,11 +29,11 @@ export default {
 }
 #quick-open-bar {
   width: 100%;
-  height: 28px;
+  height: 30px;
 }
 #editor {
   position: absolute;
-  top: 28px;
+  top: 30px;
   left: 0;
   right: 0;
   bottom: 0;
