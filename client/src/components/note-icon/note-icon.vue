@@ -1,8 +1,8 @@
 <template>
   <img
-    :src="`${staticIconUrl}${noteName}.png`"
+    :src="`${staticIconUrl}${iconName}.png`"
     @error="imgLoadError"
-    class="note-icon"
+    :class="{ 'note-icon': true, 'no-default-icon': isDefaultIconNotFound }"
   />
 </template>
 <script>
@@ -14,15 +14,23 @@ export default {
     return {
       staticIconUrl: config.server.staticIconUrl, // icon server url
       defaultIconUrl: `${config.server.staticIconUrl}${config.defaultIconName}`, // default icon file url
+      isDefaultIconTried: false,
+      isDefaultIconNotFound: false,
     };
   },
   props: {
-    noteName: String,
+    iconName: String,
   },
   methods: {
     // When icon loading fails
     imgLoadError(e) {
-      e.target.src = this.defaultIconUrl;
+      if (!this.isDefaultIconTried) {
+        e.target.src = this.defaultIconUrl;
+        this.isDefaultIconTried = true;
+      } else {
+        this.isDefaultIconNotFound = true;
+        console.warn('没有找到默认图标');
+      }
     },
   },
 };
@@ -31,5 +39,8 @@ export default {
 <style lang="scss" scoped>
 .note-icon {
   vertical-align: middle;
+}
+.no-default-icon {
+  visibility: hidden;
 }
 </style>

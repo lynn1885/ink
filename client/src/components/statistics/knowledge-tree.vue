@@ -24,7 +24,7 @@
         <div class="note-path">
           <note-icon
             class="note-icon"
-            :note-name="notePath.split('/')[notePath.split('/').length - 1]"
+            :icon-name="notePath.split('/')[notePath.split('/').length - 1]"
           ></note-icon>
           {{notePath}}
         </div>

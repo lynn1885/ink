@@ -33,7 +33,7 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv1($event, 1, cat, index)"
       >
-        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
+        <note-icon class="note-icon" :icon-name="cat" v-if="isShowCatIcon"></note-icon>
         {{cat}}
       </li>
     </ul>
@@ -64,7 +64,7 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv2($event, 2, cat, index)"
       >
-        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
+        <note-icon class="note-icon" :icon-name="cat" v-if="isShowCatIcon"></note-icon>
         {{cat}}
       </li>
     </ul>
@@ -94,7 +94,7 @@
         @dragleave="catalogDragLeave"
         @drop="catalogDropLv3($event, 3, cat, index)"
       >
-        <note-icon class="note-icon" :note-name="cat" v-if="isShowCatIcon"></note-icon>
+        <note-icon class="note-icon" :icon-name="cat" v-if="isShowCatIcon"></note-icon>
         {{cat}}
       </li>
     </ul>

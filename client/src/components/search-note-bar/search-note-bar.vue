@@ -22,7 +22,7 @@
           :title="res"
           :ref="res === searchRes[0 + curSelectedSearchResBias] ? 'selected-search-res' : ''"
         >
-          <note-icon class="note-icon" :note-name="res.split('/')[2]"></note-icon>
+          <note-icon class="note-icon" :icon-name="res.split('/')[2]"></note-icon>
           {{res}}
         </li>
       </ul>

@@ -62,7 +62,7 @@
           @click="closedSearchRes[note.dir] ? $set(closedSearchRes, note.dir, false) : $set(closedSearchRes, note.dir, true)"
           @dblclick="closedSearchRes[note.dir] ? searchResults.forEach(note =>  $set(closedSearchRes, note.dir, false)) : searchResults.forEach(note =>  $set(closedSearchRes, note.dir, true))"
         >
-          <note-icon class="note-icon" :note-name="note.dir.split('/')[2]"></note-icon>
+          <note-icon class="note-icon" :icon-name="note.dir.split('/')[2]"></note-icon>
           {{note.dir.slice(0, note.dir.length-1)}} ({{note.items.length}})
         </div>
         <div

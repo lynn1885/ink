@@ -7,8 +7,8 @@ const config = {
     staticImageUrl: `${ip}:3001/images/`, // 最后/不能省略
     staticIconUrl: `${ip}:3001/icons/`,
   },
-  defaultIconName: '___default___.png',
-  bgImgName: '___background___', // Do not write the file type
+  defaultIconName: '__default__.png',
+  bgImgName: '__background__', // Do not write the file type
 };
 
 // export

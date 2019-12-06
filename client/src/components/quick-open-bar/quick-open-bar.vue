@@ -14,7 +14,7 @@
       @click="switchNote($event, noteDir)"
       @dblclick="fixThisNoteDir(noteDir)"
     >
-      <note-icon class="note-icon" :note-name="noteDir.split('/')[2]"></note-icon>
+      <note-icon class="note-icon" :icon-name="noteDir.split('/')[2]"></note-icon>
       {{noteDir.split('/')[2]}}
       <span class="whole-dir">{{calWholeDir(noteDir)}}</span>
       <div :class="closeButtonClass" @click="closeNote(noteDir)">×</div>
