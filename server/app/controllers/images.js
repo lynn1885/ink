@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
   const dateMs = new Date().valueOf();
   const { fileDir } = req.body;
   const { file } = req;
-  const imageDir = config.noteImagesDir;
+  const imageDir = config.user.dirs.noteImages;
   // images will be placed in different directories
   // create new directories base on time
   // averagely, create a new directory each month

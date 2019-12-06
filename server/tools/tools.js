@@ -47,12 +47,12 @@ exports.isFileNameValid = function isFileNameValid(fileName) {
   if (fileName.match(r)) {
     return false;
   }
-
+  const trimedFileName = fileName.trim();
   // 目录名不能以__开头的同时以__结尾
-  if (trimedFileName[0] === '_' &&
-    trimedFileName[1] === '_' &&
-    trimedFileName[trimedFileName.length - 1] === '_' &&
-    trimedFileName[trimedFileName.length - 2] === '_') {
+  if (trimedFileName[0] === '_'
+    && trimedFileName[1] === '_'
+    && trimedFileName[trimedFileName.length - 1] === '_'
+    && trimedFileName[trimedFileName.length - 2] === '_') {
     return '笔记名不能以__开头的同时以__结尾';
   }
   return true;

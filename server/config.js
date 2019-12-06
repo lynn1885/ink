@@ -1,8 +1,19 @@
+const path = require('path');
+
 module.exports = {
-  notesDir: './user/notes/', // notes directory
-  noteImagesDir: './user/images/', // images directory
-  noteIconsDir: './user/icons/', // icons directory
-  noteDeletedDir: './user/deleted/', // deleted notes directory
+  user: {
+    dirs: {
+      notes: path.join(__dirname, './user/notes/'), // user notes directory
+      noteImages: path.join(__dirname, './user/images/'), // user note images directory
+      noteIcons: path.join(__dirname, './user/icons/'), // user note icons directory
+      noteDeleted: path.join(__dirname, './user/deleted/'), // user deleted notes directory
+      config: path.join(__dirname, './user/config'), // user config directory
+    },
+    files: {
+      configFile: path.join(__dirname, './user/config/user.json'), // user config file name
+      defaultNoteIcon: path.join(__dirname, './user/icons/__default__.png'), // default note icon
+    },
+  },
   port: 3001, // server will listen on this port
   backupInterval: 300, // seconds
   maxBackupFilesNumber: 6,

@@ -40,7 +40,7 @@ exports.create = async (req, res) => {
   }
 
   // 拼装完整的路径, 比如: 拼装后是a/b/, 则表示需要在a/b/下创建新目录
-  let newFilePath = config.notesDir;
+  let newFilePath = config.user.dirs.notes;
   for (let i = 0; i < req.body.ancestorCatNames.length; i += 1) {
     newFilePath += req.body.ancestorCatNames[i];
     newFilePath += '/';
@@ -105,7 +105,7 @@ exports.delete = async (req, res) => {
   // 拼装要删除的路径
   let catPath;
   if (req.query && req.query && req.query.paths) {
-    catPath = path.join(config.notesDir, ...req.query.paths);
+    catPath = path.join(config.user.dirs.notes, ...req.query.paths);
   } else {
     res.status(500).send(`参数错误: ${req.query}`);
     console.error(`delete(), 参数错误: ${req.query}`);
@@ -114,8 +114,8 @@ exports.delete = async (req, res) => {
   // 删除
   // 删除方式1: 把要删除的文件放到_deleted目录下
   const backupPath = path.join(
-    config.notesDir,
-    path.relative(config.notesDir, config.noteDeletedDir),
+    config.user.dirs.notes,
+    path.relative(config.user.dirs.notes, config.user.dirs.noteDeleted),
     `${Date.now()}--${req.query.paths.join(', ')}`,
   );
   await Directories.rename(catPath, backupPath)
@@ -144,7 +144,7 @@ exports.delete = async (req, res) => {
     // 获取用户配置中的catlog.order
     const userConfigCatOrder = await UserConfig.getUserConfig(['catalog', 'order']);
     // 获取真实目录
-    const realDir = await Directories.getRecursively(config.notesDir);
+    const realDir = await Directories.getRecursively(config.user.dirs.notes);
     // 根据真实目录, 生成干净且完整的catalog.order
     const uniformizedCatalog = tools.uniformizeCatalogObj(userConfigCatOrder, realDir);
     // 写入配置文件
@@ -205,7 +205,7 @@ exports.update = async (req, res) => {
         console.error(`update(), rename failed: ${JSON.stringify(err)}`);
         res.status(500).send(`rename failed: ${JSON.stringify(err)}`);
       });
-  // eslint-disable-next-line brace-style
+    // eslint-disable-next-line brace-style
   }
 
   // 重排序
@@ -264,8 +264,8 @@ async function _rename(ancestorCatNames, oldName, newName) {
   let newPath;
 
   // 重命名目录
-  oldPath = path.join(config.notesDir, ...ancestorCatNames, oldName);
-  newPath = path.join(config.notesDir, ...ancestorCatNames, newName);
+  oldPath = path.join(config.user.dirs.notes, ...ancestorCatNames, oldName);
+  newPath = path.join(config.user.dirs.notes, ...ancestorCatNames, newName);
 
   // 重命名文件
   await Directories.rename(oldPath, newPath)
@@ -273,8 +273,8 @@ async function _rename(ancestorCatNames, oldName, newName) {
 
   // 如果是三级目录, 且文件夹重命名成功, 还需要重命名文件. 注意, 需要到重命名后的新文件夹中进行重名名
   if (ancestorCatNames.length === 2 && !dirRenameErr) {
-    oldPath = path.join(config.notesDir, ...ancestorCatNames, newName, `${oldName}.md`);
-    newPath = path.join(config.notesDir, ...ancestorCatNames, newName, `${newName}.md`);
+    oldPath = path.join(config.user.dirs.notes, ...ancestorCatNames, newName, `${oldName}.md`);
+    newPath = path.join(config.user.dirs.notes, ...ancestorCatNames, newName, `${newName}.md`);
     await Directories.rename(oldPath, newPath)
       .catch((err) => { fileRenameErr = err; });
   }
@@ -286,8 +286,8 @@ async function _rename(ancestorCatNames, oldName, newName) {
   } else if (dirRenameErr) { //  一二三级目录重命名失败: 抛出错误即可
     throw new Error(`目录重命名失败: ${oldPath} -> ${newPath}, ${dirRenameErr}`);
   } else if (fileRenameErr) { // 三级目录命名成功, 但目录下的文件命名失败: 抛出错误, 并回滚文件重命名名. ⚠️ 但回滚也可能失败, 这是致命错误
-    oldPath = path.join(config.notesDir, ...ancestorCatNames, newName);
-    newPath = path.join(config.notesDir, ...ancestorCatNames, oldName);
+    oldPath = path.join(config.user.dirs.notes, ...ancestorCatNames, newName);
+    newPath = path.join(config.user.dirs.notes, ...ancestorCatNames, oldName);
     await Directories.rename(oldPath, newPath)
       .catch((err) => { throw new Error(` _rename(): FATAL ERROR, 回滚目录命名失败: ${oldPath} -> ${newPath}, ${err}`); });
     throw new Error(`文件重命名失败: ${oldPath} -> ${newPath}, ${fileRenameErr}`);
@@ -302,8 +302,8 @@ async function _rename(ancestorCatNames, oldName, newName) {
 async function _reorder(affectedCatalogs, catName) {
   // 跨文件重排序: 需移动文件
   if (affectedCatalogs.length === 2) { // 表示
-    const oldPath = path.join(config.notesDir, ...affectedCatalogs[0].ancestorCatNames, catName);
-    const newPath = path.join(config.notesDir, ...affectedCatalogs[1].ancestorCatNames, catName);
+    const oldPath = path.join(config.user.dirs.notes, ...affectedCatalogs[0].ancestorCatNames, catName);
+    const newPath = path.join(config.user.dirs.notes, ...affectedCatalogs[1].ancestorCatNames, catName);
     await Directories.rename(oldPath, newPath)
       .then(() => {
         console.log(`${new Date().toLocaleString()}: [catalog reorder] move file. from: ${oldPath} to ${newPath}`);
@@ -317,7 +317,7 @@ async function _reorder(affectedCatalogs, catName) {
       newCatOrder[o] = {};
     }
     await UserConfig.reorderUserConfig(['catalog', 'order'].concat(affectedCatalogs[0].ancestorCatNames), newCatOrder);
-  // 写入用户配置: 跨文件重排序, 注意只是把旧目录中的配置转移到新目录中, 并不按传入的newCatOrder排序
+    // 写入用户配置: 跨文件重排序, 注意只是把旧目录中的配置转移到新目录中, 并不按传入的newCatOrder排序
   } else if (affectedCatalogs.length === 2) {
     const oldProps = ['catalog', 'order'].concat(affectedCatalogs[0].ancestorCatNames, catName);
     const newProps = ['catalog', 'order'].concat(affectedCatalogs[1].ancestorCatNames, catName);

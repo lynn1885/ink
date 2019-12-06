@@ -1,10 +1,3 @@
-# alpha - beta迁移
-1. deleted中的文件要先手动删除
-3. 所有用户文件, 都要放入user文件夹中
-2. images中的图片要分到不同的文件夹, 可以运行工具来自动执行classify_images.js. 只有完全以时间戳命名的图片才会被分类, 不是完全以时间戳命名的, 还会保留在images文件夹中
-3. 笔记中的图片路径引用也有随图片路径的改变而改变, 可以运行工具rename_images_in_notes.js, 不是完全以时间戳命名的图片路径不会改变
-
-# 小而美
 # Todos
 1. 开启服务器时, 自动清理_deleted目录中的过期文件
 2. 前端rename, reorder, create等操作时, 正在编辑的文件的保存问题

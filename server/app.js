@@ -5,8 +5,14 @@ const router = require('./router/router');
 const config = require('./config');
 const task = require('./tools/tasks');
 
+console.log(__dirname);
+
 (async function fn() {
-  // TASKS AT STARTUP
+  // tasks at startup
+  // create default user directories & user config & default note icon
+  task.createDefaultUserDir();
+  task.createDefaultUserConfig();
+  task.createDefaultNoteIcon();
   // unify catalog
   await task.unifyCatalog();
 
@@ -20,7 +26,7 @@ const task = require('./tools/tasks');
 
   // 基础路由 & 托管静态资源
   app.use('/', router);
-  app.use('/images', express.static(config.noteImagesDir));
-  app.use('/icons', express.static(config.noteIconsDir));
+  app.use('/images', express.static(config.user.dirs.noteImages));
+  app.use('/icons', express.static(config.user.dirs.noteIcons));
   app.listen(config.port, () => console.log(`${new Date().toLocaleString()}: server listening on port ${config.port}`));
 }());

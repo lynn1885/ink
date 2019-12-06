@@ -8,10 +8,6 @@ yarn-error.log*
 /test/e2e/reports/
 selenium-debug.log
 
-/user/
-/backup/ 
-/logs/
-
 # Editor directories and files
 .idea
 .vscode

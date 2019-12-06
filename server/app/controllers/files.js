@@ -13,7 +13,7 @@ exports.get = async (req, res) => {
     res.status(400).send('错误的path参数');
   }
   console.log(`${new Date().toLocaleString()}: [read file] `, req.query.path);
-  await Files.read(config.notesDir + req.query.path)
+  await Files.read(config.user.dirs.notes + req.query.path)
     .then((data) => {
       res.send(data);
     })
@@ -34,7 +34,7 @@ exports.update = async (req, res) => {
   }
 
   // 写入
-  const filePath = config.notesDir + req.body.path;
+  const filePath = config.user.dirs.notes + req.body.path;
   await Files.write(filePath, req.body.data)
     .then((data) => {
       console.log(`${new Date().toLocaleString()}: [update file] `, req.body.path);
@@ -86,7 +86,7 @@ exports.searchAllFiles = async (req, res) => {
   }
 
   const startTime = new Date();
-  const allDir = await Directories.getRecursively(config.notesDir);
+  const allDir = await Directories.getRecursively(config.user.dirs.notes);
   // sort directories
   req.query.searchPath = req.query.searchPath.toLowerCase();
   let sortedPathArr = [];
@@ -143,7 +143,7 @@ exports.searchAllFiles = async (req, res) => {
       items: [],
     };
     try {
-      fileContent = await Files.read(path.join(config.notesDir, sortedPathArr[fileIndex]));
+      fileContent = await Files.read(path.join(config.user.dirs.notes, sortedPathArr[fileIndex]));
     } catch (e) {
       console.log(`${new Date().toLocaleString()}: [search all file warning]: cannot open `, sortedPathArr[fileIndex]);
     }
@@ -228,7 +228,7 @@ exports.searchAllFiles = async (req, res) => {
  */
 exports.getAllFilesInfoList = async (req, res) => {
   console.log(`${new Date().toLocaleString()}: [get all files info]`);
-  const allDir = await Directories.getRecursively(config.notesDir);
+  const allDir = await Directories.getRecursively(config.user.dirs.notes);
   const pathArr = [];
   Object.keys(allDir).forEach((dir1) => {
     Object.keys(allDir[dir1]).forEach((dir2) => {
@@ -245,7 +245,7 @@ exports.getAllFilesInfoList = async (req, res) => {
       const notePath = pathArr[readIndex];
       let fileContent = '';
       try {
-        fileContent = await Files.read(path.join(config.notesDir, notePath));
+        fileContent = await Files.read(path.join(config.user.dirs.notes, notePath));
       } catch (e) {
         console.log(`${new Date().toLocaleString()}: [WARNING: get all files info]: cannot open `, notePath);
       }
