@@ -14,7 +14,7 @@ module.exports = {
       defaultNoteIcon: path.join(__dirname, './user/icons/__default__.png'), // default note icon
     },
   },
-  port: 3001, // server will listen on this port
+  port: 12340, // server will listen on this port
   backupInterval: 300, // seconds
   maxBackupFilesNumber: 6,
   fileSizeLimit: 200, // KB
