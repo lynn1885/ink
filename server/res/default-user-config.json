@@ -1,8 +1,11 @@
 {
   "catalog": {
-    "order": {},
-    "plugins": {
-      "inkLineReplace": {}
+    "order": {
+    }
+  },
+  "plugins": {
+    "inkLineReplace": {
+      "/": {}
     }
   }
 }

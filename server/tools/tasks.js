@@ -19,9 +19,9 @@ exports.createDefaultUserDir = () => {
       if (dir === 'notes') {
         fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录'));
         fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录', '二级目录'));
-        fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '使用说明'));
+        fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '用户手册'));
         const defaultNote = fs.readFileSync(path.join(__dirname, '../res/default-note.md'), { encoding: 'utf8' });
-        fs.writeFileSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '使用说明', '使用说明.md'), defaultNote);
+        fs.writeFileSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '用户手册', '用户手册.md'), defaultNote);
       }
     }
   }

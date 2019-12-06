@@ -3,22 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 
 // 配置路径
-const defaultConfigPath = path.join(__dirname, '../../default-config.json');
 const userConfigPath = path.join(__dirname, '../../user/config/user.json');
-
-/**
- * getDefault: 获取默认配置
- */
-exports.getDefaultConfig = async () => new Promise((resolve, reject) => {
-  fs.readFile(defaultConfigPath, { encoding: 'utf8' }, (err, data) => {
-    if (err) {
-      console.error(err);
-      reject(err);
-    } else {
-      resolve(JSON.parse(data));
-    }
-  });
-});
 
 /**
  * getUserConfig: 获取用户配置
@@ -66,7 +51,8 @@ exports.getUserConfig = async (props) => {
  */
 exports.getMergedConfig = async (props) => {
   // 混合配置
-  const defaultConfig = await exports.getDefaultConfig();
+  // Todo
+  const defaultConfig = {};
   const userConfig = await exports.getUserConfig();
   // 混合配置, 此时我们需要让userConfig中的"值"覆盖defaultConfig中的值, 所以把userConfig放在后面
   const mergedConfig = _.merge(defaultConfig, userConfig);
