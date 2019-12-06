@@ -86,6 +86,7 @@ ctrl + x: 剪切, 可以直接剪切当前行
 alt + shift + ↑: 向上复制当前行
 alt + shift + ↓: 向下复制当前行
 ## 快捷键: 其他
+ctlr + p: 目录跳转, 或者说搜索目录
 ctrl + alt + l: 变换为小写
 ctrl + alt + u: 变换为大写
 ctrl + /: 专注模式(有bug)
