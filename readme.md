@@ -66,6 +66,7 @@ A WYSIWYG Markdown Editor
 
 # 如何使用 ⚠️
 该项目是一个基于codemirror的markdown编辑器, 是B/S架构, 包含客户端和服务器端两个部分, 运行时两个部分都要启动
+1. 请确保您的电脑上安装有`node 12.13.0`或更高版本
 1. `git clone`当前项目
 2. 接下来启动服务器:
     * 跳转到`server`目录
