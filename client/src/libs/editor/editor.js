@@ -58,6 +58,9 @@ export default class {
         name: 'text/markdown',
         highlightFormatting: true, // https://.net/mode/markdown/
         xml: false, // close highlight xml
+        taskLists: true,
+        strikethrough: true,
+        // emoji: true,
       },
       theme: 'paraiso-light', // editor theme, mark sure that you have imported this theme
       tabSize: 4,

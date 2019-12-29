@@ -19,6 +19,7 @@
       <span class="whole-dir">{{calWholeDir(noteDir)}}</span>
       <div :class="closeButtonClass" @click="closeNote(noteDir)">×</div>
     </li>
+    <li class="bar-placeholder"></li>
   </ul>
 </template>
 <script>
@@ -273,10 +274,17 @@ export default {
   padding: 0px;
   margin: 0px;
   color: $tool-page-color;
-  background: $tool-page-bg;
+  background: transparent;
   align-items: center;
   font-size: $font-size-sidebar;
   overflow-x: auto;
+  .bar-placeholder {
+    height: 100%;
+    width: 100%;
+    background: $tool-page-bg;
+    flex-grow: 0;
+    flex-shrink: 999;
+  }
   .item {
     position: relative;
     float: left;

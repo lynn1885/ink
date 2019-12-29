@@ -1,5 +1,5 @@
 <template>
-  <div id="editor" ref="editor" v-show="isFileLoaded"></div>
+  <div v-show="isFileLoaded" id="editor" ref="editor"></div>
 </template>
 
 <script>
@@ -42,8 +42,12 @@ export default {
       // 尝试从后端读取配置
       let inkLineReplaceConfig;
       await UserConfig.get(['plugins', 'inkLineReplace'], this.$message)
-        .then((data) => { inkLineReplaceConfig = data; })
-        .catch(() => { inkLineReplaceConfig = {}; });
+        .then((data) => {
+          inkLineReplaceConfig = data;
+        })
+        .catch(() => {
+          inkLineReplaceConfig = {};
+        });
 
       // 创建editor
       this.editor = new Editor(this.$refs.editor, {
@@ -98,7 +102,9 @@ export default {
     async runCommand(command, info) {
       // 校验
       if (!command || typeof command !== 'string') {
-        console.warn(`editor.runCommand(), 参数错误, command为空或不是string: ${command}`);
+        console.warn(
+          `editor.runCommand(), 参数错误, command为空或不是string: ${command}`
+        );
         return;
       }
       // 禁止其他操作
@@ -106,7 +112,7 @@ export default {
       // 指令: 清空编辑器. 清空编辑器不会保存当前文件未保存的内容, 也不会删除后台的物理文件
       if (command === 'CLEAN') {
         this.cleanEditor();
-      // 指令: 保存
+        // 指令: 保存
       } else if (command === 'SAVE') {
         // 保存
         if (typeof info === 'object') {
@@ -114,10 +120,12 @@ export default {
         } else {
           await this.saveFile();
         }
-      // 指令: 打开新文件
+        // 指令: 打开新文件
       } else if (command === 'OPENFILE') {
         if (typeof info !== 'string') {
-          console.error(`runCommand(): 参数错误. OPEN指令需要传入要打开的文件路径作为第二个参数: ${info}`);
+          console.error(
+            `runCommand(): 参数错误. OPEN指令需要传入要打开的文件路径作为第二个参数: ${info}`
+          );
           return;
         }
         let isSuccess = true;
@@ -133,6 +141,7 @@ export default {
         }
         if (isSuccess) {
           this.isFileLoaded = true;
+          this.$emit('editorShowState', true);
         }
       }
 
@@ -191,7 +200,9 @@ export default {
       const filePath = this.curFilePath;
       if (!filePath) {
         this.$message.error('save file: invalid filePath');
-        throw new Error(`file-server, saveFile(), invalid filePath: ${filePath}`);
+        throw new Error(
+          `file-server, saveFile(), invalid filePath: ${filePath}`
+        );
       }
       if (!triggerType) {
         triggerType = 'AUTO';
@@ -203,30 +214,34 @@ export default {
         let lastLineText = this.editor.cm.lineInfo(lastLineNum).text;
         const oldLastLineText = lastLineText;
         const cmd = `%auto-expand-line-${cursor.line}%`;
-        if (this.editor.isThisLineCmdLine(lastLineNum, lastLineText)) { // 最后一行是指令行: 添加指令或更新指令
+        if (this.editor.isThisLineCmdLine(lastLineNum, lastLineText)) {
+          // 最后一行是指令行: 添加指令或更新指令
           const matchRes = lastLineText.match(/%auto-expand-line-(\w+)%/);
-          if (matchRes) { // 修改指令
+          if (matchRes) {
+            // 修改指令
             lastLineText = lastLineText.replace(/%auto-expand-line-\w+%/, cmd);
             this._updateCmdLine(
               cursor,
               lastLineText,
               { line: lastLineNum, ch: 0 },
-              { line: lastLineNum, ch: oldLastLineText.length },
+              { line: lastLineNum, ch: oldLastLineText.length }
             );
-          } else { // 添加指令
+          } else {
+            // 添加指令
             this._updateCmdLine(
               cursor,
               ` ${cmd}`,
               { line: lastLineNum, ch: lastLineText.length },
-              { line: lastLineNum, ch: lastLineText.length },
+              { line: lastLineNum, ch: lastLineText.length }
             );
           }
-        } else { // 最后一行不是指令行: 添加指令行, 添加指令
+        } else {
+          // 最后一行不是指令行: 添加指令行, 添加指令
           this._updateCmdLine(
             cursor,
             `\n# ${cmd}`,
             { line: lastLineNum, ch: lastLineText.length },
-            { line: lastLineNum, ch: lastLineText.length },
+            { line: lastLineNum, ch: lastLineText.length }
           );
         }
       }
@@ -242,10 +257,12 @@ export default {
       // 这样就能保证, this.isFileContentChanged = false;会在editor的change事件后触发
       // 即, 这样可以保证, 自动修改完指令行之后, this.isFileContentChanged还是false
       // 但这样也可能导致 [保存时自动修改指令行之后, 下一轮事件循环开始标记isFileContentChanged为false] 这之间的操作丢失
-      await new Promise(resolve => setTimeout(() => {
-        this.isFileContentChanged = false;
-        resolve();
-      }, 0));
+      await new Promise(resolve =>
+        setTimeout(() => {
+          this.isFileContentChanged = false;
+          resolve();
+        }, 0)
+      );
 
       const content = {
         path: filePath,
@@ -265,6 +282,7 @@ export default {
       doc.clearHistory();
       this.isFileContentChanged = false;
       this.isFileLoaded = false;
+      this.$emit('editorShowState', false);
     },
 
     /**
@@ -295,7 +313,9 @@ export default {
      */
     _turnOnAutoSave() {
       if (this.autoSaveTimer) {
-        throw new Error(`Another auto save timer is running: ${this.autoSaveTimer}`);
+        throw new Error(
+          `Another auto save timer is running: ${this.autoSaveTimer}`
+        );
       }
       if (this.autoSaveInterval > 0) {
         this.autoSaveTimer = setInterval(async () => {
@@ -303,7 +323,10 @@ export default {
             await this.saveFile('AUTO');
           }
         }, this.autoSaveInterval);
-        console.log(`[start auto save]: ${this.curFilePath}, interval: ${this.autoSaveInterval / 1000} seconds`);
+        console.log(
+          `[start auto save]: ${this.curFilePath}, interval: ${this
+            .autoSaveInterval / 1000} seconds`
+        );
       }
     },
 
@@ -324,7 +347,10 @@ export default {
       // 遇到%no-auto-fold%则不折叠
       const ln = this.editor.cm.getDoc().lastLine();
       const lt = this.editor.cm.lineInfo(ln).text;
-      if (!this.editor.isThisLineCmdLine(ln, lt) || !lt.includes('%no-auto-fold%')) {
+      if (
+        !this.editor.isThisLineCmdLine(ln, lt) ||
+        !lt.includes('%no-auto-fold%')
+      ) {
         if (this.autoFoldDelay >= 0) {
           if (this.autoFoldDelay === 0) {
             fold();
@@ -343,11 +369,15 @@ export default {
         editor.foldHeaderTo(autoFoldLv);
         const lastLineNum = editor.cm.getDoc().lastLine();
         const lastLineText = editor.cm.lineInfo(lastLineNum).text;
-        if (editor.isThisLineCmdLine(lastLineNum, lastLineText)) { // 表示这一行(可能)是命令
+        if (editor.isThisLineCmdLine(lastLineNum, lastLineText)) {
+          // 表示这一行(可能)是命令
           const matchRes = lastLineText.match(/%auto-expand-line-(\w+)%/); // 遇到%auto-expand-line-行号%命令则自动展开
           if (matchRes) {
             const targetLineNum = Number(matchRes[1]);
-            const ancestors = editor.getHeaderAncestors({ line: targetLineNum, ch: 0 });
+            const ancestors = editor.getHeaderAncestors({
+              line: targetLineNum,
+              ch: 0,
+            });
             if (ancestors.length > 0) {
               ancestors.reverse();
               for (let i = 0; i < ancestors.length; i += 1) {
@@ -387,11 +417,7 @@ export default {
      */
     _updateCmdLine(cursor, cmd, from, to) {
       const doc = this.editor.cm.getDoc();
-      doc.replaceRange(
-        cmd,
-        from,
-        to,
-      );
+      doc.replaceRange(cmd, from, to);
       doc.setCursor(cursor);
     },
 
@@ -414,5 +440,4 @@ export default {
     window.addEventListener('beforeunload', this.onbeforeunload);
   },
 };
-
 </script>
