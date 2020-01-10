@@ -11,6 +11,7 @@ export default new Vuex.Store({
     userConfig: null, // 用户配置
     catalog: null, // 目录
     gotoThisCatalog: [], // 要跳转到的目录, catalog组件会监听该目录
+    curNoteTheme: null, // 当前笔记主题
   },
   mutations: {
     // 更新编辑器对象
@@ -42,6 +43,11 @@ export default new Vuex.Store({
     // 更新要跳转到的目录
     updateGotoThisCatalog(state, data) {
       state.gotoThisCatalog = data;
+    },
+
+    // 更新当前笔记的主题
+    updateCurNoteTheme(state, data) {
+      state.curNoteTheme = data;
     },
   },
   actions: {

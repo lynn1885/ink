@@ -281,6 +281,7 @@ export default {
   .bar-placeholder {
     height: 100%;
     width: 100%;
+    list-style: none;
     background: $tool-page-bg;
     flex-grow: 0;
     flex-shrink: 999;

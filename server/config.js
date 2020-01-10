@@ -6,6 +6,7 @@ module.exports = {
       notes: path.join(__dirname, './user/notes/'), // user notes directory
       noteImages: path.join(__dirname, './user/images/'), // user note images directory
       noteIcons: path.join(__dirname, './user/icons/'), // user note icons directory
+      notePlugins: path.join(__dirname, './plugins/'), // plugins directory
       noteDeleted: path.join(__dirname, './user/deleted/'), // user deleted notes directory
       config: path.join(__dirname, './user/config'), // user config directory
     },

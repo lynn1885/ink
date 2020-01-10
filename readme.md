@@ -94,6 +94,7 @@ A WYSIWYG Markdown Editor
 
 
 # 已知Bugs, 或待优化项
+* 重新整理主题系统, 现在的太重了
 * ink: fold 无法折叠图片, 图片后面需要有一个空行
 * ink: imgs 有些图片无法上传
 * server: 一级目录不支持中文, 需要修复一下

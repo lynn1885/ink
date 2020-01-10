@@ -47,12 +47,12 @@ export default {
       searchText: '', // search text
       searchRes: [], // search results
       searchTimeoutId: null, // search timeout id (for search function throttle)
-      searchDealy: 240, // ms (for search function throttle)
+      searchDealy: 200, // ms (for search function throttle)
       maxSearchResLength: 30,
       maxSearchResLengthWarn: '',
       curSelectedSearchResBias: 0, // current selected search results bias, press ↑, bias += 1, press ↓, bias -= 1
-      staticIconUrl: config.server.staticIconUrl,
-      defaultIconUrl: `${config.server.staticIconUrl}${config.defaultIconName}`, // 默认图标地址, 没有对应图标时会使用该图标
+      staticIconsUrl: config.server.staticIconsUrl,
+      defaultIconUrl: `${config.server.staticIconsUrl}${config.defaultIconName}`, // 默认图标地址, 没有对应图标时会使用该图标
     };
   },
   watch: {

@@ -1,6 +1,6 @@
 <template>
   <img
-    :src="`${staticIconUrl}${iconName}.png`"
+    :src="`${staticIconsUrl}${iconName}.png`"
     @error="imgLoadError"
     :class="{ 'note-icon': true, 'no-default-icon': isDefaultIconNotFound }"
   />
@@ -12,8 +12,8 @@ export default {
   name: 'note-icon',
   data() {
     return {
-      staticIconUrl: config.server.staticIconUrl, // icon server url
-      defaultIconUrl: `${config.server.staticIconUrl}${config.defaultIconName}`, // default icon file url
+      staticIconsUrl: config.server.staticIconsUrl, // icon server url
+      defaultIconUrl: `${config.server.staticIconsUrl}${config.defaultIconName}`, // default icon file url
       isDefaultIconTried: false,
       isDefaultIconNotFound: false,
     };

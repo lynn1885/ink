@@ -35,7 +35,7 @@ export default function (editor, config) {
       const imgMatchRes = line.text.match(/^!\[.*?\]\((.*?)\)/);
       if (imgMatchRes) {
         let baseUrl = '';
-        baseUrl = `${editor.fileServer.staticImageUrl}`;
+        baseUrl = `${editor.fileServer.staticImagesUrl}`;
         el.classList.add('line-cm-image');
         setTimeout(() => {
           if (line.widgets) {

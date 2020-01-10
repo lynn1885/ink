@@ -16,7 +16,6 @@ import inkNormalizeWord from '@/libs/editor/ink-normalize-word';
 import Files from '@/models/files';
 import Images from '@/models/images';
 import UserConfig from '@/models/user-config';
-import '@/themes/craft/index.scss';
 import config from '@/config';
 
 export default {
@@ -78,7 +77,7 @@ export default {
       this.editor.runCommand = this.runCommand;
       this.editor.fileServer = {
         serverUrl: config.server.serverUrl,
-        staticImageUrl: config.server.staticImageUrl, // 图片服务器url, 上传图片后, 从这个地址获取图片
+        staticImagesUrl: config.server.staticImagesUrl, // 图片服务器url, 上传图片后, 从这个地址获取图片
         curFileDir: null,
         curFilePath: null,
       };
@@ -171,6 +170,7 @@ export default {
       this.editor.cm.getDoc().clearHistory();
       this._turnOnAutoSave();
       this._autoFold(this.curFilePath);
+      this._setCurNoteTheme();
       this._markCmdLine();
       this.$store.commit('updateCurFilePath', filePath);
     },
@@ -257,7 +257,7 @@ export default {
       // 这样就能保证, this.isFileContentChanged = false;会在editor的change事件后触发
       // 即, 这样可以保证, 自动修改完指令行之后, this.isFileContentChanged还是false
       // 但这样也可能导致 [保存时自动修改指令行之后, 下一轮事件循环开始标记isFileContentChanged为false] 这之间的操作丢失
-      await new Promise(resolve =>
+      await new Promise((resolve) =>
         setTimeout(() => {
           this.isFileContentChanged = false;
           resolve();
@@ -405,6 +405,19 @@ export default {
           });
           editor.cm.scrollIntoView(null, 300);
         }, 100);
+      }
+    },
+
+    _setCurNoteTheme() {
+      const ln = this.editor.cm.getDoc().lastLine();
+      const lt = this.editor.cm.lineInfo(ln).text;
+      if (this.editor.isThisLineCmdLine(ln, lt)) {
+        const matchRes = lt.match(/%theme-([a-zA-Z0-9]+)%/);
+        if (matchRes) {
+          this.$store.commit('updateCurNoteTheme', matchRes[1]);
+        } else {
+          this.$store.commit('updateCurNoteTheme', null);
+        }
       }
     },
 

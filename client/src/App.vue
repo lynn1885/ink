@@ -11,26 +11,23 @@
 
     <!-- background image -->
     <div id="bgimg-container" v-show="isShowBgImg">
-      <img :src="`${staticIconUrl}${bgImgName}.${bgImgFormat}`" @error="imgLoadError" />
+      <img :src="`${staticIconsUrl}${bgImgName}.${bgImgFormat}`" @error="imgLoadError" />
     </div>
 
     <!-- modal -->
     <!--tabindex="1" is a trick, enables div to bind keydown event-->
-    <div
-      id="modal"
-      v-show="$store.state.isProhibitOperation"
-      ref="modal"
-      tabindex="1"
-    ></div>
+    <div id="modal" v-show="$store.state.isProhibitOperation" ref="modal" tabindex="1"></div>
   </div>
 </template>
 
 <script>
+import $ from 'jquery';
 import SideBar from '@/views/sidebar/sidebar.vue';
 import NoteContent from '@/views/content/content.vue';
 import StatusBar from '@/views/status-bar/status-bar.vue';
 import store from '@/store';
 import config from '@/config';
+import UserConfig from '@/models/user-config';
 
 export default {
   name: 'note',
@@ -42,24 +39,50 @@ export default {
   },
   data() {
     return {
-      staticIconUrl: config.server.staticIconUrl, // 背景图服务器地址
+      staticIconsUrl: config.server.staticIconsUrl, // 背景图服务器地址
       isShowBgImg: false, // 是否显示背景图
       bgImgName: config.bgImgName, // 背景图名字
       bgImgFormat: 'jpg', // 背景图格式
       isZenMode: false, // is zen mode
       isShowSideBar: true,
       isShowStatusBar: true,
+      curTheme: null,
+      defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
+      noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
     };
+  },
+  watch: {
+    // change theme
+    '$store.state.curNoteTheme': {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.noteThemeStyleEl.attr(
+            'href',
+            `${config.server.staticPluginsUrl}themes/${value}/index.css`
+          );
+          $('head').append(this.noteThemeStyleEl);
+          setTimeout(() => {
+            this.defaultThemeStyleEl.remove();
+          }, 0);
+        } else {
+          $('head').append(this.defaultThemeStyleEl);
+          setTimeout(() => {
+            this.noteThemeStyleEl.remove();
+          }, 0);
+        }
+      },
+    },
   },
   methods: {
     // 背景图: jpg格式加载失败时, 尝试加载png, gif格式
     imgLoadError(e) {
       if (this.bgImgFormat === 'jpg') {
         this.bgImgFormat = 'png';
-        e.target.src = `${this.staticIconUrl}${this.bgImgName}.${this.bgImgFormat}`;
+        e.target.src = `${this.staticIconsUrl}${this.bgImgName}.${this.bgImgFormat}`;
       } else if (this.bgImgFormat === 'png') {
         this.bgImgFormat = 'gif';
-        e.target.src = `${this.staticIconUrl}${this.bgImgName}.${this.bgImgFormat}`;
+        e.target.src = `${this.staticIconsUrl}${this.bgImgName}.${this.bgImgFormat}`;
       } else {
         e.target.style.visibility = 'hidden';
       }
@@ -89,6 +112,21 @@ export default {
       }
       this.isZenMode = !this.isZenMode;
     },
+
+    // get default theme
+    async getDefaultTheme() {
+      await UserConfig.get(['theme', 'default'])
+        .then((data) => {
+          this.defaultThemeStyleEl.attr(
+            'href',
+            `${config.server.staticPluginsUrl}themes/${data}/index.css`
+          );
+          $('head').append(this.defaultThemeStyleEl);
+        })
+        .catch(() => {
+          console.warn('cannot find default theme');
+        });
+    },
   },
   created() {
     const isZenMode = localStorage.getItem('isZenMode');
@@ -97,7 +135,7 @@ export default {
       this.toggleZenMode();
     }
   },
-  mounted() {
+  async mounted() {
     // this is the first keydown event
     // we can set window.IS_PORHIBIT_KEY_DOWN to true to block all keydown events
     // eslint-disable-next-line consistent-return
@@ -114,6 +152,7 @@ export default {
     setTimeout(() => {
       this.isShowBgImg = true;
     }, 300);
+    await this.getDefaultTheme();
   },
 };
 </script>

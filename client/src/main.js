@@ -6,6 +6,9 @@ import store from './store';
 import './assets/css/reset.scss';
 import App from './App.vue';
 
+// themes
+import './themes/craft/index.scss'; // default-theme
+
 Vue.use(ElementUI);
 Vue.config.productionTip = false;
 

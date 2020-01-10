@@ -1,5 +1,9 @@
 @import "var.scss";
 
+#tool-icons, #tool-pages, #quick-open-bar,  #status-bar {
+  // transition: background .1s!important;
+}
+
 // editor
 .CodeMirror {
   height: 100%;
@@ -12,7 +16,7 @@
   background-color: $editor-bg!important;
   caret-color:$cursor;
   pre {
-    padding: 0px;
+    padding-left: 0px;
   }
 }
 
@@ -73,6 +77,7 @@
 }
 .line-cm-header-1 {
   padding-left: $header-1-indent!important; // 这个仅仅是为了让隐藏markdown标签后, 标题1和2在一条垂线上
+  
 }
 .line-cm-header-3 {
   padding-left: $header-3-indent!important;
@@ -109,15 +114,14 @@
 .cm-header-6 {
   color: $header-6 !important;
 }
-.line-cm-header-1 {
-  padding-top: 20px!important;
+.CodeMirror .line-cm-header-1 {
+  padding-top: 20px;
 }
-// 取消第一行top padding
-// 可能.codemirror直接包裹pre行, 也可能.codemirror包裹div再包裹pre行
-.CodeMirror-code>pre.CodeMirror-line:first-child, // 首行没有缩进
+.CodeMirror-code>pre.CodeMirror-line:first-child,
 .CodeMirror-code>div:first-child>pre.CodeMirror-line:first-child {
-  padding-top: 0px!important;
+  padding-top: 0px;
 }
+
 
 // variable
 .cm-variable-2 {

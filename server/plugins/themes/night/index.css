@@ -1,0 +1,139 @@
+/* vars */
+:root {
+  --tool-icon-bg: rgb(26, 29, 34);
+  --tool-page-bg: rgb(33, 37, 43);
+  --editor-bg: rgb(40, 44, 52);
+  --main-bg: rgb(33, 37, 43);
+  --accent-bg: rgb(70, 67, 67);
+  --accent-hover-bg: rgba(70, 67, 67, 0.7);
+}
+
+::selection {
+  background: rgb(172, 170, 170) !important;
+}
+
+#main {
+  background: var(--main-bg)!important;
+}
+
+/* tool icons */
+#tool-icons {
+  background: var(--tool-icon-bg)!important;
+}
+#tool-icons .tool-icon svg {
+  fill: rgb(87, 85, 85)!important;
+}
+#tool-icons .tool-icon svg:hover {
+  fill: rgb(153, 153, 153)!important;
+}
+#tool-icons .tool-icon.active svg {
+  fill: rgb(153, 153, 153)!important;
+}
+
+/* tool pages */
+#tool-pages {
+  background: var(--tool-page-bg)!important;
+}
+#tool-pages li {
+  color: rgb(150, 150, 150);
+  font-weight: bold;
+}
+#tool-pages .cat-active {
+  background: var(--accent-bg)!important;
+}
+#tool-pages li:hover {
+  background: var(--accent-hover-bg)!important;
+}
+
+.CodeMirror {
+  background: var(--editor-bg)!important;
+  padding: 0px!important;
+  caret-color: #ddd;
+}
+
+.CodeMirror-sizer {
+  background-attachment: scroll!important;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+
+#quick-open-bar .bar-placeholder {
+  background: var(--tool-page-bg)!important;
+}
+#quick-open-bar .item.active {
+  background: var(--editor-bg)!important;
+}
+#quick-open-bar .item.fixed {
+  background:rgb(32, 35, 41)!important;
+  color: rgb(156, 150, 150);
+}
+
+#status-bar {
+  background: var(--tool-page-bg)!important;
+}
+#status-bar .items {
+  color: rgb(156, 150, 150);
+}
+#status-bar .items:hover {
+  background: var(--editor-bg)!important;
+}
+
+.CodeMirror-line:not(.line-cm-header) {
+  color: rgb(156, 150, 150);
+  font-weight: bold!important;
+}
+.cm-header-1:not(.cm-formatting){
+  color: rgb(209, 154, 102)!important;
+  font-weight: bold!important;
+}
+.cm-header-2:not(.cm-formatting){
+  color: rgb(85, 163, 102)!important;
+  font-weight: bold!important;
+}
+.cm-header-3:not(.cm-formatting){
+  color: rgb(156, 116, 79)!important;
+  font-weight: bold!important;
+}
+.cm-header-4:not(.cm-formatting){
+  color: rgb(68, 129, 81)!important;
+  font-weight: bold!important;
+}
+
+.CodeMirror-foldmarker {
+  background: rgb(102, 99, 99);
+  color: rgb(156, 150, 150);
+}
+
+/* style */
+.cm-formatting-list {
+  background: rgb(172, 170, 170) !important;
+  color: rgb(78, 77, 77)!important;
+}
+.line-cm-image span, .line-cm-image .cm-url {
+  background: rgb(71, 71, 71)!important;
+  color: rgb(39, 38, 38)!important;
+}
+.line-cm-code-block, .line-cm-quote {
+  padding-left: 136px!important;
+  background: linear-gradient(to right, transparent 128px, var(--tool-page-bg) 128px)!important;
+}
+
+/* comp */
+#sticky-note {
+  background: rgb(37, 40, 48)!important;
+  box-shadow: 0px 0px 2px 0px rgb(37, 40, 48)!important;
+  color: rgb(156, 150, 150)!important;
+  font-weight: bold!important;
+}
+
+/* outline */
+#outline .item.active {
+  background: var(--accent-bg)!important;
+}
+#outline .item:hover {
+  background: var(--accent-hover-bg)!important;
+}
+
+.cm-highlight-line {
+  background: var(--accent-bg)!important;
+}

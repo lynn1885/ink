@@ -28,5 +28,6 @@ console.log(__dirname);
   app.use('/', router);
   app.use('/images', express.static(config.user.dirs.noteImages));
   app.use('/icons', express.static(config.user.dirs.noteIcons));
+  app.use('/plugins', express.static(config.user.dirs.notePlugins));
   app.listen(config.port, () => console.log(`${new Date().toLocaleString()}: server listening on port ${config.port}`));
 }());

@@ -1,0 +1,197 @@
+
+/* vars */
+:root {
+  --tool-icon-bg: #f1f0f0;
+  --tool-page-bg: #faf9f9;
+  --editor-bg: #fff;
+  --main-bg: #f6f6f6;
+  --accent-bg: rgb(243, 235, 235);
+  --accent-hover-bg: rgba(243, 235, 235, 0.7);
+}
+
+::selection {
+  background: rgb(241, 225, 225) !important;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:hover {
+  background: rgb(224, 191, 191)!important;
+}
+
+* {
+  font-family: '苏新诗柳楷简';
+}
+
+#main {
+  background: var(--main-bg)!important;
+}
+
+/* tool icons */
+#tool-icons {
+  background: var(--tool-icon-bg)!important;
+}
+#tool-icons .tool-icon svg {
+  fill: rgb(192, 185, 185)!important;
+}
+#tool-icons .tool-icon svg:hover {
+  fill: rgb(146, 94, 94)!important;
+}
+#tool-icons .tool-icon.active svg {
+  fill: rgb(141, 88, 88)!important;
+}
+
+/* tool pages */
+#tool-pages {
+  background: var(--tool-page-bg)!important;
+}
+#tool-pages li {
+  font-size: 14px!important;
+  color: rgb(151, 132, 132) !important;
+}
+#tool-pages .cat-active {
+  background: var(--accent-bg)!important;
+}
+#tool-pages li:hover {
+  background: var(--accent-hover-bg)!important;
+}
+
+.CodeMirror {
+  background: #fff!important;
+  padding: 0px!important;
+  caret-color: rgb(172, 125, 125);
+}
+
+.CodeMirror-sizer {
+  /* background: url(./paper.jpg); */
+  background-attachment: scroll!important;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+}
+
+#quick-open-bar .bar-placeholder {
+  background: var(--tool-page-bg)!important;
+}
+#quick-open-bar .item.active {
+  background: var(--editor-bg)!important;
+}
+
+#status-bar {
+  background: var(--tool-page-bg)!important;
+}
+#status-bar .items:hover {
+  background: var(--accent-bg)!important;
+}
+
+/* first line */
+.CodeMirror-code>pre.CodeMirror-line:first-child,
+.CodeMirror-code>div:first-child>pre.CodeMirror-line:first-child {
+  padding-top: 0px!important;
+}
+
+.CodeMirror-line:not(.line-cm-header) {
+  color: rgb(114, 107, 107);
+  font-size: 16.5px;
+}
+
+.CodeMirror .line-cm-header-1 {
+  padding-top: 40px;
+}
+
+/* header */
+.line-cm-header-1 {
+  text-align: center;
+}
+.cm-header-1:not(.cm-formatting){
+  color: rgb(172, 125, 125)!important;
+  font-weight: bold!important;
+  font-size: 20px!important;
+}
+
+.line-cm-header-2 {
+  padding-left: 20px!important;
+}
+.cm-header-2:not(.cm-formatting) {
+  color: rgb(125, 172, 127) !important;
+  font-weight: bold!important;
+  font-size: 16.5px;
+}
+
+.line-cm-header-3 {
+  padding-left: 40px!important;
+}
+.cm-header-3:not(.cm-formatting){
+  color: rgb(211, 152, 152) !important;
+  font-size: 16.5px;
+}
+
+.line-cm-header-4 {
+  padding-left: 60px!important;
+}
+.cm-header-4:not(.cm-formatting){
+  color: rgb(166, 207, 157) !important;
+  font-size: 16.5px;
+}
+
+.line-cm-header-5 {
+  padding-left: 80px!important;
+  font-size: 16.5px;
+}
+.cm-header-5:not(.cm-formatting){
+  font-size: 16.5px;
+}
+.line-cm-header-6 {
+  padding-left: 100px!important;
+}
+.cm-header-6:not(.cm-formatting){
+  font-size: 16.5px;
+}
+
+.inserted-widget-image {
+  padding: 0px 140px;
+}
+
+/* style */
+.cm-em {
+  background: rgb(243, 224, 224) !important;
+}
+.cm-strong {
+  border-bottom: none;
+  color: rgb(179, 107, 107);
+}
+.cm-formatting-list {
+  background: rgb(243, 224, 224) !important;
+  color: rgb(172, 125, 125)!important;
+}
+.CodeMirror-foldmarker {
+  background: rgb(252, 243, 243);
+}
+
+/* cmd line */
+.line-cm-cmd {
+  text-align: left;
+  padding-left: 40px!important;
+}
+.line-cm-cmd .cm-header-1 {
+  font-size: 12px!important;
+  color: #ccc!important
+}
+
+/* comp */
+#sticky-note {
+  background: var(--tool-page-bg)!important;
+  font-weight: bold!important;
+}
+
+/* outline */
+#outline .item.active {
+  background: var(--accent-bg)!important;
+}
+#outline .item:hover {
+  background: var(--accent-hover-bg)!important;
+}
+.cm-highlight-line {
+  background: var(--accent-bg)!important;
+}
