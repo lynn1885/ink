@@ -24,10 +24,10 @@
   fill: rgb(87, 85, 85)!important;
 }
 #tool-icons .tool-icon svg:hover {
-  fill: rgb(153, 153, 153)!important;
+  fill: rgb(177, 176, 176)!important;
 }
 #tool-icons .tool-icon.active svg {
-  fill: rgb(153, 153, 153)!important;
+  fill: rgb(177, 176, 176)!important;
 }
 
 /* tool pages */
@@ -82,20 +82,26 @@
   color: rgb(156, 150, 150);
   font-weight: bold!important;
 }
-.cm-header-1:not(.cm-formatting){
+.cm-header-1:not(.cm-formatting), #outline .header1{
+  color: rgb(209, 102, 102)!important;
+  font-weight: bold!important;
+}
+.cm-header-2:not(.cm-formatting), #outline .header2{
   color: rgb(209, 154, 102)!important;
   font-weight: bold!important;
 }
-.cm-header-2:not(.cm-formatting){
-  color: rgb(85, 163, 102)!important;
+.cm-header-3:not(.cm-formatting), #outline .header3{
+  color: rgb(141, 175, 116)!important;
   font-weight: bold!important;
 }
-.cm-header-3:not(.cm-formatting){
-  color: rgb(156, 116, 79)!important;
+.cm-header-4:not(.cm-formatting), #outline .header4{
+  color: rgb(95, 144, 173)!important;
   font-weight: bold!important;
 }
-.cm-header-4:not(.cm-formatting){
-  color: rgb(68, 129, 81)!important;
+.cm-header-5:not(.cm-formatting), #outline .header5{
+  font-weight: bold!important;
+}
+.cm-header-6:not(.cm-formatting), #outline .header6{
   font-weight: bold!important;
 }
 
@@ -111,11 +117,23 @@
 }
 .line-cm-image span, .line-cm-image .cm-url {
   background: rgb(71, 71, 71)!important;
-  color: rgb(39, 38, 38)!important;
+  color: rgb(119, 117, 117)!important;
 }
 .line-cm-code-block, .line-cm-quote {
   padding-left: 136px!important;
   background: linear-gradient(to right, transparent 128px, var(--tool-page-bg) 128px)!important;
+}
+/* content menu */
+#content-menu {
+  background: var(--editor-bg)!important;
+  color: rgb(156, 150, 150);
+  box-shadow: 0px 0px 2px 0px var(--editor-bg)!important;
+}
+#content-menu li {
+  border-bottom: none!important;
+}
+#content-menu li:hover {
+  color: rgb(156, 150, 150)!important;
 }
 
 /* comp */
@@ -125,13 +143,31 @@
   color: rgb(156, 150, 150)!important;
   font-weight: bold!important;
 }
-
 /* outline */
 #outline .item.active {
   background: var(--accent-bg)!important;
 }
 #outline .item:hover {
   background: var(--accent-hover-bg)!important;
+}
+
+#search-note-bar {
+  box-shadow: 0px 0px 2px 0px rgb(37, 40, 48)!important;
+}
+#search-note-bar li, #search-note-bar .wrapper {
+  background: rgb(37, 40, 48)!important;
+  color: rgb(150, 150, 150)!important;
+}
+#search-note-bar li:hover {
+  background: var(--accent-bg)!important;
+}
+#search-note-bar .search-input, #search-note-bar .placeholder {
+  background: var(--editor-bg)!important;
+  color: rgb(156, 150, 150);
+}
+#search-note-bar .wrapper::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
 }
 
 .cm-highlight-line {

@@ -27,7 +27,8 @@ export default function (editor) {
 // 工具函数: 替换单词
 function replace(text) {
   return text
-    .replace(/[a-zA-Z][a-zA-Z, ，]+/g, match => match.replace(/[, ，]+/g, '').toLowerCase())
+    // .replace(/[a-zA-Z][a-zA-Z, ，]+/g, match => match.replace(/[, ，]+/g, '').toLowerCase())
+    .replace(/[a-zA-Z][a-zA-Z，]+/g, match => match.replace(/[，]+/g, '').toLowerCase())
     .replace(/大写开始，?([a-zA-Z]+)大写结束，?/g, (match, group1) => group1.toUpperCase())
     .replace(/全部大写，?([a-zA-Z]+)/g, (match, group1) => group1.toUpperCase())
     .replace(/大写，?([a-zA-Z])/g, (match, group1) => group1.toUpperCase());

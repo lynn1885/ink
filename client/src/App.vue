@@ -46,7 +46,6 @@ export default {
       isZenMode: false, // is zen mode
       isShowSideBar: true,
       isShowStatusBar: true,
-      curTheme: null,
       defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
       noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
     };
