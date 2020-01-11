@@ -1,6 +1,6 @@
 /* vars */
 :root {
-  --tool-icons-bg: #efeded;
+  --tool-icons-bg: #efecec;
   --tool-pages-bg: #fbf9f9;
   --editor-bg: #fffdfd;
   --main-bg: #f8f6f6;
@@ -110,7 +110,7 @@
 
 .CodeMirror-line:not(.line-cm-header) {
   color: var(--editor-color);
-  font-size: 16px;
+  font-size: 16.5px;
 }
 .line-cm-header-1 {
   text-align: center;
@@ -122,41 +122,41 @@
 }
 .cm-header-2:not(.cm-formatting) {
   color: var(--header-2-color)!important;
-  font-size: 16px!important;
+  font-size: 16.5px!important;
   font-weight: bold!important;
 }
 .cm-header-3:not(.cm-formatting) {
   color: var(--header-3-color)!important;
   font-weight: bold!important;
-  font-size: 16px!important;
+  font-size: 16.5px!important;
 }
 .cm-header-4:not(.cm-formatting) {
   color: var(--header-4-color)!important;
   font-weight: bold!important;
-  font-size: 16px!important;
+  font-size: 16.5px!important;
 }
 .cm-header-5:not(.cm-formatting) {
   color: var(--header-5-color)!important;
   font-weight: bold!important;
-  font-size: 16px!important;
+  font-size: 16.5px!important;
 }
 .cm-header-6:not(.cm-formatting) {
   color: var(--header-6-color)!important;
   font-weight: bold!important;
-  font-size: 16px!important;
+  font-size: 16.5px!important;
 }
 
 /* fold */
 .CodeMirror-foldmarker {
   background: rgb(245, 234, 234);
-  line-height: 16px;
+  line-height: 16.5px;
   font-size: 13px!important;
   color: rgb(224, 207, 207);
 }
 
 /* code */
 .cm-comment {
-  background: rgb(238, 214, 214)!important;
+  background: rgb(238, 220, 220)!important;
 }
 .cm-comment:not(.cm-formatting) {
   color: var(--editor-color)!important;
