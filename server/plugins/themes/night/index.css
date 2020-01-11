@@ -4,14 +4,27 @@
   --tool-page-bg: rgb(33, 37, 43);
   --editor-bg: rgb(40, 44, 52);
   --main-bg: rgb(33, 37, 43);
-  --accent-bg: rgb(90, 89, 89);
-  --accent-hover-bg: rgba(90, 89, 89);
+  --accent-bg: rgb(85, 84, 84);
+  --accent-hover-bg: rgba(90, 89, 89, 0.8);
+
+  --editor--color: rgb(156, 150, 150);
+  --dark-color: rgb(41, 41, 41);
 }
 
+/* font */
+* {
+  font-family: 'yahei consolas hybrid'!important;
+}
+
+/* selection & scroll bar */
 ::selection {
   background: rgb(172, 170, 170) !important;
 }
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:hover {
+  background: rgb(122, 122, 122)!important;
+}
 
+/* main */
 #main {
   background: var(--main-bg)!important;
 }
@@ -23,11 +36,11 @@
 #tool-icons .tool-icon svg {
   fill: rgb(87, 85, 85)!important;
 }
-#tool-icons .tool-icon svg:hover {
-  fill: rgb(170, 169, 168)!important;
+#tool-icons .tool-icon.active > svg {
+  fill: rgba(170, 169, 168)!important;
 }
-#tool-icons .tool-icon.active svg {
-  fill: rgb(170, 169, 168)!important;
+#tool-icons .tool-icon:not(.active):hover > svg {
+  fill: rgba(170, 169, 168, 0.8)!important;
 }
 
 /* tool pages */
@@ -41,10 +54,35 @@
 #tool-pages .cat-active {
   background: var(--accent-bg)!important;
 }
-#tool-pages li:hover {
+#tool-pages li:not(.cat-active):hover {
   background: var(--accent-hover-bg)!important;
 }
 
+/* status-bar */
+#status-bar {
+  background: var(--tool-page-bg)!important;
+}
+#status-bar .items {
+  color: var(--editor--color);
+}
+#status-bar .items:hover {
+  background: var(--editor-bg)!important;
+}
+
+/* content menu */
+#content-menu {
+  background: var(--editor-bg)!important;
+  color: var(--editor--color);
+  box-shadow: 0px 0px 2px 0px var(--editor-bg)!important;
+}
+#content-menu li {
+  border-bottom: none!important;
+}
+#content-menu li:hover {
+  color: var(--editor--color)!important;
+}
+
+/* editor */
 .CodeMirror {
   background: var(--editor-bg)!important;
   padding: 0px!important;
@@ -57,29 +95,8 @@
   background-size: 100% auto;
 }
 
-#quick-open-bar .bar-placeholder {
-  background: var(--tool-page-bg)!important;
-}
-#quick-open-bar .item.active {
-  background: var(--editor-bg)!important;
-}
-#quick-open-bar .item.fixed {
-  background:rgb(32, 35, 41)!important;
-  color: rgb(156, 150, 150);
-}
-
-#status-bar {
-  background: var(--tool-page-bg)!important;
-}
-#status-bar .items {
-  color: rgb(156, 150, 150);
-}
-#status-bar .items:hover {
-  background: var(--editor-bg)!important;
-}
-
 .CodeMirror-line:not(.line-cm-header) {
-  color: rgb(156, 150, 150);
+  color: var(--editor--color);
   font-weight: bold!important;
 }
 .cm-header-1:not(.cm-formatting), #outline .header1{
@@ -105,16 +122,35 @@
   font-weight: bold!important;
 }
 
+/* fold */
 .CodeMirror-foldmarker {
   background: rgb(102, 99, 99);
-  color: rgb(156, 150, 150);
+  color: var(--editor--color);
 }
 
-/* style */
-.cm-formatting-list {
-  background: rgb(160, 158, 158) !important;
-  color: rgb(78, 77, 77)!important;
+/* code */
+.cm-comment {
+  background: rgb(172, 136, 83)!important;
 }
+.cm-comment:not(.cm-formatting) {
+  color: var(--dark-color)!important;
+}
+
+/* em */
+.cm-em {
+  background: rgb(137, 83, 172)!important;
+}
+.cm-em:not(.cm-formatting) {
+  color: var(--dark-color)!important;
+}
+
+/* list */
+.cm-formatting-list {
+  background: rgb(128, 127, 129)!important;
+  color: var(--dark-color)!important;
+}
+
+/* image */
 .line-cm-image span, .line-cm-image .cm-url {
   background: rgb(71, 71, 71)!important;
   color: rgb(119, 117, 117)!important;
@@ -123,39 +159,30 @@
   padding-left: 136px!important;
   background: linear-gradient(to right, transparent 128px, var(--tool-page-bg) 128px)!important;
 }
-.cm-comment {
-  background: rgb(172, 136, 83)!important;
-}
-.cm-comment:not(.cm-formatting) {
-  color: rgb(41, 41, 41)!important;
-}
-.cm-em {
-  background: rgb(137, 83, 172)!important;
-}
-.cm-em:not(.cm-formatting) {
-  color: rgb(41, 41, 41)!important;
+.line-cm-code-block .cm-comment {
+  background: var(--tool-page-bg)!important;
+  color: rgb(110, 108, 108)!important;
 }
 
-/* content menu */
-#content-menu {
-  background: var(--editor-bg)!important;
-  color: rgb(156, 150, 150);
-  box-shadow: 0px 0px 2px 0px var(--editor-bg)!important;
-}
-#content-menu li {
-  border-bottom: none!important;
-}
-#content-menu li:hover {
-  color: rgb(156, 150, 150)!important;
+/* formatting */
+.cursor-in-this-line .cm-formatting-code,
+.cursor-in-this-line .cm-formatting-em,
+.cursor-in-this-line .cm-formatting-header,
+.cursor-in-this-line .cm-formatting-strong {
+  font-weight: 14px!important;
+  color: rgb(81, 82, 83)!important;
 }
 
-/* comp */
+
+/* plugins */
+/* sticky-note  */
 #sticky-note {
   background: rgb(37, 40, 48)!important;
-  box-shadow: 0px 0px 2px 0px rgb(37, 40, 48)!important;
-  color: rgb(156, 150, 150)!important;
+  box-shadow: 0px 0px 3px 0px rgb(31, 27, 24)!important;
+  color: var(--editor--color)!important;
   font-weight: bold!important;
 }
+
 /* outline */
 #outline .item.active {
   background: var(--accent-bg)!important;
@@ -177,13 +204,27 @@
 }
 #search-note-bar .search-input, #search-note-bar .placeholder {
   background: var(--editor-bg)!important;
-  color: rgb(156, 150, 150);
+  color: var(--editor--color);
 }
 #search-note-bar .wrapper::-webkit-scrollbar {
   width: 0px;
   height: 0px;
 }
 
+/* quick-open-bar */
+#quick-open-bar .bar-placeholder {
+  background: var(--tool-page-bg)!important;
+}
+
+#quick-open-bar .item, #quick-open-bar .item.fixed {
+  background:rgb(32, 35, 41)!important;
+  color: var(--editor--color);
+}
+#quick-open-bar .item.active {
+  background: var(--editor-bg)!important;
+}
+
+/* useful classes */
 .cm-highlight-line {
   background: var(--accent-bg)!important;
 }
