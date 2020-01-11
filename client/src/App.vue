@@ -46,12 +46,13 @@ export default {
       isZenMode: false, // is zen mode
       isShowSideBar: true,
       isShowStatusBar: true,
+      defaultTheme: null,
       defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
       noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
     };
   },
   watch: {
-    // change theme
+    // change note theme
     '$store.state.curNoteTheme': {
       immediate: true,
       handler(value) {
@@ -69,6 +70,23 @@ export default {
           setTimeout(() => {
             this.noteThemeStyleEl.remove();
           }, 0);
+        }
+      },
+    },
+
+    // change night mode
+    '$store.state.isNightModeOn': {
+      handler(value) {
+        if (value === true) {
+          this.defaultThemeStyleEl.attr(
+            'href',
+            `${config.server.staticPluginsUrl}themes/night/index.css`
+          );
+        } else if (value === false) {
+          this.defaultThemeStyleEl.attr(
+            'href',
+            `${config.server.staticPluginsUrl}themes/${this.defaultTheme}/index.css`
+          );
         }
       },
     },
@@ -114,13 +132,14 @@ export default {
 
     // get default theme
     async getDefaultTheme() {
+      $('head').append(this.defaultThemeStyleEl);
       await UserConfig.get(['theme', 'default'])
         .then((data) => {
+          this.defaultTheme = data;
           this.defaultThemeStyleEl.attr(
             'href',
             `${config.server.staticPluginsUrl}themes/${data}/index.css`
           );
-          $('head').append(this.defaultThemeStyleEl);
         })
         .catch(() => {
           console.warn('cannot find default theme');

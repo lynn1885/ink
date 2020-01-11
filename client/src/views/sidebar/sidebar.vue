@@ -19,14 +19,14 @@
     </div>
 
     <!-- page -->
-      <div id="tool-pages">
-          <catalog v-show="activePage === 'Catalog'"></catalog>
-          <!--never close catalog-->
-          <search v-if="activePage === 'Search'"></search>
-          <outline v-if="activePage === 'Outline'"></outline>
-          <todo v-if="activePage === 'Todo'"></todo>
-          <statistics v-if="activePage === 'Statistics'"></statistics>
-      </div>
+    <div id="tool-pages">
+      <catalog v-show="activePage === 'Catalog'"></catalog>
+      <!--never close catalog-->
+      <search v-if="activePage === 'Search'"></search>
+      <outline v-if="activePage === 'Outline'"></outline>
+      <todo v-if="activePage === 'Todo'"></todo>
+      <statistics v-if="activePage === 'Statistics'"></statistics>
+    </div>
 
     <!-- other components -->
     <sticky-note v-if="isShowStickyNote"></sticky-note>
@@ -53,6 +53,7 @@ import {
   outlineSvg,
   todoSvg,
   statisticsSvg,
+  nightModeSvg,
 } from './svg';
 
 const isEnableConsole = false;
@@ -118,25 +119,40 @@ export default {
           lastStatus: false,
         },
         {
-          name: 'Todo',
-          icon: todoSvg,
-          type: 'page',
-        },
-        {
           name: 'Outline',
           icon: outlineSvg,
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
         {
+          name: 'Todo',
+          icon: todoSvg,
+          type: 'page',
+        },
+        {
           name: 'Search',
           icon: searchSvg,
           type: 'page',
           keyMap: ['Ctrl', 'F'],
-        }, {
+        },
+        {
           name: 'Statistics',
           icon: statisticsSvg,
           type: 'page',
+        },
+        {
+          name: 'Night Mode',
+          icon: nightModeSvg,
+          type: 'button',
+          onclick: (editor, lastStatus) => {
+            let flag = false;
+            if (lastStatus === false) {
+              flag = true;
+            }
+            this.$store.commit('updateIsNightModeOn', flag);
+            return flag;
+          },
+          lastStatus: false,
         },
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
@@ -232,7 +248,8 @@ export default {
           continue;
         } else {
           this.editor.bindShortcutKeyMap(document, tool.keyMap, () =>
-            this.changeTool(tool, true));
+            this.changeTool(tool, true)
+          );
         }
       }
     },

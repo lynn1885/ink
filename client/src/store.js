@@ -12,6 +12,7 @@ export default new Vuex.Store({
     catalog: null, // 目录
     gotoThisCatalog: [], // 要跳转到的目录, catalog组件会监听该目录
     curNoteTheme: null, // 当前笔记主题
+    isNightModeOn: false, // 是否启用了夜间模式
   },
   mutations: {
     // 更新编辑器对象
@@ -48,6 +49,11 @@ export default new Vuex.Store({
     // 更新当前笔记的主题
     updateCurNoteTheme(state, data) {
       state.curNoteTheme = data;
+    },
+
+    // 更新夜间模式状态
+    updateIsNightModeOn(state, data) {
+      state.isNightModeOn = data;
     },
   },
   actions: {
