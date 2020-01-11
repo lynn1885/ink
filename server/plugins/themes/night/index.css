@@ -168,7 +168,8 @@
 .cursor-in-this-line .cm-formatting-code,
 .cursor-in-this-line .cm-formatting-em,
 .cursor-in-this-line .cm-formatting-header,
-.cursor-in-this-line .cm-formatting-strong {
+.cursor-in-this-line .cm-formatting-strong,
+.cursor-in-this-line .cm-formatting-strikethrough {
   font-weight: 14px!important;
   color: rgb(81, 82, 83)!important;
 }

@@ -210,7 +210,6 @@
   }
 }
 
-
 // formatting
 .cm-formatting, .cm-formatting-escape {
   font-style: normal;
@@ -219,7 +218,8 @@
 .cm-formatting-header, 
 .cm-formatting-em,
 .cm-formatting-code,
-.cm-formatting-strong {
+.cm-formatting-strong,
+.cm-formatting-strikethrough {
   color: transparent!important;
 }
 .cm-formatting-header {
