@@ -164,7 +164,7 @@
 
 /* em */
 .cm-em {
-  background: rgb(227, 217, 236)!important;
+  background: rgb(221, 226, 214)!important;
 }
 .cm-em:not(.cm-formatting) {
   color: var(--editor-color)!important;
