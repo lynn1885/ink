@@ -156,7 +156,7 @@
 
 /* code */
 .cm-comment {
-  background: rgb(238, 220, 220)!important;
+  background: rgb(235, 219, 219)!important;
 }
 .cm-comment:not(.cm-formatting) {
   color: var(--editor-color)!important;
@@ -200,8 +200,10 @@
 .cursor-in-this-line .cm-formatting-header,
 .cursor-in-this-line .cm-formatting-strong,
 .cursor-in-this-line .cm-formatting-strikethrough {
-  font-weight: 14px!important;
   color: rgb(209, 202, 202)!important;
+}
+.cm-header.cm-formatting-em, .cm-header.cm-formatting-code {
+  font-size: 16.5px!important;
 }
 /* cmd line */
 .line-cm-cmd {
