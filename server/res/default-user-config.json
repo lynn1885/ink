@@ -1,4 +1,7 @@
 {
+  "theme": {
+    "default": null
+  },
   "catalog": {
     "order": {
     }

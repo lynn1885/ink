@@ -36,12 +36,12 @@ $icon-bar-width: 40px;
 
 // sidebar: color
 $icon-bar-bg: rgba(233, 232, 231, 0.82);
-$tool-page-color: #444;
+$tool-page-color: rgb(100, 97, 93);
 // $tool-page-bg: rgba(248, 247, 246, 0.87);
 $tool-page-bg: rgba(249, 248, 247, 0.87);
-$icon-color: #999;
-$icon-color-active: #464646;
-$icon-color-hover: #888;
+$icon-color: rgb(168, 168, 167);
+$icon-color-active: #585654;
+$icon-color-hover: #64615f;
 
 // sidebar: element
 $sidebar-button-bg: lighten($color: $tool-page-bg, $amount: 10);
@@ -64,7 +64,7 @@ $catalog-col-border: none;
 
 // editor
 $editor-bg: rgba(254, 253, 252, 0.9);
-$editor-color: #333;
+$editor-color: rgb(66, 65, 63);
 
 // headers: color
 $header-1: #b17a46;
@@ -92,6 +92,7 @@ $code-bg: rgba(243, 237, 230, 0.9);
 $code-color: rgb(133, 114, 90);
 $code-block-bg: rgba(249, 247, 244, 0.9);
 $cm-em-bg: rgba(240, 230, 248, 0.9);
+$cm-strong-color: rgb(204, 104, 104);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgba(236, 243, 248, 0.9);
 $cm-link-color: rgb(47, 147, 165);

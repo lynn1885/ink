@@ -1,8 +1,18 @@
 <template>
   <div id="todo">
+    <!-- set mark -->
+    <input
+      id="set-mark"
+      type="text"
+      v-model="todoMark"
+      :maxlength="maxTodoMarkLength"
+      @keydown="setMarkKeyDownHandler"
+      autocomplete="off"
+    />
+
     <!-- todo info -->
     <div id="todo-info">
-      <div class="normal" v-if="todos.length < maxTodoNum">共有 {{todos.length}} 条待办事项~</div>
+      <div class="normal" v-if="todos.length < maxTodoNum">条目: {{todos.length}}</div>
       <div class="warning" v-else>待办事项太多了, 只显示前 {{maxTodoNum}} 条</div>
     </div>
 
@@ -21,7 +31,7 @@
           :key="header.headerLineNum + header.headerLineText"
           v-for="header of todo.headers"
         >{{header.headerLineText.replace(/^#+/, '')}}</div>
-        <div class="text">{{todo.text.replace(todoMark, '')}}</div>
+        <div class="text">{{todo.text}}</div>
       </div>
     </div>
   </div>
@@ -37,8 +47,9 @@ export default {
     return {
       editor: null,
       todos: [],
-      todoMark: 'Todo: ',
-      maxTodoNum: 40,
+      todoMark: localStorage.getItem('todoMark') || 'Todo: ',
+      maxTodoMarkLength: 30,
+      maxTodoNum: 200,
       highlightLineClass: classNames.highlightLineClass,
       todoStrLength: 140,
       updateTimer: null,
@@ -90,7 +101,9 @@ export default {
         if (this.isThisATodo(lineText)) {
           todos.push({
             lineNum: i,
-            text: `${lineText.slice(0, this.todoStrLength)}${lineText.length > this.todoStrLength ? '...' : ''}`,
+            text: `${lineText.slice(0, this.todoStrLength)}${
+              lineText.length > this.todoStrLength ? '...' : ''
+            }`,
             headers: this.editor
               .getHeaderAncestors({ line: i, ch: 0 })
               .reverse(),
@@ -114,16 +127,10 @@ export default {
         this.updateTodos();
         const updateConsumption = new Date() - startTime;
         if (updateConsumption > 50) {
-          console.warn(
-            'It took too long to update todos: ',
-            updateConsumption
-          );
+          console.warn('It took too long to update todos: ', updateConsumption);
         }
         if (isEnableConsole) {
-          console.log(
-            'cumulative update consumption: ',
-            updateConsumption
-          );
+          console.log('cumulative update consumption: ', updateConsumption);
         }
         console.log('todo: changes: ', updateConsumption);
       }, this.updateDelay);
@@ -141,10 +148,23 @@ export default {
       }, 0);
     },
 
+    // search bar key down handler
+    setMarkKeyDownHandler(e) {
+      // press Enter key
+      if (e.keyCode === 13) {
+        if (isEnableConsole) {
+          console.log('todo: set mark & search');
+        }
+        this.todoMark = this.todoMark || 'Todo: ';
+        localStorage.setItem('todoMark', this.todoMark);
+        this.updateTodos();
+      }
+    },
+
     // tool function
     // judge whether this is a todo
     isThisATodo(text) {
-      return text.indexOf(this.todoMark) === 0;
+      return text.startsWith(this.todoMark);
     },
   },
 
@@ -165,10 +185,23 @@ export default {
 
 <style lang="scss" scoped>
 @import '@/themes/craft/var.scss';
+
 #todo {
   position: relative;
   width: 100%;
   height: 100%;
+}
+
+#set-mark {
+  width: 96%;
+  height: 28px;
+  padding: 0px 4px;
+  box-sizing: border-box;
+  margin: 4px 2%;
+  color: $tool-page-color;
+  font-size: $sidebar-input-font-size;
+  border: 1px solid $sidebar-input-border-color;
+  background: $sidebar-input-bg;
 }
 
 // todo info
@@ -176,8 +209,8 @@ export default {
   width: 100%;
   text-align: center;
   font-size: $font-size-sidebar;
-  height: 30px;
-  line-height: 30px;
+  height: 20px;
+  line-height: 20px;
   background: $tool-page-bg;
   color: $comment-color;
   .warning {
@@ -191,7 +224,7 @@ export default {
   width: 100%;
   left: 0;
   right: 0;
-  top: 30px;
+  top: 58px;
   bottom: 0;
   box-sizing: border-box;
   overflow-y: scroll;

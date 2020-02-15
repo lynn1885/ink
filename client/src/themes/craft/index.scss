@@ -149,7 +149,7 @@
 .cm-strong {
   font-weight: bold!important;
   padding-bottom: 1.4px;
-  border-bottom: 1.6px dashed rgb(238, 114, 114);
+  color: $cm-strong-color!important;
 }
 
 // code
@@ -324,4 +324,3 @@
     color: #ccc!important;
   }
 }
-
