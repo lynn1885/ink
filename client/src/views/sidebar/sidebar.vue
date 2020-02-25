@@ -42,7 +42,8 @@ import StickyNote from '@/components/sticky-note/sticky-note.vue';
 import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
 import Statistics from '@/components/statistics/statistics.vue';
 import readonly from '@/components/readonly/readonly.js';
-// import mindMap from '@/components/mind-map/mind-map.js';
+import review from '@/components/review/review.js';
+import mindMap from '@/components/mind-map/mind-map.js';
 // eslint-disable-next-line no-unused-vars
 import {
   bookSvg,
@@ -95,6 +96,12 @@ export default {
           lastStatus: false,
         },
         {
+          name: 'Search',
+          icon: searchSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'F'],
+        },
+        {
           name: 'Sticky Note',
           icon: stickyNoteSvg,
           type: 'button',
@@ -130,10 +137,19 @@ export default {
           type: 'page',
         },
         {
-          name: 'Search',
-          icon: searchSvg,
-          type: 'page',
-          keyMap: ['Ctrl', 'F'],
+          name: 'Review',
+          icon: review.icon,
+          type: 'button',
+          onclick: review.handler,
+          lastStatus: false,
+          keyMap: ['Ctrl', 'Shift', 'R'],
+        },
+        {
+          name: 'Mind Map',
+          icon: mindMap.icon,
+          type: 'button',
+          onclick: mindMap.handler,
+          lastStatus: false,
         },
         {
           name: 'Statistics',
@@ -157,9 +173,7 @@ export default {
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
         // },
-        // {
-        // name: 'mind map', icon: mindMap.icon, type: 'button', onclick: mindMap.handler, lastStatus: false,
-        // },
+       
         // {
         //   name: 'setting',
         //   icon: settingSvg,
@@ -210,7 +224,8 @@ export default {
       } else if (tool.type === 'button' && tool.onclick) {
         tool.lastStatus = tool.onclick(
           this.$store.state.editor,
-          tool.lastStatus
+          tool.lastStatus,
+          this
         );
         if (!this.activeButtons[tool.name]) {
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听

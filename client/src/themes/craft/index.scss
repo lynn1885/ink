@@ -324,3 +324,13 @@
     color: #ccc!important;
   }
 }
+
+// other, 耦合, 将来需要移除
+jmnode {
+  font-family: 'yahei consolas hybrid'!important;
+  font-weight: bold!important;
+}
+jmnode.selected {
+  background: rgb(247, 247, 142)!important;
+  color: #333!important;
+}

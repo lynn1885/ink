@@ -226,6 +226,18 @@ export default {
     // 监听: 监听gotoThisCatalog字段, 此字段变更时触发目录跳转
     // 这个字段常由外部调用. 触发目录变更的两个入口, 一个是getCatalog()之后, 一个是这里
     '$store.state.gotoThisCatalog': function foo(value) {
+      if (!Array.isArray(value)) {
+        console.error('要前往的路径不是数组: ', value);
+        return;
+      }
+      if (
+        !this.catalog[value[0]] ||
+        !this.catalog[value[0]][value[1]] ||
+        !this.catalog[value[0]][value[1]][value[2]]
+      ) {
+        this.$message.error(`要前往的路径不存在: ${value}`);
+        return;
+      }
       if (this.$store.state.isProhibitOperation) {
         this.$message.error('暂时不能操作目录'); // 重要
         return;

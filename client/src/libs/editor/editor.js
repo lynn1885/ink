@@ -490,12 +490,24 @@ export default class {
    * @param {pos} line 要检测的line. 如果不传入line, 默认使用当前cursor所在的line
    * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
    */
-  isThisLineAHeader(line) {
+  isThisLineAHeader(lineNum) {
     let res = false;
-    if (!line) {
-      ({ line } = this.cm.getCursor());
+    if (!lineNum) {
+      ({ lineNum } = this.cm.getCursor());
     }
-    const headerLv = this.getHeaderLvByStr(this.cm.lineInfo(line).text);
+    const headerLv = this.getHeaderLvByStr(this.cm.lineInfo(lineNum).text);
+    if (headerLv) res = headerLv;
+    return res;
+  }
+
+  /**
+   * isThisTextAHeader: 检测传入的文本是不是一个标题
+   * @param {string} text
+   * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
+   */
+  isThisTextAHeader(text) {
+    let res = false;
+    const headerLv = this.getHeaderLvByStr(text);
     if (headerLv) res = headerLv;
     return res;
   }
@@ -547,8 +559,14 @@ export default class {
   /**
    * getHeadersHierarchy: 获取所有headers, 组织成一个对象
    * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
+   * @param {object} propNames 可选, 用于自定义生成的hierarchy对象的属性名
    */
-  getHeadersHierarchy(text) {
+  getHeadersHierarchy(text, propNames = {
+    lineNum: 'lineNum',
+    lv: 'lv',
+    text: 'text',
+    children: 'children'
+  }) {
     if (!text) {
       text = this.cm.getDoc().getValue();
     }
@@ -562,18 +580,18 @@ export default class {
         if (headerLv === 1) {
           lastMeetHeaders[headerLv] = [];
           hierarchy.push({
-            lineNum: i,
-            lv: headerLv,
-            text: matchRes[0],
-            children: lastMeetHeaders[headerLv],
+            [propNames.lineNum]: i,
+            [propNames.lv]: headerLv,
+            [propNames.text]: matchRes[0],
+            [propNames.children]: lastMeetHeaders[headerLv],
           });
         } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
           lastMeetHeaders[headerLv] = [];
           lastMeetHeaders[headerLv - 1].push({
-            lineNum: i,
-            lv: headerLv,
-            text: matchRes[0],
-            children: lastMeetHeaders[headerLv],
+            [propNames.lineNum]: i,
+            [propNames.lv]: headerLv,
+            [propNames.text]: matchRes[0],
+            [propNames.children]: lastMeetHeaders[headerLv],
           });
         }
       }
@@ -700,6 +718,27 @@ export default class {
         res = true;
       }
     }
+    return res;
+  }
+
+  /**
+   * getWordAndLineCount, 获取相对科学的字符统计, 行数统计
+   * @param {string} text 要统计的文本, 没有的话, 默认使用当前笔记的内容
+   * @return {object} res, 统计结果. res.wordCount: 字符数, res.lineCount: 行数
+   */
+  getWordAndLineCount(text = this.cm.getDoc().getValue()) {
+    const res = {
+      wordCount: 0,
+      lineCount: 0,
+    };
+    res.lineCount = this.cm.getDoc().lineCount();
+    let englishWordCount = 0;
+    text = text.replace(/\b[a-zA-Z-]+\b/g, () => {
+      englishWordCount += 1;
+      return '';
+    });
+    text = text.replace(/\s+/g, '');
+    res.wordCount = text.length + englishWordCount;
     return res;
   }
 }

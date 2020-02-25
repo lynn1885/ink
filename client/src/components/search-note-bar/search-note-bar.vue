@@ -98,18 +98,30 @@ export default {
     search(searchText) {
       clearTimeout(this.searchTimeoutId);
       this.searchTimeoutId = setTimeout(() => {
-        let i = 0;
+        let resCount = 0;
         this.maxSearchResLengthWarn = '';
         this.searchRes = [];
         const res = [];
         if (!searchText) {
           return;
         } else if (searchText) {
+          // search logic
+          const searchTextArr = searchText.toLowerCase().split('/');
           for (const cat of this.catalogArr) {
-            if (cat.toLowerCase().includes(searchText.toLowerCase())) {
-              i += 1;
+            let isNeedPush = true;
+            for (let i = 0; i < searchTextArr.length; i += 1) {
+              if (cat.toLowerCase().includes(searchTextArr[i])) {
+                isNeedPush = true;
+              } else {
+                isNeedPush = false;
+                break;
+              }
+            }
+            // push
+            if (isNeedPush) {
+              resCount += 1;
               res.push(cat);
-              if (i >= this.maxSearchResLength) {
+              if (resCount >= this.maxSearchResLength) {
                 this.maxSearchResLengthWarn = `Only the top ${this.maxSearchResLength} results are displayed`;
                 break;
               }

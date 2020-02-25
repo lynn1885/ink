@@ -51,6 +51,10 @@ export default {
       handler(value) {
         if (value) {
           this.editor = value;
+          // open api
+          this.editor.quickOpenBar = {
+            fixThisNoteDir: this.fixThisNoteDir.bind(this),
+          };
         }
       },
     },
@@ -65,9 +69,7 @@ export default {
           }
           this.curFilePath = value;
           const curFilePathArr = this.curFilePath.split('/');
-          this.curFileDir = `${curFilePathArr[0]}/${curFilePathArr[1]}/${
-            curFilePathArr[2]
-          }/`;
+          this.curFileDir = `${curFilePathArr[0]}/${curFilePathArr[1]}/${curFilePathArr[2]}/`;
           if (!this.fixedNoteDirs.includes(this.curFileDir)) {
             this.tempNoteDir = this.curFileDir;
           }
@@ -113,9 +115,7 @@ export default {
             if (
               typeof value[dirArr[0]] === 'object' &&
               typeof value[dirArr[0]][dirArr[1]] &&
-              typeof value[dirArr[0]][dirArr[1]][
-                dirArr[2]
-              ] === 'object'
+              typeof value[dirArr[0]][dirArr[1]][dirArr[2]] === 'object'
             ) {
               isExist = true;
             }
@@ -308,7 +308,7 @@ export default {
     }
   }
   .active {
-    background: $editor-bg!important;
+    background: $editor-bg !important;
   }
   .fixed {
     font-style: normal;

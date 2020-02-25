@@ -3,88 +3,95 @@ import JsMind from 'jsmind';
 import 'jsmind/style/jsmind.css';
 
 // prepare Dom
-const mindMapContainerId = 'mind_map_container';
-let mindMapContainer;
 
 // plugin
 export default {
-  icon: '<path d="M1024 256v-256h-384v96h-128v384h-64v-96h-448v256h448v-96h64v416h128v64h384v-256h-384v128h-64v-352h64v96h384v-256h-384v96h-64v-320h64v96h384z m-320 576h256v128h-256v-128z m0-384h256v128h-256v-128z m0-384h256v128h-256v-128z" p-id="5408"></path>',
-  handler(editor, lastStatus) {
-    // prepare
-    let isActive;
-
-    if (lastStatus) { // close
-      isActive = false;
-      mindMapContainer.remove();
-    } else { // open
-      isActive = true;
-      mindMapContainer = $(`
+  icon: '<path id="svg_1" d="m1024,256l0,-256l-384,0l0,96l-128,0l0,384l-64,0l0,-96l-448,0l0,256l448,0l0,-96l64,0l0,416l128,0l0,64l384,0l0,-256l-384,0l0,128l-64,0l0,-352l64,0l0,96l384,0l0,-256l-384,0l0,96l-64,0l0,-320l64,0l0,96l384,0zm-320,576l256,0l0,128l-256,0l0,-128zm0,-384l256,0l0,128l-256,0l0,-128zm0,-384l256,0l0,128l-256,0l0,-128z"/><rect id="svg_2" height="160.78792" width="298.04591" y="43.4601" x="681.61165" fill-opacity="null" stroke-opacity="null" stroke-width="null" stroke="null" fill="null"/><rect id="svg_3" height="174.51372" width="282.35928" y="429.74328" x="691.41579" fill-opacity="null" stroke-opacity="null" stroke-width="null" stroke="null" fill="null"/><rect id="svg_4" height="156.86627" width="300.00674" y="812.10481" x="681.61165" fill-opacity="null" stroke-opacity="null" stroke-width="null" stroke="null" fill="null"/>',
+  handler(editor) {
+    // prepare container
+    const mindMapContainerId = 'mind_map_container';
+    const mindMapContainer = $(`
         <div id="${mindMapContainerId}" style="
           position: fixed;
-          left: 44px;
+          left: 0px;
           right: 0px;
           top: 0px;
-          bottom: 24px;
+          bottom: 0px;
           background: rgba(251, 250, 249, 0.95);
           z-index: 200;
           overflow: auto;
         "> </div>
       `);
-      $('body').append(mindMapContainer);
-      // ❌ getHeadersHierarchy的api已经改动了
-      const data = buildMindMapData(editor.getHeadersHierarchy(null, true), { id: 'root', isroot: true, topic: '' });
-      const jm = new JsMind({
-        container: mindMapContainerId,
-        theme: 'info',
-        editable: false,
-      });
-      const mind = {
-        meta: {
-          version: '0.2',
-        },
-        format: 'node_array',
-        data,
-      };
-      jm.show(mind);
-    }
+    mindMapContainer.on('click', (e) => {
+      if (e.target.classList.contains('jsmind-inner') || e.target.classList.contains('theme-clouds')) {
+        mindMapContainer.remove();
+      }
+    });
+    $('body').append(mindMapContainer);
 
-    // return
-    return isActive;
-  },
+    // prepare data
+    const data = buildMindMapData(editor.getHeadersHierarchy(), {
+      id: 'root',
+      isroot: true,
+      topic: editor.fileServer.curFileDir,
+      'background-color': '#aaa',
+      'font-size': 16,
+    });
+
+    // create jsmind instance
+    const jm = new JsMind({
+      container: mindMapContainerId,
+      theme: 'clouds',
+      editable: false,
+      view: {
+        engine: 'svg',
+      },
+      shortcut: {
+        enable: false,
+      },
+    });
+    const mind = {
+      meta: {
+        version: '0.2',
+      },
+      format: 'node_array',
+      data,
+    };
+    jm.show(mind);
+    jm.view.zoomOut();
+    jm.view.zoomOut();
+    return false;
+  }
 };
 
 // build mind map data
 function buildMindMapData(hierarchy, root) {
   const data = [root];
-  // eslint-disable-next-line no-restricted-syntax
-  for (const lv1Name in hierarchy) {
+  let i = 1;
+  for (const node1 of hierarchy) {
     data.push({
-      id: lv1Name, parentid: 'root', topic: lv1Name.replace(/\d+?\s/, ''), 'background-color': '#963607',
+      id: node1.lineNum + node1.text, parentid: 'root', topic: i + node1.text.replace(/#+/, ''), 'background-color': '#c7b29e',
     });
-    // eslint-disable-next-line no-restricted-syntax
-    for (const lv2Name in hierarchy[lv1Name]) {
+    i += 1;
+    for (const node2 of node1.children) {
       data.push({
-        id: lv2Name, parentid: lv1Name, topic: lv2Name.replace(/\d+?\s/, ''), 'background-color': '#339966',
+        id: node2.lineNum + node2.text, parentid: node1.lineNum + node1.text, topic: node2.text.replace(/#+/, ''), 'background-color': '#a2c5b4',
       });
-      // eslint-disable-next-line no-restricted-syntax
-      for (const lv3Name in hierarchy[lv1Name][lv2Name]) {
+      for (const node3 of node2.children) {
         data.push({
-          id: lv3Name, parentid: lv2Name, topic: lv3Name.replace(/\d+?\s/, ''), 'background-color': '#997B57',
+          id: node3.lineNum + node3.text, parentid: node2.lineNum + node2.text, topic: node3.text.replace(/#+/, ''), 'background-color': 'rgb(216, 196, 174)', expanded: false,
         });
-        // eslint-disable-next-line no-restricted-syntax
-        for (const lv4Name in hierarchy[lv1Name][lv2Name][lv3Name]) {
+        for (const node4 of node3.children) {
           data.push({
-            id: lv4Name, parentid: lv3Name, topic: lv4Name.replace(/\d+?\s/, ''), 'background-color': '#809174',
+            id: node4.lineNum + node4.text, parentid: node3.lineNum + node3.text, topic: node4.text.replace(/#+/, ''), 'background-color': 'rgb(182, 216, 174)', expanded: false,
           });
-          // eslint-disable-next-line no-restricted-syntax
-          for (const lv5Name in hierarchy[lv1Name][lv2Name][lv3Name][lv4Name]) {
+          for (const node5 of node4.children) {
             data.push({
-              id: lv5Name, parentid: lv4Name, topic: lv5Name.replace(/\d+?\s/, ''), 'background-color': '#B2867B',
+              id: node5.lineNum + node5.text, parentid: node4.lineNum + node4.text, topic: node5.text.replace(/#+/, ''), 'background-color': 'rgb(224, 195, 195)', expanded: false
             });
-            // eslint-disable-next-line no-restricted-syntax
-            for (const lv6Name in hierarchy[lv1Name][lv2Name][lv3Name][lv4Name][lv5Name]) {
+            for (const node6 of node5.children) {
               data.push({
-                id: lv6Name, parentid: lv5Name, topic: lv6Name.replace(/\d+?\s/, ''), 'background-color': '#aaa',
+                id: node6.lineNum + node6.text, parentid: node5.lineNum + node5.text, topic: node6.text.replace(/#+/, ''), 'background-color': '#ccc', expanded: false
               });
             }
           }

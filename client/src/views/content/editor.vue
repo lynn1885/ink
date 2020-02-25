@@ -131,7 +131,7 @@ export default {
         try {
           if (this.isFileContentChanged) {
             this._turnOffAutoSave();
-            await this.saveFile('CLOSE', true);
+            await this.saveFile('CLOSE');
           }
           await this._loadFile(info);
         } catch (e) {
@@ -172,7 +172,7 @@ export default {
       this._autoFold(this.curFilePath);
       this._setCurNoteTheme();
       this._markCmdLine();
-      this.$store.commit('updateCurFilePath', filePath);
+      this.$store.commit('updateCurFilePath', filePath); // 标记着加载完成
     },
 
     /**
@@ -257,7 +257,7 @@ export default {
       // 这样就能保证, this.isFileContentChanged = false;会在editor的change事件后触发
       // 即, 这样可以保证, 自动修改完指令行之后, this.isFileContentChanged还是false
       // 但这样也可能导致 [保存时自动修改指令行之后, 下一轮事件循环开始标记isFileContentChanged为false] 这之间的操作丢失
-      await new Promise((resolve) =>
+      await new Promise(resolve =>
         setTimeout(() => {
           this.isFileContentChanged = false;
           resolve();

@@ -75,17 +75,7 @@ export default {
      */
     getWordAndLineCount() {
       const startTime = new Date();
-      const doc = this.editor.cm.getDoc();
-      let text = doc.getValue();
-      this.wordCount = text.length;
-      this.lineCount = doc.lineCount();
-      let englishWordCount = 0;
-      text = text.replace(/\b[a-zA-Z-]+\b/g, () => {
-        englishWordCount += 1;
-        return '';
-      });
-      text = text.replace(/\s+/g, '');
-      this.wordCount = text.length + englishWordCount;
+      ({ wordCount: this.wordCount, lineCount: this.lineCount } = this.editor.getWordAndLineCount());
       const updateConsumption = new Date() - startTime;
       if (updateConsumption > 10) {
         console.warn(

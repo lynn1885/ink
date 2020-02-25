@@ -296,13 +296,14 @@ export default {
   }
   .item {
     position: relative;
-    height: 26px;
     padding: 4px 10px 4px 8px;
     font-size: $font-size-sidebar + 0.5px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    // height: 26px;
+    // white-space: nowrap;
+    // text-overflow: ellipsis;
+    line-height: 1.4;
     overflow: hidden;
-    box-sizing: border-box;
+    border-bottom: 1px dashed darken($color: $tool-page-bg, $amount: 6);
     cursor: pointer;
     &:hover {
       background: $sidebar-item-hover-bg;
