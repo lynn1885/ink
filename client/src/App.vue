@@ -2,12 +2,12 @@
   <div id="app">
     <!-- main body -->
     <div id="main">
-      <side-bar id="side-bar" v-show="isShowSideBar"></side-bar>
+      <side-bar id="side-bar" :class="{'hide': !isShowSideBar}"></side-bar>
       <note-content id="note-content" :class="{'zen-mode': isZenMode }"></note-content>
     </div>
 
     <!-- status-bar-->
-    <status-bar id="status-bar" v-show="isShowStatusBar"></status-bar>
+    <status-bar id="status-bar" :class="{'hide': !isShowStatusBar}"></status-bar>
 
     <!-- background image -->
     <div id="bgimg-container" v-show="isShowBgImg">
@@ -121,11 +121,9 @@ export default {
       if (this.isZenMode) {
         this.isShowSideBar = true;
         this.isShowStatusBar = true;
-        localStorage.setItem('isZenMode', 'OFF');
       } else {
         this.isShowSideBar = false;
         this.isShowStatusBar = false;
-        localStorage.setItem('isZenMode', 'ON');
       }
       this.isZenMode = !this.isZenMode;
     },
@@ -145,13 +143,6 @@ export default {
           console.warn('cannot find default theme');
         });
     },
-  },
-  created() {
-    const isZenMode = localStorage.getItem('isZenMode');
-    if (isZenMode) {
-      this.isZenMode = !(isZenMode === 'ON');
-      this.toggleZenMode();
-    }
   },
   async mounted() {
     // this is the first keydown event
@@ -233,6 +224,13 @@ textarea {
     margin: 0 auto;
   }
 }
+// side-bar
+#side-bar {
+  &.hide {
+    width: 0px;
+    height: 0px;
+  }
+}
 
 // status-bar
 #status-bar {
@@ -242,6 +240,11 @@ textarea {
   line-height: 24px;
   flex-basis: 24px;
   z-index: 10;
+  &.hide {
+    width: 0px;
+    height: 0px;
+    flex-basis: 0px;
+  }
 }
 
 // background image

@@ -60,14 +60,14 @@ export default {
     vueThis.$store.commit('updateGotoThisCatalog', reviewPathArr);
 
     // set reivew note value when open
-    vueThis.$watch(
+    const unwatch = vueThis.$watch(
       '$store.state.curFilePath',
       (value) => {
+        unwatch();
         if (value === `${reviewPathArr.join('/')}/${reviewPathArr[reviewPathArr.length - 1]}.md`) {
-          editor.cm.getDoc().setValue(`# 原文: ${oldPath}, 压缩至: ${((newNoteWordCount / oriNoteWordCount) * 100).toFixed(2)}%, 原文字数: ${oriNoteWordCount}, 复习字数: ${newNoteWordCount}\n${newNote}`);
+          editor.cm.getDoc().setValue(`# 原文: ${oldPath}, 压缩至: ${((newNoteWordCount / oriNoteWordCount) * 100).toFixed(2)}%, 原文字数: ${oriNoteWordCount}, 复习字数: ${newNoteWordCount}\n${newNote} \n`);
         }
       },
-      { immediate: true }
     );
 
     return false;

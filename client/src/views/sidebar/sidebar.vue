@@ -109,6 +109,7 @@ export default {
             this.isShowStickyNote = !this.isShowStickyNote;
             return this.isShowStickyNote;
           },
+          keyMap: ['Ctrl', 'Shift', 'Y'],
           lastStatus: false,
         },
         {
@@ -173,7 +174,7 @@ export default {
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
         // },
-       
+
         // {
         //   name: 'setting',
         //   icon: settingSvg,
