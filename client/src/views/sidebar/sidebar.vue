@@ -338,14 +338,6 @@ export default {
 }
 
 // other components
-// sticky-note
-#sticky-note {
-  position: fixed;
-  right: 10px;
-  top: 10px;
-  z-index: $float-window-index;
-}
-
 // search-note-bar
 #search-note-bar {
   position: fixed;

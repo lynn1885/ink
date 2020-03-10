@@ -94,6 +94,7 @@ A WYSIWYG Markdown Editor
 
 
 # 已知Bugs, 或待优化项
+* sticky note拖动有拖影, 还会抖一下, 因为drag世界的clientX, Y有问题. 需要修复. 还有注意它和目录拖动直接的影响
 * 重新整理主题系统, 现在的太重了
 * ink: fold 无法折叠图片, 图片后面需要有一个空行
 * ink: imgs 有些图片无法上传

@@ -5,8 +5,6 @@ const router = require('./router/router');
 const config = require('./config');
 const task = require('./tools/tasks');
 
-console.log(__dirname);
-
 (async function fn() {
   // tasks at startup
   // create default user directories & user config & default note icon

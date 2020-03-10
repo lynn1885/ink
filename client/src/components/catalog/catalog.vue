@@ -9,12 +9,15 @@
   <div id="catalog" v-if="isCatalogLoaded">
     <!-- 一级目录 -->
     <ul
+      v-show="curCatLv1[0] !== '.'"
       class="catalog-container"
       id="catalog-level-1"
       @contextmenu="showCatalogContextMenu($event, 1)"
     >
+      <!-- 不显示以.开头的隐藏目录 -->
       <li
         v-for="(cat, index) of catsLv1"
+        v-if="cat[0] !== '.'"
         :key="cat"
         :title="cat"
         :class="{
@@ -43,6 +46,7 @@
       class="catalog-container"
       id="catalog-level-2"
       @contextmenu="showCatalogContextMenu($event, 2)"
+      v-show="curCatLv1[0] !== '.'"
     >
       <li
         v-for="(cat, index) of catsLv2"
@@ -74,6 +78,7 @@
       class="catalog-container"
       id="catalog-level-3"
       @contextmenu="showCatalogContextMenu($event, 3)"
+      v-show="curCatLv1[0] !== '.'"
     >
       <li
         v-for="(cat, index) of catsLv3"
@@ -166,15 +171,15 @@ export default {
       droppedCatIndex: null,
       catalogHalfHeight: null, // 目录高度的一半. 用于计算降落是降落在上半边还是下半边
       dropHalf: null, // 降落位置, 可取值: 'TOP', 'BOTTOM'. 在把子目录拖入兄弟目录的dragover中, 会实时修改该属性
-      catalogDragEnterLv1: null, // 目录的DragEnter回调
-      catalogDragEnterLv2: null,
-      catalogDragEnterLv3: null,
-      catalogDragOverLv1: null, // 目录的DragOver回调
-      catalogDragOverLv2: null,
-      catalogDragOverLv3: null,
-      catalogDropLv1: null, // 目录的Drop回调
-      catalogDropLv2: null,
-      catalogDropLv3: null,
+      catalogDragEnterLv1: () => {}, // 目录的DragEnter回调
+      catalogDragEnterLv2: () => {},
+      catalogDragEnterLv3: () => {},
+      catalogDragOverLv1: () => {}, // 目录的DragOver回调
+      catalogDragOverLv2: () => {},
+      catalogDragOverLv3: () => {},
+      catalogDropLv1: () => {}, // 目录的Drop回调
+      catalogDropLv2: () => {},
+      catalogDropLv3: () => {},
       // 图标
       isShowCatIcon: true, // 是否显示目录图标
     };

@@ -42,7 +42,6 @@ exports.getRecursively = async (filePath, isIncludeFile = false) => {
             } else {
               newFp = `${fp}/${f}`;
             }
-
             // eslint-disable-next-line no-await-in-loop
             await new Promise((res, rej) => {
               fs.stat(newFp, async (e, stats) => {
