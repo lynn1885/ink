@@ -17,7 +17,7 @@ export default {
           right: 0px;
           top: 0px;
           bottom: 0px;
-          background: rgba(251, 250, 249, 0.96);
+          background: rgba(251, 250, 249, 0.99);
           z-index: 200;
           overflow: auto;
         "> </div>

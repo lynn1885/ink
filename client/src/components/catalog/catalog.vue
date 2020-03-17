@@ -9,15 +9,12 @@
   <div id="catalog" v-if="isCatalogLoaded">
     <!-- 一级目录 -->
     <ul
-      v-show="curCatLv1[0] !== '.'"
       class="catalog-container"
       id="catalog-level-1"
       @contextmenu="showCatalogContextMenu($event, 1)"
     >
-      <!-- 不显示以.开头的隐藏目录 -->
       <li
         v-for="(cat, index) of catsLv1"
-        v-if="cat[0] !== '.'"
         :key="cat"
         :title="cat"
         :class="{
@@ -46,7 +43,6 @@
       class="catalog-container"
       id="catalog-level-2"
       @contextmenu="showCatalogContextMenu($event, 2)"
-      v-show="curCatLv1[0] !== '.'"
     >
       <li
         v-for="(cat, index) of catsLv2"
@@ -78,7 +74,6 @@
       class="catalog-container"
       id="catalog-level-3"
       @contextmenu="showCatalogContextMenu($event, 3)"
-      v-show="curCatLv1[0] !== '.'"
     >
       <li
         v-for="(cat, index) of catsLv3"

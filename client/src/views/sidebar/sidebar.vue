@@ -1,5 +1,5 @@
 <template>
-  <div id="side-bar" :class="{'side-bar-small-mode': isSideBarSmallMode}">
+  <div id="side-bar" :class="{'side-bar-small-mode': isSideBarSmallMode}" @resize.native="resize(1)">
     <!-- tool icons -->
     <div id="tool-icons">
       <div
@@ -269,7 +269,12 @@ export default {
         }
       }
     },
+
+    resize() {
+      console.log(1);
+    }
   },
+
 };
 </script>
 
@@ -278,6 +283,7 @@ export default {
 // side bar
 #side-bar {
   display: flex;
+  resize: horizontal;
   position: relative;
   width: $sidebar-width;
   &.side-bar-small-mode {

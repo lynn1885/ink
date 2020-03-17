@@ -16,6 +16,7 @@
       :key="header.lineNum + '-' + header.lv + '-' + header.text"
       v-for="header of displayHeaders"
       @click="scrollNoteToThisLine(header.lineNum)"
+      :title="header.text.replace(/^#+/, '')"
     >{{ header.text.replace(/^#+/, '') }}</div>
   </div>
 </template>
@@ -298,9 +299,8 @@ export default {
     position: relative;
     padding: 4px 10px 4px 8px;
     font-size: $font-size-sidebar + 0.5px;
-    // height: 26px;
-    // white-space: nowrap;
-    // text-overflow: ellipsis;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     line-height: 1.4;
     overflow: hidden;
     border-bottom: 1px dashed darken($color: $tool-page-bg, $amount: 6);

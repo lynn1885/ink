@@ -227,8 +227,8 @@ textarea {
 // side-bar
 #side-bar {
   &.hide {
-    width: 0px;
-    height: 0px;
+    width: 0px!important;
+    height: 0px!important;
   }
 }
 
