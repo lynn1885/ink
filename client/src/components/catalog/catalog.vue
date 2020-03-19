@@ -15,6 +15,7 @@
     >
       <li
         v-for="(cat, index) of catsLv1"
+        v-show="cat[0]!=='.' || curCatLv1 === cat"
         :key="cat"
         :title="cat"
         :class="{
