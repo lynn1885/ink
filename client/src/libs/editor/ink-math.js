@@ -6,9 +6,10 @@ import 'katex/dist/fonts/KaTeX_AMS-Regular.ttf';
 
 export default function (editor, config) { // eslint-disable-line no-unused-vars
   editor.cm.on('renderLine', (cm, line) => {
-    if (line.text !== line.lastTimeText_math) {
-      line.lastTimeText_math = line.text;
-      const r = /\$([^$]+?)\$/g;
+    if (line.text !== line.lastTimeTextMath) {
+      line.lastTimeTextMath = line.text;
+      // const r = /\$([^\s][^$]*?[^\s])\$/g;
+      const r = /\$([^\s][A-Za-z0-9=+\-_*%`~!#^<>,./\\||()[\]{}?\s→←↑↓±≠∞ΑαΒβΓγΔδΕεΖζΗηΘθΙι℩ΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω]*?[^\s])\$/g;
       const matchRes = r.exec(line.text);
       if (matchRes) {
         let isClearedOldWidgets = false;
