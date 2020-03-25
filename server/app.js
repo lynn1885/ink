@@ -9,6 +9,7 @@ const task = require('./tools/tasks');
   // tasks at startup
   // create default user directories & user config & default note icon
   task.createDefaultUserDir();
+  task.creatDefaultInnerNotes();
   task.createDefaultUserConfig();
   task.createDefaultNoteIcon();
   // unify catalog

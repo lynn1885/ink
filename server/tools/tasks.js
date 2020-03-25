@@ -20,11 +20,41 @@ exports.createDefaultUserDir = () => {
         fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录'));
         fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录', '二级目录'));
         fs.mkdirSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '用户手册'));
-        const defaultNote = fs.readFileSync(path.join(__dirname, '../res/default-note.md'), { encoding: 'utf8' });
+        const defaultNote = fs.readFileSync(config.inner.files.defaultNote, { encoding: 'utf8' });
         fs.writeFileSync(path.join(config.user.dirs[dir], '一级目录', '二级目录', '用户手册', '用户手册.md'), defaultNote);
       }
     }
   }
+};
+
+exports.creatDefaultInnerNotes = () => {
+  console.log(`${new Date().toLocaleString()}: [task] create default inner notes`);
+  // get inner notes
+  function r(dir) {
+    // calculate
+    const relativeD = path.relative(config.inner.dirs.res, dir);
+    const targetPath = path.join(config.user.dirs.notes, relativeD);
+    const isDir = fs.statSync(dir).isDirectory();
+    // create inner notes in user notes
+    if (!fs.existsSync(targetPath)) {
+      console.warn('[WARNING] this inner note does not exist and will be created automatically: ', targetPath);
+      if (isDir) {
+        fs.mkdirSync(targetPath);
+      } else {
+        fs.copyFileSync(dir, targetPath);
+      }
+    }
+
+    // is dir, recursion
+    if (isDir) {
+      const thisLvDirs = fs.readdirSync(dir);
+      for (const d of thisLvDirs) {
+        const completeD = path.join(dir, d);
+        r(completeD);
+      }
+    }
+  }
+  r(config.inner.dirs.innerNotes);
 };
 
 /**
@@ -34,7 +64,7 @@ exports.createDefaultUserConfig = () => {
   console.log(`${new Date().toLocaleString()}: [task] create default user config file`);
   if (!fs.existsSync(config.user.files.configFile)) {
     console.warn('[WARNING] User config file does not exist and will be created automatically: ', config.user.files.configFile);
-    const defaultUserConfig = fs.readFileSync(path.join(__dirname, '../res/default-user-config.json'), { encoding: 'utf8' });
+    const defaultUserConfig = fs.readFileSync(config.inner.files.defaultConfigFile, { encoding: 'utf8' });
     fs.writeFileSync(config.user.files.configFile, defaultUserConfig);
   }
 };
@@ -46,7 +76,7 @@ exports.createDefaultNoteIcon = () => {
   console.log(`${new Date().toLocaleString()}: [task] create default note icon`);
   if (!fs.existsSync(config.user.files.defaultNoteIcon)) {
     console.warn('[WARNING] default note icon does not exist and will be created automatically: ', config.user.files.defaultNoteIcon);
-    fs.copyFileSync(path.join(__dirname, '../res/default-note-icon.png'), config.user.files.defaultNoteIcon);
+    fs.copyFileSync(config.inner.files.defaultNoteIcon, config.user.files.defaultNoteIcon);
   }
 };
 

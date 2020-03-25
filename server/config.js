@@ -1,6 +1,7 @@
 const path = require('path');
 
 module.exports = {
+  // user dirs & files
   user: {
     dirs: {
       notes: path.join(__dirname, './user/notes/'), // user notes directory
@@ -15,9 +16,25 @@ module.exports = {
       defaultNoteIcon: path.join(__dirname, './user/icons/__default__.png'), // default note icon
     },
   },
+
+  // inner dirs & files, don't modify them
+  inner: {
+    dirs: {
+      config: __dirname,
+      res: path.join(__dirname, 'res'),
+      innerNotes: path.join(__dirname, './res/.ink'),
+    },
+    files: {
+      defaultNote: path.join(__dirname, './res/default-note.md'),
+      defaultConfigFile: path.join(__dirname, './res/default-user-config.json'),
+      defaultNoteIcon: path.join(__dirname, './res/default-note-icon.png'),
+    },
+  },
+
+  // other
   port: 12340, // server will listen on this port
   backupInterval: 300, // seconds
-  maxBackupFilesNumber: 6,
+  maxBackupFilesNumber: 8,
   fileSizeLimit: 200, // KB
   maxSearchNum: 200, // when searching globally, how many results can you find at most
 };
