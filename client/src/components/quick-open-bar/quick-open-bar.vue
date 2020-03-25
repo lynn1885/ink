@@ -73,6 +73,13 @@ export default {
           if (!this.fixedNoteDirs.includes(this.curFileDir)) {
             this.tempNoteDir = this.curFileDir;
           }
+        // when open nothing
+        } else {
+          this.curFilePath = '';
+          this.curFileDir = '';
+          if (this.tempNoteDir === this.curFileDir) {
+            this.tempNoteDir = '';
+          }
         }
       },
     },
@@ -239,12 +246,14 @@ export default {
       // save & record cursor position
       // As long as the notedir is switched, save will be triggered
       // regardless of whether the current note has changed.
-      // Used to save the cursor position
-      await this.$store.state.editor.runCommand('SAVE', {
-        triggerType: 'SWITCH_TAB',
-      });
-
+      // beacuse we need to save the cursor position
       // change note
+      console.log(this.curFilePath);
+      if (this.curFilePath) {
+        await this.$store.state.editor.runCommand('SAVE', {
+          triggerType: 'SWITCH_TAB',
+        });
+      }
       this.$store.commit(
         'updateGotoThisCatalog',
         noteDir.split('/').slice(0, 3)

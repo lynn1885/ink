@@ -590,6 +590,9 @@ export default {
           break;
       }
 
+      // 标记现在打开的文件是空
+      this.$store.commit('updateCurFilePath', null);
+
       // 重新从后端获取目录, 触发前端更新
       await this.getCatalog();
     },
