@@ -13,7 +13,7 @@
 
 /* font */
 * {
-  font-family: 'yahei consolas hybrid'!important;
+  font-family: '.PingFang SC'!important;
 }
 
 /* selection & scroll bar */
@@ -180,11 +180,17 @@
 #sticky-note {
   background: rgb(37, 40, 48)!important;
   box-shadow: 0px 0px 3px 0px rgb(31, 27, 24)!important;
-  color: var(--editor--color)!important;
   font-weight: bold!important;
+}
+#sticky-note textarea {
+  background: rgb(37, 40, 48)!important;
+  color: var(--editor--color)!important;
 }
 
 /* outline */
+#outline .item {
+  border-bottom-color: #333!important;
+}
 #outline .item.active {
   background: var(--accent-bg)!important;
 }

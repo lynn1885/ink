@@ -14,6 +14,7 @@ import 'codemirror/addon/fold/markdown-fold'; // fold code method for markdown
 import 'codemirror/addon/display/autorefresh'; // autorefresh
 import 'codemirror/addon/mode/simple'; // mode maker
 import 'codemirror/addon/mode/loadmode'; // load mode
+import 'codemirror/addon/mode/overlay'; // load mode
 import 'codemirror/theme/paraiso-light.css'; // 主题包
 import 'codemirror/addon/dialog/dialog';
 import 'codemirror/addon/dialog/dialog.css';
@@ -22,6 +23,7 @@ import 'codemirror/addon/dialog/dialog.css';
 // import 'codemirror/addon/hint/show-hint.css'; // hint样式, 使用hint时必须引入
 // import 'codemirror/addon/hint/javascript-hint'; // 针对具体语言的hint包
 // import 'codemirror/keymap/vim';
+
 
 export default class {
   /**
@@ -48,15 +50,15 @@ export default class {
   }
 
   /**
-   * _init: 初始化editor
-   * @param {HTMLElement} el editor元素
-   * @param {object} config 用户配置对象
+   * _init: initialize the editor
+   * @param {HTMLElement} el editor dom
+   * @param {object} config user config
    */
   _init(el, config) { // eslint-disable-line class-methods-use-this
     const mergedConfig = {
       mode: {
         name: 'text/markdown',
-        highlightFormatting: true, // https://.net/mode/markdown/
+        highlightFormatting: true, // https://codemirror.net/mode/markdown/
         xml: false, // close highlight xml
         taskLists: true,
         strikethrough: true,

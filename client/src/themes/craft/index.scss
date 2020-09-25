@@ -133,6 +133,7 @@
   background: $cm-em-bg!important;
   font-style: normal;
   padding: 2px;
+  color: $cm-em-color!important;
   // border-radius: 2px;
 }
 .cm-formatting-em {
@@ -320,8 +321,18 @@
 // cmd line
 .line-cm-cmd {
   span {
+    
     font-size: 12px;
     color: #ccc!important;
+  }
+}
+
+// tag
+.line-warning-tag {
+  &>span {
+    background: rgb(255, 243, 221)!important;
+    padding: 0 6px;
+    border-radius: 3px;
   }
 }
 

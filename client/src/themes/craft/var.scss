@@ -2,7 +2,7 @@
 // $font-family-main: 'Aa元气满满';
 // $font-size-main: 16px;
 // $font-size-sidebar: 13px;
-$font-family-main: 'yahei consolas hybrid';
+$font-family-main: '.PingFang SC';
 $font-size-main: 14px;
 $font-size-sidebar: 12px;
 
@@ -64,7 +64,7 @@ $catalog-col-border: none;
 
 // editor
 $editor-bg: rgba(254, 253, 252, 0.9);
-$editor-color: rgb(66, 65, 63);
+$editor-color: rgb(73, 72, 70);
 
 // headers: color
 $header-1: #b17a46;
@@ -91,7 +91,9 @@ $cursor: #333;
 $code-bg: rgba(243, 237, 230, 0.9);
 $code-color: rgb(133, 114, 90);
 $code-block-bg: rgba(249, 247, 244, 0.9);
-$cm-em-bg: rgba(240, 230, 248, 0.9);
+// $cm-em-bg: rgba(240, 230, 248, 0.9);
+$cm-em-bg: rgba(245, 234, 204, 0.9);
+$cm-em-color: rgb(206, 192, 153);
 $cm-strong-color: rgb(204, 104, 104);
 $cm-code-comment: #aaa;
 $cm-link-bg: rgba(236, 243, 248, 0.9);
