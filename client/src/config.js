@@ -1,5 +1,7 @@
-// 应用程序监听端口参见vue.config.js
-const ip = 'http://localhost';
+// 前端应用程序监听的ip
+// 端口参见vue.config.js
+const ip = window.location.hostname ? `http://${window.location.hostname}` : 'http://localhost';
+console.log('您连接的后台ip是: ', ip);
 
 const config = {
   server: {

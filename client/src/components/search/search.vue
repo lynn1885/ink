@@ -99,7 +99,7 @@ export default {
       searchText: '',
       lastSearchText: '',
       replaceText: '',
-      isGlobal: true,
+      isGlobal: false,
       isSensitiveToCase: false,
       isSearchDone: false,
       isSearching: false,
