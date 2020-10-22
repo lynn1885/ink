@@ -12,8 +12,18 @@
 
     <!-- todo info -->
     <div id="todo-info">
+      <div class="prepared-markers">
+        <div
+          class="item"
+          v-for="item of preparedMarkers"
+          :key="item"
+          @click="selectPreparedMarker(item)"
+        >
+          {{item}}
+        </div>
+      </div>
       <div class="normal" v-if="todos.length < maxTodoNum">条目: {{todos.length}}</div>
-      <div class="warning" v-else>待办事项太多了, 只显示前 {{maxTodoNum}} 条</div>
+      <div class="warning" v-else>条目太多了, 只显示前 {{maxTodoNum}} 条</div>
     </div>
 
     <!-- todo results -->
@@ -47,7 +57,8 @@ export default {
     return {
       editor: null,
       todos: [],
-      todoMark: localStorage.getItem('todoMark') || 'Todo: ',
+      todoMark: localStorage.getItem('todoMark') || 'Todo ',
+      preparedMarkers: ['Todo', 'Review', '⚠️', '⭐', '👑'],
       maxTodoMarkLength: 30,
       maxTodoNum: 200,
       highlightLineClass: classNames.highlightLineClass,
@@ -155,16 +166,23 @@ export default {
         if (isEnableConsole) {
           console.log('todo: set mark & search');
         }
-        this.todoMark = this.todoMark || 'Todo: ';
+        this.todoMark = this.todoMark || this.preparedMarkers[0];
         localStorage.setItem('todoMark', this.todoMark);
         this.updateTodos();
       }
     },
 
+    // select a prepared marker & search
+    selectPreparedMarker(marker) {
+      this.todoMark = marker;
+      this.setMarkKeyDownHandler({ keyCode: 13 });
+    },
+
     // tool function
     // judge whether this is a todo
     isThisATodo(text) {
-      return text.startsWith(this.todoMark);
+      text = text.trim();
+      return text.startsWith(this.todoMark) || text.endsWith(this.todoMark);
     },
   },
 
@@ -213,6 +231,17 @@ export default {
   line-height: 20px;
   background: $tool-page-bg;
   color: $comment-color;
+  .prepared-markers {
+    display: flex;
+    justify-content: center;
+    .item {
+      background: darken($color: $tool-page-bg, $amount: 4);
+      padding: 2px 4px;
+      margin-right: 4px;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+  }
   .warning {
     background: $warning-bg;
     color: $warning-color;
@@ -224,7 +253,7 @@ export default {
   width: 100%;
   left: 0;
   right: 0;
-  top: 58px;
+  top: 80px;
   bottom: 0;
   box-sizing: border-box;
   overflow-y: scroll;

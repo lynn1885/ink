@@ -8,11 +8,11 @@
           @click="getStatistics"
           :disabled="isGettingStatistics"
         >获取</button>
-        <button
+        <!-- <button
           class="sort"
           :disabled="!isGetStatisticsDone"
           @click="sort"
-        >{{isSorted ? '取消排序': ' 排序'}}</button>
+        >{{isSorted ? '取消排序': ' 排序'}}</button> -->
       </div>
       <div class="tips">
         <div
@@ -114,7 +114,8 @@ export default {
       const startTime = new Date();
       let tempInfo = await Files.getAllFilesInfo();
       tempInfo = this.calAllFilesInfoProcessed(tempInfo);
-      this.allFilesInfoProcessed = this.sortByCatalog(tempInfo);
+      // this.allFilesInfoProcessed = this.sortByCatalog(tempInfo);
+      this.allFilesInfoProcessed = this.sortByWordCount(tempInfo);
       this.updateDisplayFilesInfo('/');
       this.timeConsumption = new Date() - startTime;
       this.isGettingStatistics = false;
@@ -136,14 +137,11 @@ export default {
      */
     sort() {
       if (this.isSorted) {
-        this.allFilesInfoProcessed = this.sortByCatalog(
-          this.allFilesInfoProcessed
-        );
+        this.allFilesInfoProcessed = this.sortByCatalog(this.allFilesInfoProcessed);
       } else {
-        this.allFilesInfoProcessed = this.sortByWordCount(
-          this.allFilesInfoProcessed
-        );
+        this.allFilesInfoProcessed = this.sortByWordCount(this.allFilesInfoProcessed);
       }
+
       this.updateDisplayFilesInfo('/');
       this.isSorted = !this.isSorted;
     },

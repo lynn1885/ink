@@ -29,6 +29,8 @@ import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
 
+import Files from '@/models/files';
+
 export default {
   name: 'note',
   store,
@@ -162,6 +164,13 @@ export default {
       this.isShowBgImg = true;
     }, 300);
     await this.getDefaultTheme();
+
+    // After opening the software for 3 seconds, get all files for caching these notes in memory
+    setTimeout(async () => {
+      const startTime = Date.now();
+      await Files.getAllFilesInfo();
+      console.log(`It tooks ${((Date.now() - startTime) / 1000).toFixed(2)}s to cache all notes into memory`);
+    }, 3000);
   },
 };
 </script>
