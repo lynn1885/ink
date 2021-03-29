@@ -117,6 +117,7 @@ export default {
   box-shadow: $float-box-shadow;
   border-radius: 2px;
   background: $sticky-note-bg;
+  backdrop-filter: blur(8px) saturate(200%);
   #title {
     height: 10px;
     cursor: move;

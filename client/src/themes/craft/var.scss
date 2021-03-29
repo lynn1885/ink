@@ -17,8 +17,8 @@ $warning-bg: #fdf6ec;
 $active-color: rgb(164, 119, 222);
 
 // scrollbar
-$scrollbar-width: 4px;
-$scrollbar-height: 4px;
+$scrollbar-width: 8px;
+$scrollbar-height: 8px;
 $scrollbar-bg: #ddd;
 $scrollbar-bg-hover: #bbb;
 $scrollbar-radius: 1px;
@@ -51,7 +51,7 @@ $sidebar-button-disabled-color: #ccc;
 $sidebar-input-bg: $sidebar-button-bg;
 $sidebar-input-border-color: $sidebar-button-border-color;
 $sidebar-input-disabled-bg: $sidebar-button-disabled-bg;
-$sidebar-input-font-size: $font-size-sidebar + 1px;
+$sidebar-input-font-size: $font-size-sidebar+1px;
 $sidebar-input-margin-left: 10px;
 $sidebar-item-active-bg: rgba(239, 230, 248, 0.9);
 $sidebar-item-hover-bg: rgba(237, 229, 245, 0.6);
@@ -122,9 +122,10 @@ $content-menu-active-bg: $sidebar-item-active-bg;
 $content-menu-active-color: $content-menu-color;
 
 // tool: sticky note
-$sticky-note-bg: rgb(251, 250, 249);
+$sticky-note-bg: rgba(251, 250, 249, 0.8);
 $sticky-note-color: $editor-color;
 
 // tool: float window
 $float-box-shadow: 0px 0px 4px 0px #ddd;
 $float-bg: rgb(251, 250, 249);
+$float-bg-alpha: rgba(251, 250, 249, 0.8);

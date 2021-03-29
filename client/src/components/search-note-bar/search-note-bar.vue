@@ -200,10 +200,11 @@ export default {
 <style lang="scss" scoped>
 @import '@/themes/craft/var.scss';
 #search-note-bar {
-  background: $float-bg;
+  background: $float-bg-alpha ;
   box-shadow: $float-box-shadow;
   font-size: $font-size-sidebar;
   color: $tool-page-color;
+  backdrop-filter: blur(8px) saturate(200%);
   .wrapper {
     // necessary. without this, ".search-input" cannot "fixed"
     width: 100%;

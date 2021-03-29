@@ -1,20 +1,24 @@
 @import "var.scss";
 
-#tool-icons, #tool-pages, #quick-open-bar,  #status-bar {
+#tool-icons,
+#tool-pages,
+#quick-open-bar,
+#status-bar {
   // transition: background .1s!important;
 }
 
 // editor
 .CodeMirror {
   height: 100%;
-  padding: 0px 6px!important;
+  padding: 0px 6px !important;
   line-height: 2;
   border: none;
   font-family: $font-family-main !important;
   font-size: $font-size-main;
-  color: $editor-color!important;
-  background-color: $editor-bg!important;
-  caret-color:$cursor;
+  color: $editor-color !important;
+  background-color: $editor-bg !important;
+  caret-color: $cursor;
+
   pre {
     padding-left: 0px;
   }
@@ -30,11 +34,11 @@
 // fat cursor
 .cm-fat-cursor-mark {
   width: auto;
-  border: 0px!important;
-  background: $fat-cursor!important;
-  border-radius: 0px!important;
-  padding: 0px!important;
-  margin: 0px!important;
+  border: 0px !important;
+  background: $fat-cursor !important;
+  border-radius: 0px !important;
+  padding: 0px !important;
+  margin: 0px !important;
 }
 
 // dialogue (vim-dialogue)
@@ -43,7 +47,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 10px!important;
+  padding: 0 10px !important;
   margin: 0;
   width: 100%;
   height: 24px;
@@ -55,6 +59,7 @@
   z-index: 100;
   opacity: 0.9;
   overflow: hidden;
+
   input {
     width: 100%;
     padding: 0;
@@ -75,48 +80,62 @@
   padding: 0;
   font-weight: normal;
 }
+
 .line-cm-header-1 {
-  padding-left: $header-1-indent!important; // 这个仅仅是为了让隐藏markdown标签后, 标题1和2在一条垂线上
-  
+  padding-left: $header-1-indent !important; // 这个仅仅是为了让隐藏markdown标签后, 标题1和2在一条垂线上
+
 }
+
 .line-cm-header-3 {
-  padding-left: $header-3-indent!important;
+  padding-left: $header-3-indent !important;
 }
+
 .line-cm-header-4 {
-  padding-left: $header-4-indent!important;
+  padding-left: $header-4-indent !important;
 }
+
 .line-cm-header-5 {
-  padding-left: $header-5-indent!important;
+  padding-left: $header-5-indent !important;
 }
+
 .line-cm-header-6 {
-  padding-left: $header-6-indent!important;
+  padding-left: $header-6-indent !important;
 }
+
 .CodeMirror-line:not(.line-cm-header) {
   padding-left: $not-header-indent; // 修改这个也要修改图片插件的缩进
 }
-.cm-header-1{
+
+.cm-header-1 {
   color: $header-1 !important;
-  font-weight: bold!important;
+  font-weight: bold !important;
 }
+
 .cm-header-2 {
   color: $header-2 !important;
-  font-weight: bold!important;
+  font-weight: bold !important;
 }
+
 .cm-header-3 {
   color: $header-3 !important;
 }
+
 .cm-header-4 {
   color: $header-4 !important;
 }
+
 .cm-header-5 {
   color: $header-5 !important;
 }
+
 .cm-header-6 {
   color: $header-6 !important;
 }
+
 .CodeMirror .line-cm-header-1 {
   padding-top: 20px;
 }
+
 .CodeMirror-code>pre.CodeMirror-line:first-child,
 .CodeMirror-code>div:first-child>pre.CodeMirror-line:first-child {
   padding-top: 0px;
@@ -130,16 +149,18 @@
 
 // em, strong
 .cm-em {
-  background: $cm-em-bg!important;
+  background: $cm-em-bg !important;
   font-style: normal;
   padding: 2px;
-  color: $cm-em-color!important;
+  color: $cm-em-color !important;
   // border-radius: 2px;
 }
+
 .cm-formatting-em {
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
+
 .cm-em+.cm-formatting-em {
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
@@ -148,21 +169,23 @@
 }
 
 .cm-strong {
-  font-weight: bold!important;
+  font-weight: bold !important;
   padding-bottom: 1.4px;
-  color: $cm-strong-color!important;
+  color: $cm-strong-color !important;
 }
 
 // code
 .cm-comment {
   padding: 2px;
   background: $code-bg;
-  color:$code-color!important;
+  color: $code-color !important;
 }
+
 .cm-formatting-code {
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
+
 .cm-comment+.cm-formatting-code {
   border-top-left-radius: 0px;
   border-bottom-left-radius: 0px;
@@ -170,10 +193,12 @@
   border-bottom-right-radius: 2px;
 }
 
-.cm-comment.cm-code-comment { // 代码中的注释
+.cm-comment.cm-code-comment {
+  // 代码中的注释
   background: none;
-  color:$cm-code-comment!important;
+  color: $cm-code-comment !important;
 }
+
 .cm-link {
   text-decoration: none;
   background: $cm-link-bg;
@@ -181,15 +206,17 @@
   color: $cm-link-color !important;
   border-radius: 4px;
 }
+
 .line-cm-code-block-boundary {
   .cm-comment {
     background: none;
-    color: $cm-formatting-color!important;
+    color: $cm-formatting-color !important;
   }
 }
+
 .line-cm-code-block {
-  padding-left: $not-header-indent + 8px!important;
-  background: linear-gradient(to right, transparent $not-header-indent, $code-block-bg $not-header-indent)!important;
+  padding-left: $not-header-indent + 8px !important;
+  background: linear-gradient(to right, transparent $not-header-indent, $code-block-bg $not-header-indent) !important;
 }
 
 // link
@@ -197,53 +224,59 @@
   background: none;
   color: $cm-link-color !important;
 }
+
 .cm-url {
   color: $cm-link-color !important;
 }
 
 // quote
 .line-cm-quote {
-  padding-left: $not-header-indent + 8px!important;
-  background: linear-gradient(to right, transparent $not-header-indent, $cm-quote-bg $not-header-indent)!important;
-  color: $cm-quote-color!important;
+  padding-left: $not-header-indent + 8px !important;
+  background: linear-gradient(to right, transparent $not-header-indent, $cm-quote-bg $not-header-indent) !important;
+  color: $cm-quote-color !important;
+
   .cm-quote {
     padding: 0px 2px;
   }
 }
 
 // formatting
-.cm-formatting, .cm-formatting-escape {
+.cm-formatting,
+.cm-formatting-escape {
   font-style: normal;
-  color: $cm-formatting-color!important;
+  color: $cm-formatting-color !important;
 }
-.cm-formatting-header, 
+
+.cm-formatting-header,
 .cm-formatting-em,
 .cm-formatting-code,
 .cm-formatting-strong,
 .cm-formatting-strikethrough {
-  color: transparent!important;
+  color: transparent !important;
 }
+
 .cm-formatting-header {
   font-size: $font-size-formatting;
 }
 
 .cursor-in-this-line {
-  .cm-formatting-header, 
+
+  .cm-formatting-header,
   .cm-formatting-em,
   .cm-formatting-code,
-  .cm-formatting-strong{
-    color: $cm-formatting-color!important; // visibility"可能"会导致复制失效, 所以使用安全的opacity
+  .cm-formatting-strong {
+    color: $cm-formatting-color !important; // visibility"可能"会导致复制失效, 所以使用安全的opacity
   }
 }
 
 
 // list
 .cm-formatting-list {
-  background: $cm-list-bg!important;
+  background: $cm-list-bg !important;
   border-radius: 2px;
   padding: 0px 4px;
   margin-right: 4px;
-  color: $cm-list-color!important;
+  color: $cm-list-color !important;
 }
 
 // fold-marker
@@ -266,20 +299,24 @@
   &>span {
     border-radius: 2px;
   }
+
   span {
     font-size: 12px;
     background: $cm-image-font-bg;
     padding: 4px 2px;
     cursor: text;
   }
+
   .cm-url {
-    color: $cm-image-font-color!important;
+    color: $cm-image-font-color !important;
   }
 }
+
 .inserted-widget-image {
   width: 100%;
   padding-left: $not-header-indent;
   box-sizing: border-box;
+
   img {
     display: block;
     max-width: 100%;
@@ -292,18 +329,21 @@
   padding: 0px 4px;
   color: #000;
 }
+
 // math
 .line-cm-math {
   span {
-    color: #aaa!important;
-    background: #f4f4f4!important;
+    color: #aaa !important;
+    background: #f4f4f4 !important;
     padding: 2px 4px;
     border-radius: 2px;
   }
 }
+
 .inserted-widget-math {
   padding-left: 100px;
 }
+
 .ink-math-preview {
   padding: 10px;
   margin-left: 100px;
@@ -313,24 +353,25 @@
 .cm-searched-text {
   background: $cm-searched-text-bg;
 }
+
 .cm-highlight-line {
-  background: $cm-highlight-line-bg!important;
-  transition: all 0.4s!important;
+  background: $cm-highlight-line-bg !important;
+  transition: all 0.4s !important;
 }
 
 // cmd line
 .line-cm-cmd {
   span {
-    
+
     font-size: 12px;
-    color: #ccc!important;
+    color: #ccc !important;
   }
 }
 
 // tag
 .line-warning-tag {
   &>span {
-    background: rgb(255, 243, 221)!important;
+    background: rgb(255, 243, 221) !important;
     padding: 0 6px;
     border-radius: 3px;
   }
@@ -338,10 +379,12 @@
 
 // other, 耦合, 将来需要移除
 jmnode {
-  font-family: 'yahei consolas hybrid'!important;
-  font-weight: bold!important;
+  font-family: '.PingFang SC' !important;
+  font-weight: bold !important;
+  box-shadow: none !important;
 }
+
 jmnode.selected {
-  background: rgb(247, 247, 142)!important;
-  color: #333!important;
+  background: rgb(247, 247, 142) !important;
+  color: #333 !important;
 }
