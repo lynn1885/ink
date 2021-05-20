@@ -235,3 +235,7 @@
 .cm-highlight-line {
   background: var(--accent-bg)!important;
 }
+
+.cm-header.cm-strong:not(.cm-formatting) {
+  color: #cc6868!important
+}

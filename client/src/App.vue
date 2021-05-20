@@ -11,7 +11,11 @@
 
     <!-- background image -->
     <div id="bgimg-container" v-show="isShowBgImg">
-      <img :src="`${staticIconsUrl}${bgImgName}.${bgImgFormat}`" @error="imgLoadError" />
+      <!-- 用于测试背景图片是否存在 -->
+      <img class="test-bg" :src="curBgImgSrc" @error="imgLoadError" />
+      <!-- 用于真正显示背景 -->
+      <img v-show="realBgImgSrc" class="real-bg" :src="realBgImgSrc"/>
+
     </div>
 
     <!-- modal -->
@@ -44,7 +48,11 @@ export default {
       staticIconsUrl: config.server.staticIconsUrl, // 背景图服务器地址
       isShowBgImg: false, // 是否显示背景图
       bgImgName: config.bgImgName, // 背景图名字
-      bgImgFormat: 'jpg', // 背景图格式
+      possibleBgImgSrc: [], // 可能可以使用的背景图地图
+      curBgImgIndex: 0, // 当前选用的背景图index
+      curBgImgSrc: '', // 当前选用的背景图地址, 可能该地址并不指向一张可显示的图片
+      realBgImgSrc: '', // 当前真正使用的背景图片
+      changeBgImgTimer: null, // 更换真正使用背景的倒计时器
       isZenMode: false, // is zen mode
       isShowSideBar: true,
       isShowStatusBar: true,
@@ -92,18 +100,50 @@ export default {
         }
       },
     },
+
+    // 监听当前路径
+    '$store.state.curCatalogArr': {
+      handler(value) {
+        this.calculateCurBgImg(value);
+      }
+    }
   },
   methods: {
-    // 背景图: jpg格式加载失败时, 尝试加载png, gif格式
-    imgLoadError(e) {
-      if (this.bgImgFormat === 'jpg') {
-        this.bgImgFormat = 'png';
-        e.target.src = `${this.staticIconsUrl}${this.bgImgName}.${this.bgImgFormat}`;
-      } else if (this.bgImgFormat === 'png') {
-        this.bgImgFormat = 'gif';
-        e.target.src = `${this.staticIconsUrl}${this.bgImgName}.${this.bgImgFormat}`;
-      } else {
-        e.target.style.visibility = 'hidden';
+    // 计算当前笔记背景图数组
+    calculateCurBgImg(curCatalogArr) {
+      let bgNamesArr = curCatalogArr.concat(); // 复制一份
+      bgNamesArr = bgNamesArr
+        .filter(item => item)
+        .map((item, index, arr) => `__${arr.slice(0, index + 1).join('-')}__`)
+        .reverse();
+      bgNamesArr.push(this.bgImgName); // 可能使用的背景图的名字
+
+      const bgFormats = ['jpg', 'png', 'gif']; // 可能使用的背景图格式
+
+      const possibleBgImgSrc = []; // 可是使用的背景地址
+
+      bgNamesArr.forEach((bgName) => {
+        bgFormats.forEach((bgFormat) => {
+          possibleBgImgSrc.push(`${this.staticIconsUrl}${bgName}.${bgFormat}`);
+        });
+      });
+
+      this.possibleBgImgSrc = possibleBgImgSrc;
+      this.curBgImgIndex = 0;
+      this.curBgImgSrc = './';
+    },
+
+    // 测试背景图: 一张加载失败时, 尝试加载另一张
+    imgLoadError() {
+      if (this.curBgImgIndex < this.possibleBgImgSrc.length) {
+        clearTimeout(this.changeBgImgTimer);
+        this.curBgImgSrc = this.possibleBgImgSrc[this.curBgImgIndex];
+        console.log(123, this.curBgImgSrc);
+        this.curBgImgIndex += 1;
+        this.changeBgImgTimer = setTimeout(() => {
+          this.realBgImgSrc = this.curBgImgSrc;
+          console.log('真实背景: ', this.realBgImgSrc);
+        }, 200);
       }
     },
 
@@ -264,7 +304,12 @@ textarea {
   right: 0px;
   bottom: 0px;
   z-index: 0;
-  img {
+  .test-bg {
+    width: 0px;
+    height: 0px;
+    visibility: hidden;
+  }
+  .real-bg {
     width: 100%;
     height: 100%;
     object-fit: cover;

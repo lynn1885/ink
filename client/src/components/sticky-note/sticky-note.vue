@@ -129,7 +129,7 @@ export default {
     border: none;
     outline-style: none;
     box-sizing: border-box;
-    background: $sticky-note-bg;
+    background: transparent;
     color: $sticky-note-color;
     font-size: $font-size-main - 1px;
     overflow: auto;

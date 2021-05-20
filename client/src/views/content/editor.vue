@@ -101,9 +101,7 @@ export default {
     async runCommand(command, info) {
       // 校验
       if (!command || typeof command !== 'string') {
-        console.warn(
-          `editor.runCommand(), 参数错误, command为空或不是string: ${command}`
-        );
+        console.warn(`editor.runCommand(), 参数错误, command为空或不是string: ${command}`);
         return;
       }
       // 禁止其他操作
@@ -122,9 +120,7 @@ export default {
         // 指令: 打开新文件
       } else if (command === 'OPENFILE') {
         if (typeof info !== 'string') {
-          console.error(
-            `runCommand(): 参数错误. OPEN指令需要传入要打开的文件路径作为第二个参数: ${info}`
-          );
+          console.error(`runCommand(): 参数错误. OPEN指令需要传入要打开的文件路径作为第二个参数: ${info}`);
           return;
         }
         let isSuccess = true;
@@ -200,9 +196,7 @@ export default {
       const filePath = this.curFilePath;
       if (!filePath) {
         this.$message.error('save file: invalid filePath');
-        throw new Error(
-          `file-server, saveFile(), invalid filePath: ${filePath}`
-        );
+        throw new Error(`file-server, saveFile(), invalid filePath: ${filePath}`);
       }
       if (!triggerType) {
         triggerType = 'AUTO';
@@ -261,8 +255,7 @@ export default {
         setTimeout(() => {
           this.isFileContentChanged = false;
           resolve();
-        }, 0)
-      );
+        }, 0));
 
       const content = {
         path: filePath,
@@ -313,9 +306,7 @@ export default {
      */
     _turnOnAutoSave() {
       if (this.autoSaveTimer) {
-        throw new Error(
-          `Another auto save timer is running: ${this.autoSaveTimer}`
-        );
+        throw new Error(`Another auto save timer is running: ${this.autoSaveTimer}`);
       }
       if (this.autoSaveInterval > 0) {
         this.autoSaveTimer = setInterval(async () => {
@@ -323,10 +314,8 @@ export default {
             await this.saveFile('AUTO');
           }
         }, this.autoSaveInterval);
-        console.log(
-          `[start auto save]: ${this.curFilePath}, interval: ${this
-            .autoSaveInterval / 1000} seconds`
-        );
+        console.log(`[start auto save]: ${this.curFilePath}, interval: ${this
+          .autoSaveInterval / 1000} seconds`);
       }
     },
 

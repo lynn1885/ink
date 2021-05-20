@@ -196,6 +196,7 @@ export default {
       if (value && typeof this.catalog[value] === 'object') {
       // 只有选中一级菜单时, 才标记二级菜单容器可用. 比如, 二级菜单未选中时, 不能在二级菜单右键
         this.isConAvailableLv2 = true;
+        this.$store.commit('updateCurCatalogArr', [this.curCatLv1, null, null]);
         this.updateCatalog(2);
       } else {
         this.isConAvailableLv2 = false;
@@ -207,6 +208,7 @@ export default {
       if (value && typeof this.catalog[this.curCatLv1][value] === 'object') {
         // 只有选中二级菜单时, 才标记三级菜单容器可用. 比如, 二级菜单未选中时, 不能在三级菜单右键
         this.isConAvailableLv3 = true;
+        this.$store.commit('updateCurCatalogArr', [this.curCatLv1, this.curCatLv2, null]);
         this.updateCatalog(3);
       } else {
         this.isConAvailableLv3 = false;
@@ -217,6 +219,7 @@ export default {
     // 需要三级**目录**也对应一个对象才行 ⚠️
     async curCatLv3(value) {
       if (value && typeof this.catalog[this.curCatLv1][this.curCatLv2][value] === 'object') {
+        this.$store.commit('updateCurCatalogArr', [this.curCatLv1, this.curCatLv2, this.curCatLv3]);
         await this.$store.state.editor.runCommand(
           'OPENFILE',
           `${this.curCatLv1}/${this.curCatLv2}/${this.curCatLv3}/${this.curCatLv3}.md`,

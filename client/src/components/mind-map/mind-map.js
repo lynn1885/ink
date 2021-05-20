@@ -19,7 +19,7 @@ export default {
           transform: translateX(-50%) translateY(-50%);
           width: 1280px;
           height: 800px;
-          background: rgba(251, 250, 249, 0.8);
+          background: rgba(251, 250, 249, 0.85);
           box-shadow: 0px 0px 10px 0px #eee;
           z-index: 200;
           overflow: auto;
