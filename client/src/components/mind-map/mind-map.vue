@@ -1,6 +1,5 @@
 <template>
   <div id="mind-map" @click="onClickMindMap">
-
   </div>
 </template>
 <script>
@@ -48,7 +47,7 @@ export default {
 
   methods: {
     //  移动光标时
-    onCursorMove(lineNum) {
+    onCursorMove(lineNum, behavior = 'smooth') {
       if (!this.mindMapArr || !this.mindMapArr.length || !this.jm) return;
       // 节流
       // 找到当前光标所在的的脑图节点id
@@ -63,7 +62,7 @@ export default {
       const curCursorMindNodeDom = $(`jmnode[nodeid='${curCursorMindNodeId}']`);
       if (curCursorMindNodeDom && curCursorMindNodeDom[0]) {
         curCursorMindNodeDom[0].scrollIntoView({
-          behavior: 'smooth',
+          behavior,
           block: 'center',
           inline: 'center',
         });
@@ -75,9 +74,7 @@ export default {
       clearTimeout(this.contentUpdateTimer);
       this.contentUpdateTimer = setTimeout(() => {
         this.build(this.editor); // 重新构建mind map
-        setTimeout(() => {
-          this.onCursorMove(e.doc.getCursor().line); // 将mind map滚动到当前正在编辑的这一行
-        }, 0);
+        this.onCursorMove(e.doc.getCursor().line, 'auto'); // 将mind map滚动到当前正在编辑的这一行
       }, 1000);
     },
 
@@ -112,6 +109,7 @@ export default {
         container: 'mind-map',
         theme: 'clouds',
         editable: false,
+        support_html: true,
         view: {
           engine: 'svg',
         },
@@ -194,12 +192,8 @@ export default {
 #mind-map {
   width: 100%;
   height: 100%;
-  overflow: auto;
   position: relative;
-  img {
-    position: absolute;
-  }
-
+  overflow: auto;
 }
 </style>
 <style>
