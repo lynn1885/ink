@@ -135,14 +135,12 @@ export default {
 
     // 测试背景图: 一张加载失败时, 尝试加载另一张
     imgLoadError() {
-      if (this.curBgImgIndex < this.possibleBgImgSrc.length) {
+      if (this.curBgImgIndex < this.possibleBgImgSrc.length + 1) {
         clearTimeout(this.changeBgImgTimer);
         this.curBgImgSrc = this.possibleBgImgSrc[this.curBgImgIndex];
-        console.log(123, this.curBgImgSrc);
         this.curBgImgIndex += 1;
         this.changeBgImgTimer = setTimeout(() => {
-          this.realBgImgSrc = this.curBgImgSrc;
-          console.log('真实背景: ', this.realBgImgSrc);
+          if (this.curBgImg) this.realBgImgSrc = this.curBgImgSrc;
         }, 200);
       }
     },

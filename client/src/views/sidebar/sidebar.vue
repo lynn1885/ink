@@ -1,5 +1,12 @@
 <template>
-  <div id="side-bar" :class="{'side-bar-small-mode': isSideBarSmallMode}" @resize.native="resize(1)">
+  <div
+    id="side-bar"
+    :class="{'side-bar-small-mode': isSideBarSmallMode}"
+    @resize.native="resize(1)"
+    :style="{
+      width: sideBarWidth
+    }"
+    >
     <!-- tool icons -->
     <div id="tool-icons">
       <div
@@ -25,8 +32,9 @@
 
       <search v-if="activePage === 'Search'"></search>
       <outline v-if="activePage === 'Outline'"></outline>
-      <note-map v-if="activePage === 'Note Map'"></note-map>
+      <!-- <note-map v-if="activePage === 'Note Map'"></note-map> -->
       <todo v-if="activePage === 'Todo'"></todo>
+      <mind-map v-if="activePage === 'Mind Map'"></mind-map>
       <statistics v-if="activePage === 'Statistics'"></statistics>
     </div>
 
@@ -43,10 +51,10 @@ import NoteMap from '@/components/note-map/note-map.vue';
 import Todo from '@/components/todo/todo.vue';
 import StickyNote from '@/components/sticky-note/sticky-note.vue';
 import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
+import MindMap from '@/components/mind-map/mind-map.vue';
 import Statistics from '@/components/statistics/statistics.vue';
 import readonly from '@/components/readonly/readonly';
 import review from '@/components/review/review';
-import mindMap from '@/components/mind-map/mind-map';
 // eslint-disable-next-line no-unused-vars
 import {
   bookSvg,
@@ -55,6 +63,7 @@ import {
   // settingSvg,
   // pluginSvg,
   outlineSvg,
+  mindMapSvg,
   noteMapSvg,
   todoSvg,
   statisticsSvg,
@@ -70,6 +79,7 @@ export default {
     Search,
     Outline,
     Todo,
+    MindMap,
     NoteMap,
     StickyNote,
     SearchNoteBar,
@@ -85,6 +95,8 @@ export default {
       isShortcutKeyBinded: false,
       isShowSearchNoteBar: false,
       toggleToolPageShortcut: ['Ctrl', 'Shift', 'B'],
+      sideBarWidth: '350px',
+      defaultSideBarWidth: '350px',
       // tool name must be unique
       tools: [
         {
@@ -137,12 +149,11 @@ export default {
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
-        {
-          name: 'Note Map',
-          icon: noteMapSvg,
-          type: 'page',
-          keyMap: ['Ctrl', 'Shift', 'M'],
-        },
+        // {
+        //   name: 'Note Map',
+        //   icon: noteMapSvg,
+        //   type: 'page',
+        // },
         {
           name: 'Todo',
           icon: todoSvg,
@@ -158,10 +169,13 @@ export default {
         },
         {
           name: 'Mind Map',
-          icon: mindMap.icon,
-          type: 'button',
-          onclick: mindMap.handler,
-          lastStatus: false,
+          icon: mindMapSvg,
+          // type: 'button',
+          // onclick: mindMap.handler,
+          // lastStatus: false,
+          type: 'page',
+          sideBarWidth: '50%',
+          keyMap: ['Ctrl', 'Shift', 'M'],
         },
         {
           name: 'Statistics',
@@ -232,6 +246,7 @@ export default {
           this.isSideBarSmallMode = !this.isSideBarSmallMode;
         }
         this.activePage = tool.name;
+        this.sideBarWidth = tool.sideBarWidth || this.defaultSideBarWidth;
         // "button" tool is a button, which will trigger something
       } else if (tool.type === 'button' && tool.onclick) {
         tool.lastStatus = tool.onclick(
@@ -295,7 +310,7 @@ export default {
   display: flex;
   resize: horizontal;
   position: relative;
-  width: $sidebar-width;
+  transition: width 0.3s;
   &.side-bar-small-mode {
     width: $icon-bar-width;
     #tool-pages {

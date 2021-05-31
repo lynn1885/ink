@@ -19,12 +19,11 @@ export default {
           transform: translateX(-50%) translateY(-50%);
           width: 1280px;
           height: 800px;
-          background: rgba(251, 250, 249, 0.85);
+          background: rgba(251, 250, 249, 0.95);
           box-shadow: 0px 0px 10px 0px #eee;
           z-index: 200;
           overflow: auto;
           border-raduis: 4px;
-          backdrop-filter: blur(8px) saturate(200%);
         "> </div>
       `);
     mindMapContainer.on('click', (e) => {
@@ -84,19 +83,19 @@ function buildMindMapData(hierarchy, root) {
       });
       for (const node3 of node2.children) {
         data.push({
-          id: node3.lineNum + node3.text, parentid: node2.lineNum + node2.text, topic: node3.text.replace(/#+/, ''), 'background-color': '#e2d4c5', expanded: false,
+          id: node3.lineNum + node3.text, parentid: node2.lineNum + node2.text, topic: node3.text.replace(/#+/, ''), 'background-color': '#e2d4c5', expanded: true,
         });
         for (const node4 of node3.children) {
           data.push({
-            id: node4.lineNum + node4.text, parentid: node3.lineNum + node3.text, topic: node4.text.replace(/#+/, ''), 'background-color': 'rgb(182, 216, 174)', expanded: false,
+            id: node4.lineNum + node4.text, parentid: node3.lineNum + node3.text, topic: node4.text.replace(/#+/, ''), 'background-color': 'rgb(182, 216, 174)', expanded: true,
           });
           for (const node5 of node4.children) {
             data.push({
-              id: node5.lineNum + node5.text, parentid: node4.lineNum + node4.text, topic: node5.text.replace(/#+/, ''), 'background-color': 'rgb(224, 195, 195)', expanded: false
+              id: node5.lineNum + node5.text, parentid: node4.lineNum + node4.text, topic: node5.text.replace(/#+/, ''), 'background-color': 'rgb(224, 195, 195)', expanded: true
             });
             for (const node6 of node5.children) {
               data.push({
-                id: node6.lineNum + node6.text, parentid: node5.lineNum + node5.text, topic: node6.text.replace(/#+/, ''), 'background-color': '#ccc', expanded: false
+                id: node6.lineNum + node6.text, parentid: node5.lineNum + node5.text, topic: node6.text.replace(/#+/, ''), 'background-color': '#ccc', expanded: true
               });
             }
           }
