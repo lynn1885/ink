@@ -32,7 +32,7 @@
 
       <search v-if="activePage === 'Search'"></search>
       <outline v-if="activePage === 'Outline'"></outline>
-      <!-- <note-map v-if="activePage === 'Note Map'"></note-map> -->
+      <note-map v-if="activePage === 'Note Map'"></note-map>
       <todo v-if="activePage === 'Todo'"></todo>
       <mind-map v-if="activePage === 'Mind Map'"></mind-map>
       <statistics v-if="activePage === 'Statistics'"></statistics>
@@ -149,11 +149,12 @@ export default {
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
-        // {
-        //   name: 'Note Map',
-        //   icon: noteMapSvg,
-        //   type: 'page',
-        // },
+        {
+          name: 'Note Map',
+          icon: noteMapSvg,
+          type: 'page',
+          sideBarWidth: '50%',
+        },
         {
           name: 'Todo',
           icon: todoSvg,
@@ -174,7 +175,7 @@ export default {
           // onclick: mindMap.handler,
           // lastStatus: false,
           type: 'page',
-          sideBarWidth: '50%',
+          sideBarWidth: '70%',
           keyMap: ['Ctrl', 'Shift', 'M'],
         },
         {
@@ -312,7 +313,7 @@ export default {
   position: relative;
   transition: width 0.3s;
   &.side-bar-small-mode {
-    width: $icon-bar-width;
+    width: $icon-bar-width!important;
     #tool-pages {
       display: none;
     }

@@ -8,7 +8,7 @@ import 'jsmind/style/jsmind.css';
 import JsMind from 'jsmind';
 import classNames from '@/tools/class-names';
 
-const isEnableConsole = false;
+// const isEnableConsole = false;
 
 export default {
   name: 'mind-map',
@@ -46,51 +46,6 @@ export default {
   },
 
   methods: {
-    //  移动光标时
-    onCursorMove(lineNum, behavior = 'smooth') {
-      if (!this.mindMapArr || !this.mindMapArr.length || !this.jm) return;
-      // 节流
-      // 找到当前光标所在的的脑图节点id
-      let curCursorMindNodeId;
-      for (const mindNode of this.mindMapArr) {
-        const mindNodeLine = Number(mindNode.id.match(/^[0-9]+/));
-        if (mindNodeLine <= lineNum) { if (mindNode.id) curCursorMindNodeId = mindNode.id; } else { break; }
-      }
-      // 选中mind map该节点
-      this.jm.select_node(curCursorMindNodeId);
-      // 将mind map该节点滚动到视野中
-      const curCursorMindNodeDom = $(`jmnode[nodeid='${curCursorMindNodeId}']`);
-      if (curCursorMindNodeDom && curCursorMindNodeDom[0]) {
-        curCursorMindNodeDom[0].scrollIntoView({
-          behavior,
-          block: 'center',
-          inline: 'center',
-        });
-      }
-    },
-
-    // 编辑时
-    onChanges(e) {
-      clearTimeout(this.contentUpdateTimer);
-      this.contentUpdateTimer = setTimeout(() => {
-        this.build(this.editor); // 重新构建mind map
-        this.onCursorMove(e.doc.getCursor().line, 'auto'); // 将mind map滚动到当前正在编辑的这一行
-      }, 1000);
-    },
-
-    // 点击mind map时
-    onClickMindMap() {
-      // 跳转到正文对应的行
-      const clickMindNode = this.jm.get_selected_node();
-      if (!clickMindNode || !clickMindNode.id) return;
-      try {
-        const gotoThisLine = clickMindNode.id.match(/^[0-9]+/)[0];
-        this.editor.scrollNoteToThisLine(gotoThisLine, classNames.highlightLineClass, 'unfoldAll', true);
-      } catch (error) {
-        console.warn('无法跳转到指定行:', error);
-      }
-    },
-
     // ⭐ 构造mind map
     build(editor) {
       // prepare data
@@ -137,6 +92,54 @@ export default {
 
       return false;
     },
+
+    //  移动光标时
+    onCursorMove(lineNum, behavior = 'smooth') {
+      if (!this.mindMapArr || !this.mindMapArr.length || !this.jm) return;
+      // 节流
+      // 找到当前光标所在的的脑图节点id
+      let curCursorMindNodeId;
+      for (const mindNode of this.mindMapArr) {
+        const mindNodeLine = Number(mindNode.id.match(/^[0-9]+/));
+        if (mindNodeLine <= lineNum) { if (mindNode.id) curCursorMindNodeId = mindNode.id; } else { break; }
+      }
+      // 选中mind map该节点
+      this.jm.select_node(curCursorMindNodeId);
+      // 将mind map该节点滚动到视野中
+      const curCursorMindNodeDom = $(`jmnode[nodeid='${curCursorMindNodeId}']`);
+      if (curCursorMindNodeDom && curCursorMindNodeDom[0]) {
+        curCursorMindNodeDom[0].scrollIntoView({
+          behavior,
+          block: 'center',
+          inline: 'center',
+        });
+      }
+    },
+
+    // 编辑时
+    onChanges(e) {
+      clearTimeout(this.contentUpdateTimer);
+      this.contentUpdateTimer = setTimeout(() => {
+        this.build(this.editor); // 重新构建mind map
+        const curCursorLine = e.doc.getCursor().line;
+        this.onCursorMove(curCursorLine - 1, 'auto'); // 将mind map滚动到当前正在编辑的这一行
+        this.onCursorMove(curCursorLine, 'auto'); // hack. 这样先移动到目标行的前一行, 再移动到目标行, 可以防止位置闪烁
+      }, 1000);
+    },
+
+    // 点击mind map时
+    onClickMindMap() {
+      // 跳转到正文对应的行
+      const clickMindNode = this.jm.get_selected_node();
+      if (!clickMindNode || !clickMindNode.id) return;
+      try {
+        const gotoThisLine = clickMindNode.id.match(/^[0-9]+/)[0];
+        this.editor.scrollNoteToThisLine(gotoThisLine, classNames.highlightLineClass, 'unfoldAll', true);
+      } catch (error) {
+        console.warn('无法跳转到指定行:', error);
+      }
+    },
+
 
     // build mind map data
     buildMindMapData(hierarchy, root) {

@@ -573,6 +573,7 @@ export default class {
     lineNum: 'lineNum',
     lv: 'lv',
     text: 'text',
+    nextLine: 'nextLine',
     children: 'children'
   }) {
     if (!text) {
@@ -591,6 +592,7 @@ export default class {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
+            [propNames.nextLine]: lineArr[i + 1],
             [propNames.children]: lastMeetHeaders[headerLv],
           });
         } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
@@ -599,6 +601,7 @@ export default class {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
+            [propNames.nextLine]: lineArr[i + 1],
             [propNames.children]: lastMeetHeaders[headerLv],
           });
         }
