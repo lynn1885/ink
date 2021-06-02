@@ -7,6 +7,7 @@ const config = {
   server: {
     serverUrl: `${ip}:12340/`,
     staticImagesUrl: `${ip}:12340/images/`, // 最后/不能省略
+    staticMapImgUrl: `${ip}:12340/images/map/`, // 最后/不能省略
     staticIconsUrl: `${ip}:12340/icons/`,
     staticPluginsUrl: `${ip}:12340/plugins/`,
   },

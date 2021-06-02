@@ -7,8 +7,7 @@
         :id="'note-map-line-'+lv1Obj.lineNum"
         v-for="lv1Obj in noteHierarchy"
         :key="lv1Obj.lineNum + lv1Obj.text"
-        :style="calNodeStyle(lv1Obj.nextLine2, 1)"
-        v-show="!lv1Obj.text.includes('图示')"
+        :style="calNodeStyle(lv1Obj.nextLine)"
       >
         <div class="cur-lv-content">
           {{lv1Obj.text.replace(/#+/, '')}}
@@ -20,12 +19,11 @@
             :id="'note-map-line-'+lv2Obj.lineNum"
             v-for="lv2Obj in lv1Obj.children"
             :key="lv2Obj.lineNum + lv2Obj.text"
-            :style="calNodeStyle(lv2Obj.nextLine2, 2)"
-            v-show="!lv2Obj.text.includes('图示')"
-            @click.stop="onClickMapNode(  )"
+            :style="calNodeStyle(lv2Obj.nextLine)"
+            @click.stop="onClickMapNode(lv2Obj)"
           >
             <div class="cur-lv-content">
-              ■ {{lv2Obj.text.replace(/#+/, '')}}
+              {{lv2Obj.text.replace(/#+/, '')}}
             </div>
             <!-- lv3 -->
             <div v-if="lv2Obj.children" class="lv3-container item-container">
@@ -34,12 +32,11 @@
                 :id="'note-map-line-'+lv3Obj.lineNum"
                 v-for="lv3Obj in lv2Obj.children"
                 :key="lv3Obj.lineNum + lv3Obj.text"
-                :style="calNodeStyle(lv3Obj.nextLine2, 3)"
-                v-show="!lv3Obj.text.includes('图示')"
+                :style="calNodeStyle(lv3Obj.nextLine)"
                 @click.stop="onClickMapNode(lv3Obj)"
               >
                 <div class="cur-lv-content">
-                  ● {{lv3Obj.text.replace(/#+/, '')}}
+                  {{lv3Obj.text.replace(/#+/, '')}}
                 </div>
                 <!-- lv4 -->
                 <div v-if="lv3Obj.children" class="lv4-container item-container">
@@ -48,12 +45,11 @@
                     :id="'note-map-line-'+lv4Obj.lineNum"
                     v-for="lv4Obj in lv3Obj.children"
                     :key="lv4Obj.lineNum + lv4Obj.text"
-                    :style="calNodeStyle(lv4Obj.nextLine2, 4)"
-                    v-show="!lv4Obj.text.includes('图示')"
+                    :style="calNodeStyle(lv4Obj.nextLine)"
                     @click.stop="onClickMapNode(lv4Obj)"
                   >
                     <div class="cur-lv-content">
-                      ○ {{lv4Obj.text.replace(/#+/, '')}}
+                      {{lv4Obj.text.replace(/#+/, '')}}
                     </div>
                     <!-- lv5 -->
                     <div v-if="lv4Obj.children" class="lv5-container item-container">
@@ -62,12 +58,11 @@
                         :id="'note-map-line-'+lv5Obj.lineNum"
                         v-for="lv5Obj in lv4Obj.children"
                         :key="lv5Obj.lineNum + lv5Obj.text"
-                        :style="calNodeStyle(lv5Obj.nextLine2, 5)"
-                        v-show="!lv5Obj.text.includes('图示')"
+                        :style="calNodeStyle(lv5Obj.nextLine)"
                         @click.stop="onClickMapNode(lv5Obj)"
                       >
                         <div class="cur-lv-content">
-                          ◆ {{lv5Obj.text.replace(/#+/, '')}}
+                          {{lv5Obj.text.replace(/#+/, '')}}
                         </div>
                         <div v-if="lv5Obj.children" class="lv5-container item-container">
                           <!-- lv6 -->
@@ -76,12 +71,11 @@
                             :id="'note-map-line-'+lv6Obj.lineNum"
                             v-for="lv6Obj in lv5Obj.children"
                             :key="lv6Obj.lineNum + lv6Obj.text"
-                            :style="calNodeStyle(lv6Obj.nextLine, 6)"
-                            v-show="!lv6Obj.text.includes('图示')"
+                            :style="calNodeStyle(lv6Obj.nextLine)"
                             @click.stop="onClickMapNode(lv6Obj)"
                           >
                             <div class="cur-lv-content">
-                              ◇ {{lv6Obj.text.replace(/#+/, '')}}
+                              {{lv6Obj.text.replace(/#+/, '')}}
                             </div>
                           </div>
                         </div>
@@ -111,8 +105,7 @@ export default {
       editor: null,
       noteHierarchy: null, // 笔记层级信息
       contentUpdateTimer: null,
-      staticImagesUrl: config.server.staticImagesUrl,
-      staticMapImgUrl: config.server.staticMapImgUrl
+      staticImagesUrl: config.server.staticImagesUrl, // 图片服务器url, 上传图片后, 从这个地址获取图片
     };
   },
 
@@ -143,6 +136,7 @@ export default {
     // ⭐ 构建知识地图
     build() {
       this.noteHierarchy = this.editor.getHeadersHierarchy();
+      console.log(123, this.noteHierarchy);
     },
 
     // 编辑时
@@ -184,155 +178,42 @@ export default {
     },
 
     // 计算当前节点的样式
-    // 样式行: 1-5级标题的样式行, 是标题行之后的第二行. 6级标题的样式行, 是标题行之后的第一行
-    calNodeStyle(styleLine, lv) {
-      // 样式行需要以'==='结尾
-      if (!styleLine || !styleLine.startsWith('===') || !styleLine.endsWith('===')) return;
+    calNodeStyle(nextLine) {
+      if (!nextLine || !nextLine.startsWith('![]')) return;
 
-      // 移除'==='
-      styleLine = styleLine.replace(/===/g, '').replace(/\s+/g, '');
-
-      // 解析出来用户设置的属性
       const styleObj = {};
-      const attrsArr = styleLine.split('|'); // 用户自定义的属性数组
-      const attrs = {}; // 用户自定义的属性对象
-      attrsArr.forEach((item) => {
-        const [k, v] = item.split(':');
-        if (k.startsWith('![](')) {
-          attrs.bg2 = k;
-        } else {
-          attrs[k] = v;
-        }
-      });
+      const attrs = nextLine.split('|');
 
-      // 解析出来个属性的值
-      // 背景图, 瓷砖
-      const bgImgStr = attrs.bg2 || `![](map/${attrs.bg}.png)`; // 背景图片地址: ![](625/2531038569.png) 或直接给名字 '山'
-      let bgWidthHeightStr = attrs.bs; // 背景图片大小: 10,10%
-      const bgTileStr = attrs.bt; // 背景瓷砖: dirt1, 3, inset
-      // if (!bgTileStr) { // 默认瓷砖
-      //   switch (lv) {
-      //     case 1:
-      //       bgTileStr = 'road';
-      //       break;
-      //     case 2:
-      //       bgTileStr = 'grass4,1';
-      //       break;
-      //     case 3:
-      //       bgTileStr = 'rock,1';
-      //       break;
-      //     case 4:
-      //       bgTileStr = 'plank,10';
-      //       break;
-      //     case 5:
-      //       bgTileStr = 'plank2,10,inset';
-      //       break;
-      //     case 6:
-      //       bgTileStr = 'water,1,inset';
-      //       break;
-      //     default:
-      //       break;
-      //   }
-      // }
-      const smartBgHeight = attrs.sh; // 智能背景高度: 100 (表示背景图高度100px, 并腾出100px的padding-top)
-      const smartBgWidth = attrs.sw; // 智能背景宽度: 100 (表示背景图宽度100px, 并腾出100px的padding-left)
+      // 默认宽高
 
-      // 容器宽高
-      const heightStr = attrs.h; // 高度: 100
-      const widthStr = attrs.w; // 宽度: 100
-      const paddingLeftStr = attrs.pl; // 左内边距: 100
-      const paddingTopStr = attrs.pt; // 上内边距: 100
-      const marginLeftStr = attrs.ml; // 左外边距: 100
-      const marginTopStr = attrs.mt; // 上外边距: 100
+      // 背景图
+      const bgImg = attrs[0].replace(/[!\[\]()]+/, '').replace(')', '');
+      styleObj.background = `url("${this.staticImagesUrl + bgImg}") no-repeat 0px 0px / 100% 100%`;
+      styleObj.border = 'none';
+      attrs.shift();
 
-      const sizeStr = attrs.s; // 宽高: 100, 100
-      const posStr = attrs.p; // 容器位置: 0,0,100,100
-
-      // 圆角
-      const radiusStr = attrs.r; // 圆角: 20
-
-      // transform
-      const scaleStr = attrs.ts; // 放缩 0.3
-
-
-      // 先解除宽高限制
-      styleObj['max-width'] = '9999px';
-      styleObj['max-height'] = '9999px';
-
-      // 解析: 背景图地址, 背景图大小
-      if (bgImgStr) {
-        let isRepeat = false;
-        if (bgWidthHeightStr && bgWidthHeightStr.endsWith('r')) { // 背景图size以'r'结尾时, 表示要重复背景图
-          isRepeat = true;
-          bgWidthHeightStr = bgWidthHeightStr.replace(/r$/, '');
-        }
-        const bgImg = bgImgStr.replace(/[!\[\]()]+/, '').replace(')', '');
-        styleObj.background = `url("${this.staticImagesUrl + bgImg}") ${isRepeat ? '' : 'no-repeat'}  center 10px / `;
-        // 解析背景图大小
-        if (bgWidthHeightStr) {
-          const bgWidthHeightArr = bgWidthHeightStr.split(',');
-          if (bgWidthHeightArr[0]) styleObj.background += `${bgWidthHeightArr[0]}${bgWidthHeightArr[0].endsWith('%') ? '' : 'px'}`;
-          if (bgWidthHeightArr[1]) styleObj.background += ` ${bgWidthHeightArr[1]}${bgWidthHeightArr[1].endsWith('%') ? '' : 'px'}`;
-        } else if (smartBgHeight) {
-          styleObj.background += `auto ${smartBgHeight}px`;
-          styleObj['padding-top'] = `${smartBgHeight}px`;
-        } else if (smartBgWidth) {
-          styleObj.background += `${smartBgWidth}px auto`;
-          styleObj['padding-left'] = `${smartBgWidth}px`;
-        } else {
-          styleObj.background += '101% 101%';
+      // 指定位置
+      for (const kvText of attrs) {
+        // 拆分键值对
+        const kvArr = kvText.trim().toLowerCase().split(':');
+        const key = kvArr[0];
+        let value = kvArr[1];
+        // 处理键值对
+        switch (key) {
+          // 处理位置和大小
+          case 'pos': {
+            value = value.replace(' ', '');
+            const valueArr = value.split(',');
+            styleObj['margin-left'] = `${valueArr[0]}px`;
+            styleObj['margin-top'] = `${valueArr[1]}px`;
+            styleObj.width = `${valueArr[2]}px`;
+            styleObj.height = `${valueArr[3]}px`;
+            break;
+          }
+          default:
+            break;
         }
       }
-
-      // 解析: 背景瓷砖
-      if (bgTileStr) {
-        const bgTileArr = bgTileStr.split(',');
-        // 解析瓷砖背景
-        if (styleObj.background) {
-          styleObj.background += ', ';
-        } else {
-          styleObj.background = '';
-        }
-        styleObj.background += `url("${this.staticMapImgUrl + bgTileArr[0]}.png")`;
-        // 解析box-shadow
-        if (bgTileArr[1]) {
-          styleObj['box-shadow'] = `${bgTileArr[1]}px ${bgTileArr[1]}px ${bgTileArr[1]}px ${bgTileArr[2] || ''} #333`;
-        }
-      }
-
-
-      // 解析: 容器位置pos
-      if (posStr) {
-        const [left, top, width, height] = posStr.split(',');
-        styleObj['margin-left'] = `${left}px`;
-        styleObj['margin-top'] = `${top}px`;
-        styleObj.width = `${width}px`;
-        styleObj.height = `${height}px`;
-      }
-
-      // 解析: 容器宽高
-      if (sizeStr) {
-        const sizeArr = sizeStr.split(',');
-        styleObj.width = `${sizeArr[0]}px`;
-        styleObj.height = `${sizeArr[1] || sizeArr[0]}px`;
-      }
-      if (widthStr) styleObj.width = `${widthStr}px`;
-      if (heightStr) styleObj.height = `${heightStr}px`;
-
-      // 解析: 容器边距
-      if (paddingLeftStr) styleObj['padding-left'] = `${paddingLeftStr}px`;
-      if (paddingTopStr) styleObj['padding-top'] = `${paddingTopStr}px`;
-      if (marginLeftStr) styleObj['margin-left'] = `${marginLeftStr}px`;
-      if (marginTopStr) styleObj['margin-top'] = `${marginTopStr}px`;
-
-      // 解析: 圆角
-      if (radiusStr) styleObj['border-radius'] = `${radiusStr}px`;
-
-      // 解析: 放缩
-      if (scaleStr) styleObj.transform = `scale(${scaleStr})`;
-
-
-      console.log(999, styleObj);
       // eslint-disable-next-line consistent-return
       return styleObj;
     }
@@ -363,13 +244,12 @@ export default {
   /* 地图容器 */
   .note-container {
     display: flex;
-    background-image: url("/grass4.jpg");
+    /* background-image: url("/grass4.jpg"); */
     width: fit-content;
     height: fit-content;
-    /* flex-direction: column; */
+    flex-direction: column;
     .item-container {
       display: flex;
-      position: relative;
       padding: 10px;
       box-sizing: border-box;
       width: fit-content;
@@ -384,35 +264,33 @@ export default {
     .item {
       flex-shrink: 0;
       flex-grow: 0;
-      min-width: 40px;
-      min-height: 40px;
+      min-width: 30px;
+      min-height: 30px;
       width: fit-content;
       height: fit-content;
       margin: 4px;
       box-sizing: border-box;
-      font-size: 11px;
-      border-radius: 2px;
+      font-size: 12px;
+      border-radius: 4px;
       box-sizing: border-box;
       transition: all 0.2s;
-      background: rgba(255, 255, 255, 0.15);
       cursor: pointer;
-      /* border: 2px solid #333; */
+      border: 2px solid #ccc;
       &.no-child {
         min-width: 40px;
-        max-width: 80px;
+        max-width: 120px;
       }
       .active {
-        outline: 2px solid red;
+        border: 2px solid red;
         transition: all 0.2s;
       }
     }
     .cur-lv-content {
       display: inline-block;
       min-height: 20px;
-      color: rgb(129, 104, 21);
-      background: rgba(255, 255, 255, 0.7);
+      color: rgb(187, 151, 35);
+      background: rgba(255, 255, 255, 0.5);
       padding: 0 2px;
-      margin: 0 auto;
       border-radius: 2px;
       box-sizing: border-box;
       overflow: hidden;
@@ -423,7 +301,6 @@ export default {
       text-align: left;
       margin: 10px;
       margin-bottom: 20px;
-      font-size: 18px;
     }
     .lv2 {
       /* background-image: url('/grass4.jpg');
