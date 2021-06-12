@@ -302,7 +302,7 @@
 
   span {
     font-size: 12px;
-    background: $cm-image-font-bg;
+    background: $cm-image-font-bg !important;
     padding: 4px 2px;
     cursor: text;
   }
@@ -324,6 +324,13 @@
     box-shadow: $cm-img-shadow;
   }
 }
+
+.inserted-widget-image-small {
+  img {
+    max-width: 30px;
+  }
+}
+
 
 .katex {
   padding: 0px 4px;

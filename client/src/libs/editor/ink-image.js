@@ -37,6 +37,11 @@ export default function (editor, config) {
         let baseUrl = '';
         baseUrl = `${editor.fileServer.staticImagesUrl}`;
         el.classList.add('line-cm-image');
+        let isSmallImage = false;
+        if (line && line.text.endsWith('-')) { // 以'-'结尾的图片, 缩小显示
+          el.classList.add('line-cm-image-small');
+          isSmallImage = true;
+        }
         setTimeout(() => {
           if (line.widgets) {
             line.widgets.forEach((w) => {
@@ -44,7 +49,7 @@ export default function (editor, config) {
             });
           }
           const img = $('<img style="visibility:hidden"></img>');
-          const imgWidget = $('<div class="inserted-widget-image"></div>');
+          const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
           imgWidget.append(img);
           // don't know why the picture is bigger than the real size
           // scale it to 81% here

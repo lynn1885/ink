@@ -575,6 +575,7 @@ export default class {
     text: 'text',
     nextLine: 'nextLine',
     nextLine2: 'nextLine2',
+    nextLine3: 'nextLine3', // 标题之后三行
     children: 'children'
   }) {
     if (!text) {
@@ -595,6 +596,7 @@ export default class {
             [propNames.text]: matchRes[0],
             [propNames.nextLine]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
+            [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],
           });
         } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
@@ -605,6 +607,7 @@ export default class {
             [propNames.text]: matchRes[0],
             [propNames.nextLine]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
+            [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],
           });
         }

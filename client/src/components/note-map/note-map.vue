@@ -8,13 +8,15 @@
         :id="'note-map-line-'+lv1Obj.lineNum"
         v-for="lv1Obj in noteHierarchy"
         :key="lv1Obj.lineNum + lv1Obj.text"
-        :style="calNodeStyle(lv1Obj.nextLine2, 1, lv1Obj)"
+        :style="calNodeImg(lv1Obj, 1)"
         v-show="!lv1Obj.text.includes('图示')"
       >
         <div class="cur-lv-content">
           {{lv1Obj.text.replace(/#+/, '')}}
         </div>
-        <img class="map-img" v-if="lv1Obj.imgSrc" :src="lv1Obj.imgSrc" alt="">
+        <img class="map-img map-img-a" v-if="lv1Obj.imgs[0]" :src="lv1Obj.imgs[0]" alt="">
+        <img class="map-img map-img-b" v-if="lv1Obj.imgs[1]" :src="lv1Obj.imgs[1]" alt="">
+        <img class="map-img map-img-c" v-if="lv1Obj.imgs[2]" :src="lv1Obj.imgs[2]" alt="">
         <!-- lv2 -->
         <div v-if="lv1Obj.children" class="lv2-container item-container">
           <div
@@ -22,14 +24,16 @@
             :id="'note-map-line-'+lv2Obj.lineNum"
             v-for="lv2Obj in lv1Obj.children"
             :key="lv2Obj.lineNum + lv2Obj.text"
-            :style="calNodeStyle(lv2Obj.nextLine2, 2, lv2Obj)"
+            :style="calNodeImg(lv2Obj, 2)"
             v-show="!lv2Obj.text.includes('图示')"
             @click.stop="onClickMapNode(lv2Obj)"
           >
             <div class="cur-lv-content">
               {{lv2Obj.text.replace(/#+/, '')}}
             </div>
-            <img class="map-img" v-if="lv2Obj.imgSrc" :src="lv2Obj.imgSrc" alt="">
+            <img class="map-img map-img-a" v-if="lv2Obj.imgs[0]" :src="lv2Obj.imgs[0]" alt="">
+            <img class="map-img map-img-b" v-if="lv2Obj.imgs[1]" :src="lv2Obj.imgs[1]" alt="">
+            <img class="map-img map-img-c" v-if="lv2Obj.imgs[2]" :src="lv2Obj.imgs[2]" alt="">
             <!-- lv3 -->
             <div v-if="lv2Obj.children" class="lv3-container item-container">
               <div
@@ -37,14 +41,16 @@
                 :id="'note-map-line-'+lv3Obj.lineNum"
                 v-for="lv3Obj in lv2Obj.children"
                 :key="lv3Obj.lineNum + lv3Obj.text"
-                :style="calNodeStyle(lv3Obj.nextLine2, 3, lv3Obj)"
+                :style="calNodeImg(lv3Obj, 3)"
                 v-show="!lv3Obj.text.includes('图示')"
                 @click.stop="onClickMapNode(lv3Obj)"
               >
                 <div class="cur-lv-content">
                   {{lv3Obj.text.replace(/#+/, '')}}
                 </div>
-                <img class="map-img" v-if="lv3Obj.imgSrc" :src="lv3Obj.imgSrc" alt="">
+                <img class="map-img map-img-a" v-if="lv3Obj.imgs[0]" :src="lv3Obj.imgs[0]" alt="">
+                <img class="map-img map-img-b" v-if="lv3Obj.imgs[1]" :src="lv3Obj.imgs[1]" alt="">
+                <img class="map-img map-img-c" v-if="lv3Obj.imgs[2]" :src="lv3Obj.imgs[2]" alt="">
                 <!-- lv4 -->
                 <div v-if="lv3Obj.children" class="lv4-container item-container">
                   <div
@@ -52,14 +58,16 @@
                     :id="'note-map-line-'+lv4Obj.lineNum"
                     v-for="lv4Obj in lv3Obj.children"
                     :key="lv4Obj.lineNum + lv4Obj.text"
-                    :style="calNodeStyle(lv4Obj.nextLine2, 4, lv4Obj)"
+                    :style="calNodeImg(lv4Obj, 4)"
                     v-show="!lv4Obj.text.includes('图示')"
                     @click.stop="onClickMapNode(lv4Obj)"
                   >
                     <div class="cur-lv-content">
                       {{lv4Obj.text.replace(/#+/, '')}}
                     </div>
-                    <img class="map-img" v-if="lv4Obj.imgSrc" :src="lv4Obj.imgSrc" alt="">
+                    <img class="map-img map-img-a" v-if="lv4Obj.imgs[0]" :src="lv4Obj.imgs[0]" alt="">
+                    <img class="map-img map-img-b" v-if="lv4Obj.imgs[1]" :src="lv4Obj.imgs[1]" alt="">
+                    <img class="map-img map-img-c" v-if="lv4Obj.imgs[2]" :src="lv4Obj.imgs[2]" alt="">
                     <!-- lv5 -->
                     <div v-if="lv4Obj.children" class="lv5-container item-container">
                       <div
@@ -67,14 +75,16 @@
                         :id="'note-map-line-'+lv5Obj.lineNum"
                         v-for="lv5Obj in lv4Obj.children"
                         :key="lv5Obj.lineNum + lv5Obj.text"
-                        :style="calNodeStyle(lv5Obj.nextLine2, 5, lv5Obj)"
+                        :style="calNodeImg(lv5Obj, 5)"
                         v-show="!lv5Obj.text.includes('图示')"
                         @click.stop="onClickMapNode(lv5Obj)"
                       >
                         <div class="cur-lv-content">
                           {{lv5Obj.text.replace(/#+/, '')}}
                         </div>
-                        <img class="map-img" v-if="lv5Obj.imgSrc" :src="lv5Obj.imgSrc" alt="">
+                        <img class="map-img map-img-a" v-if="lv5Obj.imgs[0]" :src="lv5Obj.imgs[0]" alt="">
+                        <img class="map-img map-img-b" v-if="lv5Obj.imgs[1]" :src="lv5Obj.imgs[1]" alt="">
+                        <img class="map-img map-img-c" v-if="lv5Obj.imgs[2]" :src="lv5Obj.imgs[2]" alt="">
                         <div v-if="lv5Obj.children" class="lv5-container item-container">
                           <!-- lv6 -->
                           <div
@@ -82,14 +92,16 @@
                             :id="'note-map-line-'+lv6Obj.lineNum"
                             v-for="lv6Obj in lv5Obj.children"
                             :key="lv6Obj.lineNum + lv6Obj.text"
-                            :style="calNodeStyle(lv6Obj.nextLine, 6, lv6Obj)"
+                            :style="calNodeImg(lv6Obj, 6)"
                             v-show="!lv6Obj.text.includes('图示')"
                             @click.stop="onClickMapNode(lv6Obj)"
                           >
                             <div class="cur-lv-content">
                               {{lv6Obj.text.replace(/#+/, '')}}
                             </div>
-                            <img class="map-img" v-if="lv6Obj.imgSrc" :src="lv6Obj.imgSrc" alt="">
+                            <img class="map-img map-img-a" v-if="lv6Obj.imgs[0]" :src="lv6Obj.imgs[0]" alt="">
+                            <img class="map-img map-img-b" v-if="lv6Obj.imgs[1]" :src="lv6Obj.imgs[1]" alt="">
+                            <img class="map-img map-img-c" v-if="lv6Obj.imgs[2]" :src="lv6Obj.imgs[2]" alt="">
                           </div>
                         </div>
                       </div>
@@ -205,9 +217,9 @@ export default {
       }
     },
 
-    // 计算当前节点的样式
+    // 计算当前节点的图片
     // 样式行: 1-5级标题的样式行, 是标题行之后的第二行. 6级标题的样式行, 是标题行之后的第一行
-    calNodeStyleOld(styleLine, lv, lvObj) {
+    calNodeImgOld(styleLine, lv, lvObj) {
     // 样式行需要以'==='结尾
       if (!styleLine || !styleLine.startsWith('===') || !styleLine.endsWith('===')) return;
 
@@ -335,15 +347,23 @@ export default {
       return styleObj;
     },
 
-    // 计算节点样式
-    calNodeStyle(styleLine, lv, lvObj) {
-      if (!styleLine) return;
+    // 计算节点图片
+    calNodeImg(lvObj) {
+      lvObj.imgs = [];
+      if (!lvObj) return;
 
-      if (styleLine.startsWith('![](')) {
-        const imgName = styleLine.replace('![](', '').replace(')', '');
-        const imgSrc = this.staticImagesUrl + imgName;
-        lvObj.imgSrc = imgSrc;
-      }
+      const lines = [lvObj.nextLine, lvObj.nextLine2, lvObj.nextLine3];
+
+      const imgs = lines.map((line) => {
+        if (line && line.startsWith('![](') && line.endsWith('-')) {
+          const imgName = line.replace('![](', '').replace(')', '').replace('-', '');
+          const imgSrc = this.staticImagesUrl + imgName;
+          return imgSrc;
+        }
+        return '';
+      }).filter(imgSrc => imgSrc);
+
+      lvObj.imgs = imgs;
     },
   },
 
@@ -377,10 +397,8 @@ export default {
     display: flex;
     /* background-image: url("/grass4.jpg"); */
     width: 100%;
-    height: 100%;
+    height: calc(100% - 300px);
     overflow: auto;
-
-
     flex-direction: column;
     .item-container {
       display: flex;
@@ -434,9 +452,18 @@ export default {
 
     /* 内容: 图像 */
     .map-img {
-      width: 120px;
+      width: 160px;
       margin-left: 10px;
       border-radius: 3px;
+
+      &.map-img-b {
+        width: 60px;
+        margin-left: -150px;
+      }
+       &.map-img-c {
+        width: 60px;
+        margin-top: 20px;
+      }
     }
 
     .lv1 {
@@ -484,16 +511,13 @@ export default {
 
   /* 图片搜索 */
   .img-searcher {
-    position: absolute;
-    left: 0;
-    bottom: 0;
     width: 100%;
-    height: 200px;
+    height: 300px;
     overflow: hidden;
     iframe {
       width: 100%;
       height: 400px;
-      transform: translateY(-120px);
+      transform: translateY(-10px);
     }
   }
 }
