@@ -458,7 +458,8 @@ export default {
 
       &.map-img-b {
         width: 60px;
-        margin-left: -150px;
+        margin-left: -130px;
+        margin-top: -10px;
       }
        &.map-img-c {
         width: 60px;
