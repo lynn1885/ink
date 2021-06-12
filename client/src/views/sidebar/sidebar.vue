@@ -175,7 +175,7 @@ export default {
           // onclick: mindMap.handler,
           // lastStatus: false,
           type: 'page',
-          sideBarWidth: '70%',
+          sideBarWidth: '50%',
           keyMap: ['Ctrl', 'Shift', 'M'],
         },
         {

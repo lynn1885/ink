@@ -19,7 +19,7 @@ export default function (editor) {
       if (headerLv > 0) { // 只有当前已经位于某个header中时, 才会执行下面的操作
         // 找到下一个同级header所在行, 或当前所在行的父级header的最后一行, 这是要插入的位置
         const { nextSiblingHeaderlineNum, parentHeaderLastLineNum }
-            = getNextSiblingHeaderLineNumByCurosr(editor, cm, headerLv);
+          = getNextSiblingHeaderLineNumByCurosr(editor, cm, headerLv);
         let insertLineNum;
         if (nextSiblingHeaderlineNum) {
           insertLineNum = nextSiblingHeaderlineNum - 1;

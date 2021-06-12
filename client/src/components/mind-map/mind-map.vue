@@ -142,31 +142,38 @@ export default {
 
 
     // build mind map data
+    // 不显示以"图示"两个字结尾的章节
     buildMindMapData(hierarchy, root) {
       const data = [root];
       let i = 1;
       for (const node1 of hierarchy) {
+        if (node1.text.endsWith('图示')) continue;
         data.push({
           id: node1.lineNum + node1.text, parentid: 'root', topic: i + node1.text.replace(/#+/, ''), 'background-color': '#e2d4c5',
         });
         i += 1;
         for (const node2 of node1.children) {
+          if (node2.text.endsWith('图示')) continue;
           data.push({
             id: node2.lineNum + node2.text, parentid: node1.lineNum + node1.text, topic: node2.text.replace(/#+/, ''), 'background-color': '#cde2d7',
           });
           for (const node3 of node2.children) {
+            if (node3.text.endsWith('图示')) continue;
             data.push({
               id: node3.lineNum + node3.text, parentid: node2.lineNum + node2.text, topic: node3.text.replace(/#+/, ''), 'background-color': '#e2d4c5', expanded: true,
             });
             for (const node4 of node3.children) {
+              if (node4.text.endsWith('图示')) continue;
               data.push({
                 id: node4.lineNum + node4.text, parentid: node3.lineNum + node3.text, topic: node4.text.replace(/#+/, ''), 'background-color': 'rgb(182, 216, 174)', expanded: true,
               });
               for (const node5 of node4.children) {
+                if (node5.text.endsWith('图示')) continue;
                 data.push({
                   id: node5.lineNum + node5.text, parentid: node4.lineNum + node4.text, topic: node5.text.replace(/#+/, ''), 'background-color': 'rgb(224, 195, 195)', expanded: true
                 });
                 for (const node6 of node5.children) {
+                  if (node6.text.endsWith('图示')) continue;
                   data.push({
                     id: node6.lineNum + node6.text, parentid: node5.lineNum + node5.text, topic: node6.text.replace(/#+/, ''), 'background-color': '#ccc', expanded: true
                   });

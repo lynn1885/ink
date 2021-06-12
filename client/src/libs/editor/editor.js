@@ -27,12 +27,12 @@ import 'codemirror/addon/dialog/dialog.css';
 
 export default class {
   /**
-         * @param {dom} el 原生dom元素, 会在这个元素中初始化editor
-         * @param {Object} config config object
-         * `config.message`: `Object` messager, 用于当editor出现问题时, 以ui的形式向用户发送信息.
-         * 对象中需要包含如下四个函数: success(), info(), warning(), error(), 向函数中传入信息会以ui的形式提示用户
-         * `config.cm`: `Object` CodeMirror()函数接收的配置项, 只有部分参数有效
-         */
+   * @param {dom} el 原生dom元素, 会在这个元素中初始化editor
+   * @param {Object} config config object
+   * `config.message`: `Object` messager, 用于当editor出现问题时, 以ui的形式向用户发送信息.
+   * 对象中需要包含如下四个函数: success(), info(), warning(), error(), 向函数中传入信息会以ui的形式提示用户
+   * `config.cm`: `Object` CodeMirror()函数接收的配置项, 只有部分参数有效
+   */
   constructor(el, config) {
     config = _.merge({
       cm: {},
@@ -50,10 +50,10 @@ export default class {
   }
 
   /**
-         * _init: initialize the editor
-         * @param {HTMLElement} el editor dom
-         * @param {object} config user config
-         */
+   * _init: initialize the editor
+   * @param {HTMLElement} el editor dom
+   * @param {object} config user config
+   */
   _init(el, config) { // eslint-disable-line class-methods-use-this
     const mergedConfig = {
       mode: {
@@ -97,10 +97,10 @@ export default class {
   }
 
   /**
-         * _onChange: event, cm对象change时触发
-         * @param {cm} cm cm
-         * @param {*} change change
-         */
+   * _onChange: event, cm对象change时触发
+   * @param {cm} cm cm
+   * @param {*} change change
+   */
   _onChange() { // eslint-disable-line class-methods-use-this
     // console.log(change);
     // this.isFileContentChanged = true;
@@ -123,11 +123,11 @@ export default class {
   }
 
   /**
-         * _onRenderLine: event, cm对象render时触发
-         * @param {cm} cm
-         * @param {line} line
-         * @param {HTMLElement} el
-         */
+   * _onRenderLine: event, cm对象render时触发
+   * @param {cm} cm
+   * @param {line} line
+   * @param {HTMLElement} el
+   */
   // Fired whenever a line is (re-)rendered to the DOM.
   // Fired right after the DOM element is built, before it is added to the document.
   _onRenderLine(cm, line, el) { // eslint-disable-line class-methods-use-this
@@ -165,10 +165,10 @@ export default class {
   }
 
   /**
-         * on: add event listener
-         * @param {String} eventName eventName
-         * @param {Function} handler handler
-         */
+   * on: add event listener
+   * @param {String} eventName eventName
+   * @param {Function} handler handler
+   */
   on(eventName, handler) {
     switch (eventName) {
       case 'renderLine':
@@ -190,10 +190,10 @@ export default class {
   }
 
   /**
-         * off: remove event listener
-         * @param {String} eventName eventName
-         * @param {Function} handler handler
-         */
+   * off: remove event listener
+   * @param {String} eventName eventName
+   * @param {Function} handler handler
+   */
   off(eventName, handler) {
     switch (eventName) {
       case 'renderLine':
@@ -215,20 +215,20 @@ export default class {
   }
 
   /**
-         * use: 使用插件
-         * @param {function} plugin 插件函数
-         * @param {object} config 插件配置对象
-         */
+   * use: 使用插件
+   * @param {function} plugin 插件函数
+   * @param {object} config 插件配置对象
+   */
   use(plugin, config) {
     plugin(this, config);
   }
 
   /**
-         * bind shortcut key map
-         * @param {Object} target Which object to bind the key map to
-         * @param {Array} keyArr key array
-         * @param {Function} handler
-         */
+   * bind shortcut key map
+   * @param {Object} target Which object to bind the key map to
+   * @param {Array} keyArr key array
+   * @param {Function} handler
+   */
   bindShortcutKeyMap(target, keyArr, handler) {
     if (keyArr.length > 4) {
       throw new Error(`The maximum length of keyArr is 4: ${keyArr}`);
@@ -282,9 +282,9 @@ export default class {
   }
 
   /**
-         * foldHeaderTo: 折叠代码至headerLv
-         * @param {number} targetHeaderLv
-         */
+   * foldHeaderTo: 折叠代码至headerLv
+   * @param {number} targetHeaderLv
+   */
   foldHeaderTo(targetHeaderLv) {
     let prevHeaderLv = 0;
     this.cm.execCommand('unfoldAll');
@@ -306,10 +306,10 @@ export default class {
   }
 
   /**
-         * toggleFold
-         * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
-         * @param {boolean} scanUp 是否向上扫描
-         */
+   * toggleFold
+   * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
+   * @param {boolean} scanUp 是否向上扫描
+   */
   toggleFold(line, scanUp = false) {
     this.cm.foldCode(line, {
       widget: '+',
@@ -319,10 +319,10 @@ export default class {
   }
 
   /**
-         * fold 折叠
-         * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
-         * @param {boolean} scanUp 是否向上扫描
-         */
+   * fold 折叠
+   * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
+   * @param {boolean} scanUp 是否向上扫描
+   */
   fold(line, scanUp = false) {
     this.cm.foldCode(line, {
       widget: '+',
@@ -332,9 +332,9 @@ export default class {
   }
 
   /**
-         * unfold 展开
-         * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
-         */
+   * unfold 展开
+   * @param {number/pos} line line可以是一个数值, 表示行数, 或一个{ line, ch }对象
+   */
   unfold(line) {
     this.cm.foldCode(line, {
       widget: '+',
@@ -343,13 +343,13 @@ export default class {
   }
 
   /**
-         * getHeaderAncestors: 获取当前Header的祖先Header
-         * @param {pos} pos 位置. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
-         * @param {num} depth 向上检索的层级. 比如传入1, 就只检索到父级, 不检索爷爷级. 可选, 如果不填, 则默认一直检索到一级标题
-         * @returns {array} 检索结果数组, 数组第一项是父级, 第二项是爷爷级...
-         * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
-         * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
-         */
+   * getHeaderAncestors: 获取当前Header的祖先Header
+   * @param {pos} pos 位置. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
+   * @param {num} depth 向上检索的层级. 比如传入1, 就只检索到父级, 不检索爷爷级. 可选, 如果不填, 则默认一直检索到一级标题
+   * @returns {array} 检索结果数组, 数组第一项是父级, 第二项是爷爷级...
+   * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
+   * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
+   */
   getHeaderAncestors(pos, depth) {
     const res = [];
     if (!pos) {
@@ -360,7 +360,7 @@ export default class {
     }
     // first line res
     let curLineRes;
-    const curLineText = this.cm.lineInfo(pos.line).text;
+    const curLineText = (this.cm.lineInfo(pos.line) || { text: '' }).text;
     const firstLineHeaderLv = this.getHeaderLvByStr(curLineText);
     if (firstLineHeaderLv) {
       curLineRes = {
@@ -396,16 +396,16 @@ export default class {
   }
 
   /**
-         * getHeaderSiblings: 获取当前Header的兄弟Header
-         * @param {pos} cursor 光标. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
-         * @param {boolean} isGetPrev 是否获取当前标题之前的同级标题, 默认为true
-         * @param {boolean} isGetNext 是否获取当前标题之后的同级标题, 默认为true. 如果前后都检索, 则优先检索前面的. 检索范围不会越过父级范围.
-         * @param {num} tagertGetNum 要检索的header个数. 可选, 如果不填, 则检索所有复合要求的header
-         * @returns {obj} 检索结果对象. 包含如下属性: firstNextHeaderIndex: [num] 第一个nextHeader在结果数组中的下标, data: 结果数组
-         * 结果数组[0]始终是当前光标位于的header的信息. [1]-[firstNextHeaderIndex-1]是prevHeader的信息, 之后是nextHeader的信息
-         * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
-         * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
-         */
+   * getHeaderSiblings: 获取当前Header的兄弟Header
+   * @param {pos} cursor 光标. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
+   * @param {boolean} isGetPrev 是否获取当前标题之前的同级标题, 默认为true
+   * @param {boolean} isGetNext 是否获取当前标题之后的同级标题, 默认为true. 如果前后都检索, 则优先检索前面的. 检索范围不会越过父级范围.
+   * @param {num} tagertGetNum 要检索的header个数. 可选, 如果不填, 则检索所有复合要求的header
+   * @returns {obj} 检索结果对象. 包含如下属性: firstNextHeaderIndex: [num] 第一个nextHeader在结果数组中的下标, data: 结果数组
+   * 结果数组[0]始终是当前光标位于的header的信息. [1]-[firstNextHeaderIndex-1]是prevHeader的信息, 之后是nextHeader的信息
+   * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
+   * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
+   */
   getHeaderSiblings(cursor, isGetPrev = true, isGetNext = true, tagertGetNum) {
     // verify & prepare
     let res = {};
@@ -494,10 +494,10 @@ export default class {
   }
 
   /**
-         * isThisLineAHeader: 传入的行是header吗, 该函数尚未测试
-         * @param {pos} line 要检测的line. 如果不传入line, 默认使用当前cursor所在的line
-         * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
-         */
+   * isThisLineAHeader: 传入的行是header吗, 该函数尚未测试
+   * @param {pos} line 要检测的line. 如果不传入line, 默认使用当前cursor所在的line
+   * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
+   */
   isThisLineAHeader(lineNum) {
     let res = false;
     if (!lineNum) {
@@ -521,10 +521,10 @@ export default class {
   }
 
   /**
-         * getHeaderLvByStr 根据传入的字符串, 判断header等级
-         * @param {string} str
-         * @returns {number} headerLv
-         */
+   * getHeaderLvByStr 根据传入的字符串, 判断header等级
+   * @param {string} str
+   * @returns {number} headerLv
+   */
   // eslint-disable-next-line class-methods-use-this
   getHeaderLvByStr(str) {
     let headerLv;
@@ -536,11 +536,11 @@ export default class {
   }
 
   /**
-         * getHeaderByCursor: 获取当前cursor位于的head
-         * @param {pos} cursor 要检测的cursor. 如果不传入cursor, 默认使用当前cursor. 检测范围从传入的行开始(含)
-         * @returns {object } 如果找到了headerLv, 返回值中的headerLv有值. headerLineNum和headerLineText是和headerLv相关的值
-         * 如果没有找到headerLv, 返回值中的headerLv没有值. 但headerLineNum和headerLineText依旧存在, 存储的是第一行的信息
-         */
+   * getHeaderByCursor: 获取当前cursor位于的head
+   * @param {pos} cursor 要检测的cursor. 如果不传入cursor, 默认使用当前cursor. 检测范围从传入的行开始(含)
+   * @returns {object } 如果找到了headerLv, 返回值中的headerLv有值. headerLineNum和headerLineText是和headerLv相关的值
+   * 如果没有找到headerLv, 返回值中的headerLv没有值. 但headerLineNum和headerLineText依旧存在, 存储的是第一行的信息
+   */
   getHeaderByCursor(cursor) {
     if (!cursor) {
       const doc = this.cm.getDoc();
@@ -565,10 +565,10 @@ export default class {
   }
 
   /**
-         * getHeadersHierarchy: 获取所有headers, 组织成一个对象
-         * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
-         * @param {object} propNames 可选, 用于自定义生成的hierarchy对象的属性名
-         */
+   * getHeadersHierarchy: 获取所有headers, 组织成一个对象
+   * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
+   * @param {object} propNames 可选, 用于自定义生成的hierarchy对象的属性名
+   */
   getHeadersHierarchy(text, propNames = {
     lineNum: 'lineNum',
     lv: 'lv',
@@ -614,9 +614,9 @@ export default class {
   }
 
   /**
-         * getHeadersArray
-         * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
-         */
+   * getHeadersArray
+   * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
+   */
   getHeadersArray(text) {
     if (!text) {
       text = this.cm.getDoc().getValue();
@@ -637,12 +637,12 @@ export default class {
   }
 
   /**
-         * scroll note to this line
-         * @param {Number} lineNum scroll to this line
-         * @param {String} highlightLineClass Highlight the line that scroll to with this class name
-         * @param {String} unfoldWay the way to unfold note content. 'unfoldAll' (default)| 'intelligently' | 'keepFold'
-         * @param {Boolean} isMoveCursorToThisLine Do you want to move the cursor to this line? default is "false"
-         */
+   * scroll note to this line
+   * @param {Number} lineNum scroll to this line
+   * @param {String} highlightLineClass Highlight the line that scroll to with this class name
+   * @param {String} unfoldWay the way to unfold note content. 'unfoldAll' (default)| 'intelligently' | 'keepFold'
+   * @param {Boolean} isMoveCursorToThisLine Do you want to move the cursor to this line? default is "false"
+   */
   scrollNoteToThisLine(lineNum, highlightLineClass, unfoldWay = 'unfoldAll', isMoveCursorToThisLine = false) {
     const doc = this.cm.getDoc();
     if (unfoldWay === 'unfoldAll') {
@@ -681,10 +681,10 @@ export default class {
   }
 
   /**
-         * getCmdInLastLine: 从最后一行读取指令
-         * @param {Regext} reg 匹配命令的正则表达式
-         * @returns {array} 返回匹配结果
-         */
+   * getCmdInLastLine: 从最后一行读取指令
+   * @param {Regext} reg 匹配命令的正则表达式
+   * @returns {array} 返回匹配结果
+   */
   getCmdInLastLine(reg) {
     let matchRes = null;
     const lastLineNum = this.cm.getDoc().lastLine();
@@ -698,13 +698,13 @@ export default class {
   }
 
   /**
-         * isThisLineCmdLine: 检测当前行是否是命令行
-         * 命令行需要一# %开头,如: # %no-auto-fold%, 即命令行本身是个一级标题
-         * @param {num} lineNum 行号
-         * @param {num} lineText 行文本
-         * 如果传入行号, 不传入行文本, 将通过行号自动获取行文本
-         * 如果传入行号和行文本, 将默认传入的行号和行文本就是最后一行的行号和行文本
-         */
+   * isThisLineCmdLine: 检测当前行是否是命令行
+   * 命令行需要一# %开头,如: # %no-auto-fold%, 即命令行本身是个一级标题
+   * @param {num} lineNum 行号
+   * @param {num} lineText 行文本
+   * 如果传入行号, 不传入行文本, 将通过行号自动获取行文本
+   * 如果传入行号和行文本, 将默认传入的行号和行文本就是最后一行的行号和行文本
+   */
   isThisLineCmdLine(lineNum, lineText) {
     let res = false;
     let ln;
@@ -736,10 +736,10 @@ export default class {
   }
 
   /**
-         * getWordAndLineCount, 获取相对科学的字符统计, 行数统计
-         * @param {string} text 要统计的文本, 没有的话, 默认使用当前笔记的内容
-         * @return {object} res, 统计结果. res.wordCount: 字符数, res.lineCount: 行数
-         */
+   * getWordAndLineCount, 获取相对科学的字符统计, 行数统计
+   * @param {string} text 要统计的文本, 没有的话, 默认使用当前笔记的内容
+   * @return {object} res, 统计结果. res.wordCount: 字符数, res.lineCount: 行数
+   */
   getWordAndLineCount(text = this.cm.getDoc().getValue()) {
     const res = {
       wordCount: 0,
