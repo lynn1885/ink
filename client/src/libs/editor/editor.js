@@ -573,7 +573,7 @@ export default class {
     lineNum: 'lineNum',
     lv: 'lv',
     text: 'text',
-    nextLine: 'nextLine',
+    nextLine1: 'nextLine1',
     nextLine2: 'nextLine2',
     nextLine3: 'nextLine3', // 标题之后三行
     children: 'children'
@@ -594,7 +594,7 @@ export default class {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
-            [propNames.nextLine]: lineArr[i + 1],
+            [propNames.nextLine1]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
             [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],
@@ -605,7 +605,7 @@ export default class {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
-            [propNames.nextLine]: lineArr[i + 1],
+            [propNames.nextLine1]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
             [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],

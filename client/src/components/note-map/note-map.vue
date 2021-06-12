@@ -350,13 +350,22 @@ export default {
     // 计算节点图片
     calNodeImg(lvObj) {
       lvObj.imgs = [];
-      if (!lvObj) return;
 
-      const lines = [lvObj.nextLine, lvObj.nextLine2, lvObj.nextLine3];
+      let line = '';
 
-      const imgs = lines.map((line) => {
-        if (line && line.startsWith('![](') && line.endsWith('-')) {
-          const imgName = line.replace('![](', '').replace(')', '').replace('-', '');
+      if (lvObj.nextLine1 && lvObj.nextLine1.endsWith('图示') && lvObj.nextLine2 && lvObj.nextLine2.endsWith('-')) {
+        line = lvObj.nextLine2;
+      } else if (lvObj.nextLine1 && lvObj.nextLine1.endsWith('-')) {
+        line = lvObj.nextLine1;
+      } else {
+        return;
+      }
+
+      console.log(456, line);
+
+      const imgs = line.split('-').filter(imgStr => imgStr).map((imgStr) => {
+        if (imgStr && imgStr.startsWith('![](')) {
+          const imgName = imgStr.replace('![](', '').replace(')', '').replace('-', '');
           const imgSrc = this.staticImagesUrl + imgName;
           return imgSrc;
         }
