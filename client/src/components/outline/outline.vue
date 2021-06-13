@@ -17,7 +17,10 @@
       v-for="header of displayHeaders"
       @click="scrollNoteToThisLine(header.lineNum)"
       :title="header.text.replace(/^#+/, '')"
-    >{{ header.text.replace(/^#+/, '') }}</div>
+    >
+      {{ header.text.replace(/^#+/, '') }}
+      <span v-if="header.children && header.children.length" class="children-length">{{header.children.length}}</span>
+    </div>
   </div>
 </template>
 <script>
@@ -310,6 +313,18 @@ export default {
     }
     &:last-of-type {
       margin-bottom: 120px;
+    }
+    .children-length {
+      position: absolute;
+      right: 2px;
+      top: 6px;
+      min-width: 14px;
+      height: 14px;
+      line-height: 14px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.5);
+      text-align: center;
+      font-size: 10px;
     }
   }
   .header1:not(:first-of-type) {

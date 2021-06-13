@@ -1,3 +1,5 @@
+import config from '@/config';
+
 const tools = {
   /**
   * 注意: 这校验方法需要和后端保持一致
@@ -58,6 +60,35 @@ const tools = {
       return '笔记名不能以__开头的同时以__结尾';
     }
     return true;
+  },
+
+  /**
+   * 获取段落图片
+   * @param {string} line1 第一行
+   * @param {string} line2 第二行
+   * @return {string[]} 图片地址数组, 如果没有解析是来图片地址, 则返回空数组
+   */
+  getParaImg(line1 = '', line2 = '') {
+    let line = '';
+    let imgs = [];
+    if (line1 && line1.endsWith('图示') && line2 && line2.endsWith('-')) {
+      line = line2;
+    } else if (line1 && line1.endsWith('-')) {
+      line = line1;
+    } else {
+      return imgs;
+    }
+
+    imgs = line.split('-').filter(imgStr => imgStr).map((imgStr) => {
+      if (imgStr && imgStr.startsWith('![](')) {
+        const imgName = imgStr.replace('![](', '').replace(')', '').replace('-', '');
+        const imgSrc = config.server.staticImagesUrl + imgName;
+        return imgSrc;
+      }
+      return '';
+    }).filter(imgSrc => imgSrc);
+
+    return imgs;
   },
 };
 

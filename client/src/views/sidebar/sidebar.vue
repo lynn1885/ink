@@ -311,7 +311,7 @@ export default {
   display: flex;
   resize: horizontal;
   position: relative;
-  transition: width 0.3s;
+  transition: width 0.2s;
   &.side-bar-small-mode {
     width: $icon-bar-width!important;
     #tool-pages {

@@ -124,6 +124,7 @@
 <script>
 import $ from 'jquery';
 import classNames from '@/tools/class-names';
+import tools from '@/tools/tools';
 import config from '@/config';
 
 const isEnableConsole = false;
@@ -201,7 +202,7 @@ export default {
           node.addClass('active');
           setTimeout(() => {
             node.removeClass('active');
-          }, 1000);
+          }, 600);
         } catch (error) {
           console.warn('无法滚动到指定node map节点: ', error);
         }
@@ -349,30 +350,7 @@ export default {
 
     // 计算节点图片
     calNodeImg(lvObj) {
-      lvObj.imgs = [];
-
-      let line = '';
-
-      if (lvObj.nextLine1 && lvObj.nextLine1.endsWith('图示') && lvObj.nextLine2 && lvObj.nextLine2.endsWith('-')) {
-        line = lvObj.nextLine2;
-      } else if (lvObj.nextLine1 && lvObj.nextLine1.endsWith('-')) {
-        line = lvObj.nextLine1;
-      } else {
-        return;
-      }
-
-      console.log(456, line);
-
-      const imgs = line.split('-').filter(imgStr => imgStr).map((imgStr) => {
-        if (imgStr && imgStr.startsWith('![](')) {
-          const imgName = imgStr.replace('![](', '').replace(')', '').replace('-', '');
-          const imgSrc = this.staticImagesUrl + imgName;
-          return imgSrc;
-        }
-        return '';
-      }).filter(imgSrc => imgSrc);
-
-      lvObj.imgs = imgs;
+      lvObj.imgs = tools.getParaImg(lvObj.nextLine1, lvObj.nextLine2);
     },
   },
 
@@ -434,14 +412,14 @@ export default {
       margin: 3px;
       box-sizing: border-box;
       font-size: 12px;
-      border-radius: 2px;
+      /* border-radius: 2px; */
       box-sizing: border-box;
       transition: all 0.2s;
       cursor: pointer;
-      border: 1px dashed #888;
+      border: 2px solid #888;
       vertical-align: middle;
       .active {
-        border: 1px dashed red;
+        background: $sidebar-item-active-bg;
         transition: all 0.2s;
       }
     }
@@ -450,7 +428,6 @@ export default {
       display: inline-block;
       padding: 0 2px;
       margin: 0 auto 0 0;
-      border-radius: 2px;
       box-sizing: border-box;
       overflow: hidden;
       cursor: pointer;
@@ -461,7 +438,7 @@ export default {
 
     /* 内容: 图像 */
     .map-img {
-      width: 160px;
+      width: 140px;
       margin-left: 10px;
       border-radius: 3px;
 
