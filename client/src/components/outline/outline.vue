@@ -1,25 +1,39 @@
 <template>
   <div id="outline">
     <div id="outline-info" v-if="!displayHeaders">没有发现标题~</div>
-    <div
-      :class="{
-        item: true,
-        header1: header.lv === 1,
-        header2: header.lv === 2,
-        header3: header.lv === 3,
-        header4: header.lv === 4,
-        header5: header.lv === 5,
-        header6: header.lv === 6,
-        active: header.lineNum === activeHeaderLineNum
-      }"
-      :ref="`lineNum${header.lineNum}`"
-      :key="header.lineNum + '-' + header.lv + '-' + header.text"
-      v-for="header of displayHeaders"
-      @click="scrollNoteToThisLine(header.lineNum)"
-      :title="header.text.replace(/^#+/, '')"
-    >
-      {{ header.text.replace(/^#+/, '') }}
-      <span v-if="header.children && header.children.length" class="children-length">{{header.children.length}}</span>
+
+    <div class="headers-container">
+      <div
+        :class="{
+          item: true,
+          header1: header.lv === 1,
+          header2: header.lv === 2,
+          header3: header.lv === 3,
+          header4: header.lv === 4,
+          header5: header.lv === 5,
+          header6: header.lv === 6,
+          active: header.lineNum === activeHeaderLineNum
+        }"
+        :ref="`lineNum${header.lineNum}`"
+        :key="header.lineNum + '-' + header.lv + '-' + header.text"
+        v-for="header of displayHeaders"
+        @click="scrollNoteToThisLine(header.lineNum)"
+        :title="header.text.replace(/^#+/, '')"
+      >
+        {{ header.text.replace(/^#+/, '') }}
+        <span v-if="header.children && header.children.length" class="children-length">{{header.children.length}}</span>
+      </div>
+    </div>
+
+    <!-- 标题计数 -->
+    <div class="headers-counter">
+      <div class="count lv1">{{headerCount[1] - 1}}</div>
+      <div class="count lv2">{{headerCount[2]}}</div>
+      <div class="count lv3">{{headerCount[3]}}</div>
+      <div class="count lv4">{{headerCount[4]}}</div>
+      <div class="count lv5">{{headerCount[5]}}</div>
+      <div class="count lv6">{{headerCount[6]}}</div>
+      <div class="count all">{{headerCount.all}} 个知识点</div>
     </div>
   </div>
 </template>
@@ -43,6 +57,15 @@ export default {
       isForbidHeadersBarToScroll: false,
       highlightLineClass: classNames.highlightLineClass,
       activeHeaderLineNum: -1,
+      headerCount: {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        all: 0,
+      }, // 标题计数
     };
   },
 
@@ -121,9 +144,35 @@ export default {
     // update outline
     updateAllHeaders() {
       this.allHeaders = this.editor.getHeadersHierarchy();
+      this.calHeaderCount(this.allHeaders);
       if (isEnableConsole) {
         console.log('update all headers: ', this.allHeaders);
       }
+    },
+
+    // 计算1,2,3级标题个数
+    calHeaderCount(headerArr = []) {
+      const headerCount = {
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0
+      };
+
+      function getHeaderCount(lv, headers) {
+        if (headers && headers.length) {
+          headerCount[lv] += headers.length;
+          headers.forEach((item) => {
+            if (item.children && item.children.length) getHeaderCount(lv + 1, item.children);
+          });
+        }
+      }
+
+      getHeaderCount(1, headerArr);
+      headerCount.all = headerCount[1] + headerCount[2] + headerCount[3] + headerCount[4] + headerCount[5] + headerCount[6];
+      this.headerCount = headerCount;
     },
 
     // scroll outline to active header
@@ -291,84 +340,140 @@ export default {
 <style lang="scss" scoped>
 @import '@/themes/craft/var.scss';
 #outline {
+  position: relative;
+  flex-direction: column;
+  display: flex;
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
-  &::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-  }
-  .item {
-    position: relative;
-    padding: 4px 10px 4px 8px;
-    font-size: $font-size-sidebar + 0.5px;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    line-height: 1.4;
-    overflow: hidden;
-    border-bottom: 1px dashed darken($color: $tool-page-bg, $amount: 6);
-    cursor: pointer;
-    &:hover {
-      background: $sidebar-item-hover-bg;
-    }
-    &:last-of-type {
-      margin-bottom: 120px;
-    }
-    .children-length {
-      position: absolute;
-      right: 2px;
-      top: 6px;
-      min-width: 14px;
-      height: 14px;
-      line-height: 14px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.5);
-      text-align: center;
-      font-size: 10px;
-    }
-  }
-  .header1:not(:first-of-type) {
-    margin-top: 10px;
-  }
-  .header1:first-of-type {
-    padding-top: 4px;
-  }
-  .header1 {
-    color: $header-1;
-    font-weight: bold;
-  }
-  .header2 {
-    color: $header-2;
-    font-weight: bold;
-  }
-  .header3 {
-    color: $header-3;
-    padding-left: 20px;
-  }
-  .header4 {
-    color: $header-4;
-    padding-left: 40px;
-  }
-  .header5 {
-    color: $header-5;
-    padding-left: 60px;
-  }
-  .header6 {
-    color: $header-6;
-    padding-left: 80px;
-  }
-  .active {
-    background: $sidebar-item-active-bg;
-  }
-}
+  overflow: hidden;
 
-#outline-info {
-  width: 100%;
-  text-align: center;
-  font-size: $font-size-sidebar;
-  height: 30px;
-  line-height: 30px;
-  background: $tool-page-bg;
-  color: $comment-color;
+  /* 信息栏 */
+  #outline-info {
+    width: 100%;
+    text-align: center;
+    font-size: $font-size-sidebar;
+    height: 30px;
+    line-height: 30px;
+    background: $tool-page-bg;
+    color: $comment-color;
+  }
+
+  /* 标题容器 */
+  .headers-container {
+    width: 100%;
+    overflow: auto;
+    box-sizing: border-box;
+    &::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+    }
+    .item {
+      position: relative;
+      padding: 4px 10px 4px 8px;
+      font-size: $font-size-sidebar + 0.5px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      line-height: 1.4;
+      overflow: hidden;
+      border-bottom: 1px dashed darken($color: $tool-page-bg, $amount: 6);
+      cursor: pointer;
+      &:hover {
+        background: $sidebar-item-hover-bg;
+      }
+      &:last-of-type {
+        margin-bottom: 120px;
+      }
+      .children-length {
+        position: absolute;
+        right: 2px;
+        top: 6px;
+        min-width: 14px;
+        height: 14px;
+        line-height: 14px;
+        border-radius: 2px;
+        /* background: rgba(255, 255, 255, 0.5); */
+        text-align: center;
+        font-size: 10px;
+      }
+    }
+    .header1:not(:first-of-type) {
+      margin-top: 10px;
+    }
+    .header1:first-of-type {
+      padding-top: 4px;
+    }
+    .header1 {
+      color: $header-1;
+      font-weight: bold;
+    }
+    .header2 {
+      color: $header-2;
+      font-weight: bold;
+    }
+    .header3 {
+      color: $header-3;
+      padding-left: 20px;
+    }
+    .header4 {
+      color: $header-4;
+      padding-left: 40px;
+    }
+    .header5 {
+      color: $header-5;
+      padding-left: 60px;
+    }
+    .header6 {
+      color: $header-6;
+      padding-left: 80px;
+    }
+    .active {
+      background: $sidebar-item-active-bg;
+    }
+  }
+
+  /* 标题计数 */
+  .headers-counter {
+    flex-shrink: 0;
+    flex-grow: 0;
+    position: absolute;
+    display: flex;
+    bottom: 0;
+    box-sizing: border-box;
+    padding: 0 4px;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    width: 100%;
+    .count {
+      padding: 2px;
+      margin: 2px;
+    }
+    .lv1 {
+      color: $header-1;
+      font-weight: bold;
+    }
+    .lv2 {
+      color: $header-2;
+      font-weight: bold;
+    }
+    .lv3 {
+      color: $header-3;
+    }
+    .lv4 {
+      color: $header-4;
+    }
+    .lv5 {
+      color: $header-5;
+    }
+    .lv6 {
+      color: $header-6;
+    }
+    .all {
+      font-weight: bold;
+      color:rgb(236, 204, 134);
+      flex-grow: 1;
+      text-align: right;
+    }
+  }
+
 }
 </style>
