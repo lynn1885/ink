@@ -207,12 +207,12 @@ export default function (editor) {
       }
 
       function replace(text) {
-        if (!text.match(/^(#+) /gm)) {
+        if (!text.match(/^(#+)\s/gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;
-          text = text.replace(/^\d+. /gm, `${'#'.repeat(headerLv + 1)} `);
+          text = text.replace(/^\d+.\s/gm, `${'#'.repeat(headerLv + 1)} `);
         } else {
-          text = text.replace(/^(#+) /gm, (match, group1) => `${'#'.repeat(group1.length + 1)} `);
+          text = text.replace(/^(#+)\s/gm, (match, group1) => `${'#'.repeat(group1.length + 1)} `);
         }
         if (text.match(/^#{7,} /gm)) {
           editor.messager.warning('有些标题超过6级了, 最多只支持到6级标题');
@@ -237,15 +237,15 @@ export default function (editor) {
       }
 
       function replace(text) {
-        if (text.match(/^# /gm)) {
+        if (text.match(/^#\s/gm)) {
           editor.messager.warning('有些标题已经是1级标题了, 将不再提升这些标题');
         }
         if (!text.match(/^(#+) /gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;
-          text = text.replace(/^\d+. /gm, `${'#'.repeat(headerLv)} `);
+          text = text.replace(/^\d+.\s/gm, `${'#'.repeat(headerLv)} `);
         } else {
-          text = text.replace(/^(#+) /gm, (match, group1) => `${'#'.repeat(group1.length - 1 >= 1 ? group1.length - 1 : 1)} `);
+          text = text.replace(/^(#+)\s/gm, (match, group1) => `${'#'.repeat(group1.length - 1 >= 1 ? group1.length - 1 : 1)} `);
         }
         return text;
       }

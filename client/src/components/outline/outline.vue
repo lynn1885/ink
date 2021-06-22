@@ -25,7 +25,7 @@
       </div>
     </div>
 
-    <!-- 标题计数 -->
+    <!-- 标题计数: 下面的-1是, 为了去除最后一行命令行带来的干扰-->
     <div class="headers-counter">
       <div class="count lv1">{{headerCount[1] - 1}}</div>
       <div class="count lv2">{{headerCount[2]}}</div>
@@ -33,7 +33,7 @@
       <div class="count lv4">{{headerCount[4]}}</div>
       <div class="count lv5">{{headerCount[5]}}</div>
       <div class="count lv6">{{headerCount[6]}}</div>
-      <div class="count all">{{headerCount.all}} 个知识点</div>
+      <div class="count all">{{headerCount.all - 1}} 个知识点</div>
     </div>
   </div>
 </template>

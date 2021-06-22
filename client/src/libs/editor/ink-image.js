@@ -38,7 +38,7 @@ export default function (editor, config) {
         baseUrl = `${editor.fileServer.staticImagesUrl}`;
         el.classList.add('line-cm-image');
         let isSmallImage = false;
-        if (line && line.text.endsWith('-')) { // 以'-'结尾的图片, 缩小显示
+        if (line && line.text.endsWith(';')) { // 以';结尾的图片, 缩小显示
           el.classList.add('line-cm-image-small');
           isSmallImage = true;
         }

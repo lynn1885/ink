@@ -11,7 +11,7 @@
   </div>
 </template>
 <script>
-import $ from 'jquery';
+import tools from '@/tools/tools';
 
 const isEnableConsole = false;
 
@@ -93,11 +93,7 @@ export default {
      */
     copyNotePath() {
       const text = this.notePath;
-      const element = $(`<textarea>${text}</textarea>`); // This element cannot be display none or hidden
-      $('body').append(element);
-      element[0].select();
-      document.execCommand('Copy');
-      element.remove();
+      tools.copyText(text);
     },
   },
 };

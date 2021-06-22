@@ -327,7 +327,9 @@
 
 .inserted-widget-image-small {
   img {
-    max-width: 30px;
+    height: 10px;
+    width: auto!important;
+    border-radius: 1px;
   }
 }
 

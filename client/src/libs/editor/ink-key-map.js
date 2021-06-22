@@ -12,6 +12,7 @@ export default function (editor, keyMap) {
     bold: 'Ctrl-B',
     code: 'Ctrl-;',
     em: 'Ctrl-E',
+    em2: 'Alt-Z',
     toUpperCase: 'Ctrl-Alt-U',
     toLowerCase: 'Ctrl-Alt-L',
     // quotation: "Ctrl-'", // 这个快捷键不能用
@@ -280,6 +281,26 @@ export default function (editor, keyMap) {
       }
     },
 
+    [mergedKeyMap.em2]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        const matchRes = sel.match(/^\*(.*?)\*$/);
+        if (matchRes) {
+          doc.replaceSelection(matchRes[1]);
+        } else {
+          doc.replaceSelection(`*${sel}*`);
+        }
+      } else {
+        doc.replaceRange('*e*', cursor);
+        doc.setSelection(
+          { line: cursor.line, ch: cursor.ch + 1 },
+          { line: cursor.line, ch: cursor.ch + 2 },
+        );
+      }
+    },
+
     [mergedKeyMap.italic]: (cm) => {
       const doc = cm.getDoc();
       const cursor = doc.getCursor();
@@ -418,6 +439,7 @@ export default function (editor, keyMap) {
       );
       doc.setCursor({ line: cursor.line + 1, ch: 0 });
     },
+
     [mergedKeyMap.insertNewLineUp]: (cm) => {
       const doc = cm.getDoc();
       const cursor = doc.getCursor();

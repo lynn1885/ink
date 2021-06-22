@@ -1,4 +1,5 @@
 import config from '@/config';
+import $ from 'jquery';
 
 const tools = {
   /**
@@ -71,17 +72,20 @@ const tools = {
   getParaImg(line1 = '', line2 = '') {
     let line = '';
     let imgs = [];
-    if (line1 && line1.endsWith('图示') && line2 && line2.endsWith('-')) {
+    line1 = line1.trim();
+    line2 = line2.trim();
+    if (line1 && line1.endsWith('图示') && line2 && line2.endsWith('|')) {
       line = line2;
-    } else if (line1 && line1.endsWith('-')) {
+    } else if (line1 && line1.endsWith('|')) {
       line = line1;
     } else {
       return imgs;
     }
 
-    imgs = line.split('-').filter(imgStr => imgStr).map((imgStr) => {
+    imgs = line.split('|').filter(imgStr => imgStr).map((imgStr) => {
+      console.log(123, imgs);
       if (imgStr && imgStr.startsWith('![](')) {
-        const imgName = imgStr.replace('![](', '').replace(')', '').replace('-', '');
+        const imgName = imgStr.replace('![](', '').replace(')', '').replace('|', '');
         const imgSrc = config.server.staticImagesUrl + imgName;
         return imgSrc;
       }
@@ -90,6 +94,18 @@ const tools = {
 
     return imgs;
   },
+
+  /**
+   *
+   * @param {string} text 要拷贝的文字
+   */
+  copyText(text) {
+    const element = $(`<textarea>${text}</textarea>`); // This element cannot be display none or hidden
+    $('body').append(element);
+    element[0].select();
+    document.execCommand('Copy');
+    element.remove();
+  }
 };
 
 export default tools;
