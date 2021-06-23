@@ -54,7 +54,7 @@ export default {
         isroot: true,
         topic: editor.fileServer.curFileDir,
         'background-color': '#aaa',
-        'font-size': 16,
+        'font-size': 17
       });
       this.mindMapArr = data;
 
@@ -87,7 +87,7 @@ export default {
       if (!isJmCreated) {
         jm.view.zoomOut();
         jm.view.zoomOut();
-        jm.view.zoomOut();
+        // jm.view.zoomOut();
       }
 
       return false;
