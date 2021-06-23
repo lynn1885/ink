@@ -12,7 +12,7 @@ export default function (editor, keyMap) {
     bold: 'Ctrl-B',
     code: 'Ctrl-;',
     em: 'Ctrl-E',
-    em2: 'Alt-Z',
+    em2: 'Alt-E',
     toUpperCase: 'Ctrl-Alt-U',
     toLowerCase: 'Ctrl-Alt-L',
     // quotation: "Ctrl-'", // 这个快捷键不能用

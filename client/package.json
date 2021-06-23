@@ -27,8 +27,8 @@
     "@vue/cli-plugin-eslint": "^3.0.3",
     "@vue/cli-service": "^3.0.3",
     "@vue/eslint-config-airbnb": "^3.0.3",
-    "browserslist": "^4.7.2",
-    "caniuse-lite": "^1.0.30001010",
+    "browserslist": "^4.16.6",
+    "caniuse-lite": "^1.0.30001239",
     "node-sass": "^4.13.0",
     "sass-loader": "^7.0.1",
     "vue-template-compiler": "^2.5.17"

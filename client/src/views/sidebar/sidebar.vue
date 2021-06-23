@@ -95,8 +95,8 @@ export default {
       isShortcutKeyBinded: false,
       isShowSearchNoteBar: false,
       toggleToolPageShortcut: ['Ctrl', 'Shift', 'B'],
-      sideBarWidth: '350px',
-      defaultSideBarWidth: '350px',
+      sideBarWidth: '380px',
+      defaultSideBarWidth: '380px',
       // tool name must be unique
       tools: [
         {
