@@ -268,17 +268,22 @@ export default {
         .note-img {
           width: 100%;
           height: 100%;
+          border-radius: 2px;
           &:hover {
-            /* opacity: 0.5; */
             cursor: pointer;
           }
         }
         .note-text {
           display: inline-block;
           padding: 2px;
-          margin-top: -4px;
-          background: rgba(255, 255, 255, 0.8);
-          border-radius: 2px;
+          background: rgba(247, 242, 238, 0.8);
+          font-size: 12px;
+          font-family: 方正像素14;
+          font-weight: bold;
+          color: rgb(151, 118, 76);
+          border: 2px solid rgb(151, 118, 76);
+          line-height: 1.2;
+          transform: translateY(-4px);
         }
       }
     }

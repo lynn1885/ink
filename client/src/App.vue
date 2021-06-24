@@ -21,6 +21,9 @@
     <!-- modal -->
     <!--tabindex="1" is a trick, enables div to bind keydown event-->
     <div id="modal" v-show="$store.state.isProhibitOperation" ref="modal" tabindex="1"></div>
+
+    <!-- 音频播放器 -->
+    <audio src="" id="ink-audio-player"></audio>
   </div>
 </template>
 

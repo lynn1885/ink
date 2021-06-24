@@ -32,6 +32,7 @@ export default function (editor, keyMap) {
     // other
     alt: 'Alt', // just to prevent the cursor becoming cross when type alt
   };
+
   const mergedKeyMap = Object.assign(defaultKeyMap, keyMap);
 
   editor.cm.addKeyMap({
@@ -267,10 +268,11 @@ export default function (editor, keyMap) {
       const sel = doc.getSelection();
       if (sel) {
         const matchRes = sel.match(/^\*(.*?)\*$/);
-        if (matchRes) {
+        if (matchRes) { // 移除
           doc.replaceSelection(matchRes[1]);
-        } else {
+        } else { // 添加
           doc.replaceSelection(`*${sel}*`);
+          editor.playAudio('addEmphasis');
         }
       } else {
         doc.replaceRange('*e*', cursor);

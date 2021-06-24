@@ -1,4 +1,6 @@
 import _ from 'lodash';
+import $ from 'jquery';
+import audioSrc from '@/tools/audios';
 import CodeMirror from 'codemirror/lib/codemirror';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/markdown/markdown'; // language mode: markdown
@@ -38,6 +40,7 @@ export default class {
       cm: {},
     }, config);
     this.el = el;
+    this._initAudioAbility();
     this.curCursorLineNum = undefined; // 当前光标所处的行
     this.shortcutKeyMap = {};
     this.messager = config.messager || {
@@ -164,6 +167,12 @@ export default class {
     }
   }
 
+  // 初始化音频播放能力
+  _initAudioAbility() {
+    this.audioPlayer = $('#ink-audio-player') || null;
+    this.audioSrc = audioSrc;
+  }
+
   /**
    * on: add event listener
    * @param {String} eventName eventName
@@ -280,6 +289,18 @@ export default class {
       });
     }
   }
+
+  /**
+   * 播放音频
+   * @param {string} audioName 音频名
+   */
+  playAudio(audioName) {
+    if (this.audioPlayer && audioName && this.audioSrc[audioName]) {
+      this.audioPlayer.attr('src', this.audioSrc[audioName]);
+      this.audioPlayer[0].play();
+    }
+  }
+
 
   /**
    * foldHeaderTo: 折叠代码至headerLv
