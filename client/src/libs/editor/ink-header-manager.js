@@ -207,6 +207,7 @@ export default function (editor) {
       }
 
       function replace(text) {
+        editor.playAudio('addHeader');
         if (!text.match(/^(#+)\s/gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;
@@ -240,6 +241,7 @@ export default function (editor) {
         if (text.match(/^#\s/gm)) {
           editor.messager.warning('有些标题已经是1级标题了, 将不再提升这些标题');
         }
+        editor.playAudio('addHeader');
         if (!text.match(/^(#+) /gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;

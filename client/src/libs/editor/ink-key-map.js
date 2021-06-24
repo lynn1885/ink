@@ -53,12 +53,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes.length !== 2) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '# ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '# ',
           { line: cursor.line, ch: 0 },
@@ -87,12 +89,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes[0].length !== 3) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '## ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '## ',
           { line: cursor.line, ch: 0 },
@@ -121,12 +125,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes[0].length !== 4) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '### ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '### ',
           { line: cursor.line, ch: 0 },
@@ -155,12 +161,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes[0].length !== 5) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '#### ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '#### ',
           { line: cursor.line, ch: 0 },
@@ -189,12 +197,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes[0].length !== 6) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '##### ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '##### ',
           { line: cursor.line, ch: 0 },
@@ -223,12 +233,14 @@ export default function (editor, keyMap) {
           ch: doc.getLine(cursor.line).length,
         });
       } else if (matchRes && matchRes[0].length !== 7) {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '###### ',
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: matchRes[0].length },
         );
       } else {
+        editor.playAudio('addHeader2');
         doc.replaceRange(
           '###### ',
           { line: cursor.line, ch: 0 },
@@ -293,6 +305,7 @@ export default function (editor, keyMap) {
           doc.replaceSelection(matchRes[1]);
         } else {
           doc.replaceSelection(`*${sel}*`);
+          editor.playAudio('addEmphasis');
         }
       } else {
         doc.replaceRange('*e*', cursor);
