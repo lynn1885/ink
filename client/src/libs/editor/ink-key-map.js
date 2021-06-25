@@ -13,6 +13,7 @@ export default function (editor, keyMap) {
     code: 'Ctrl-;',
     em: 'Ctrl-E',
     em2: 'Alt-E',
+    colon: 'Alt-C',
     toUpperCase: 'Ctrl-Alt-U',
     toLowerCase: 'Ctrl-Alt-L',
     // quotation: "Ctrl-'", // 这个快捷键不能用
@@ -373,6 +374,18 @@ export default function (editor, keyMap) {
           { line: cursor.line, ch: cursor.ch + 1 },
           { line: cursor.line, ch: cursor.ch + 2 },
         );
+      }
+    },
+
+    [mergedKeyMap.colon]: (cm) => {
+      editor.playAudio('addColon');
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const sel = doc.getSelection();
+      if (sel) {
+        doc.replaceSelection(': ');
+      } else {
+        doc.replaceRange(': ', cursor);
       }
     },
 

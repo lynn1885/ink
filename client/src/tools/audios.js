@@ -3,6 +3,7 @@ const audios = {
   removeEmphasis: '/audios/remove-emphasis.mp3',
   addHeader: '/audios/add-header.mp3',
   addHeader2: '/audios/add-header-2.mp3',
+  addColon: '/audios/add-colon.mp3',
 };
 
 export default audios;

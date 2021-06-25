@@ -14,6 +14,7 @@ export default function (editor) {
   editor.cm.addKeyMap({
     // insert header by hierarchy: next
     [map.insertHeaderNext]: (cm) => {
+      editor.playAudio('addHeader2');
       const doc = cm.getDoc();
       const { headerLv, headerLineText } = editor.getHeaderByCursor();
       if (headerLv > 0) { // 只有当前已经位于某个header中时, 才会执行下面的操作
@@ -47,6 +48,41 @@ export default function (editor) {
           { line: insertLineNum + 1, ch: headerLv + 1 },
           { line: insertLineNum + 1, ch: headerStr.length },
         );
+      }
+    },
+
+    // insert header child
+    [map.insertHeaderChild]: (cm) => {
+      editor.playAudio('addHeader2');
+      const doc = cm.getDoc();
+      const { headerLv, headerLineNum } = editor.getHeaderByCursor();
+      if (headerLv > 0) {
+        let headerStr = '';
+        for (let i = 0; i < headerLv + 1; i += 1) {
+          headerStr += '#';
+        }
+        const insertLineCh = cm.lineInfo(headerLineNum).text.length;
+        doc.replaceRange(`\n${headerStr} `, { line: headerLineNum, ch: insertLineCh }, { line: headerLineNum, ch: insertLineCh });
+        doc.setCursor({ line: headerLineNum + 1, ch: headerLv + 2 });
+      }
+    },
+
+    // insert header parent
+    [map.insertHeaderNextParent]: (cm) => {
+      editor.playAudio('addHeader2');
+      const doc = cm.getDoc();
+      const { headerLv } = editor.getHeaderByCursor();
+      if (headerLv > 1) {
+        let headerStr = '';
+        for (let i = 0; i < headerLv - 1; i += 1) {
+          headerStr += '#';
+        }
+
+        const { parentHeaderLastLineNum: insertLineNum }
+          = getNextSiblingHeaderLineNumByCurosr(editor, cm, headerLv, true);
+        const insertLineCh = cm.lineInfo(insertLineNum).text.length;
+        doc.replaceRange(`\n${headerStr} `, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
+        doc.setCursor({ line: insertLineNum + 1, ch: headerLv });
       }
     },
 
@@ -157,40 +193,7 @@ export default function (editor) {
       }
     },
 
-    // insert header child
-    [map.insertHeaderChild]: (cm) => {
-      const doc = cm.getDoc();
-      const { headerLv, headerLineNum } = editor.getHeaderByCursor();
-      if (headerLv > 0) {
-        let headerStr = '';
-        for (let i = 0; i < headerLv + 1; i += 1) {
-          headerStr += '#';
-        }
-        const insertLineCh = cm.lineInfo(headerLineNum).text.length;
-        doc.replaceRange(`\n${headerStr} `, { line: headerLineNum, ch: insertLineCh }, { line: headerLineNum, ch: insertLineCh });
-        doc.setCursor({ line: headerLineNum + 1, ch: headerLv + 2 });
-      }
-    },
-
-    // insert header parent
-    [map.insertHeaderNextParent]: (cm) => {
-      const doc = cm.getDoc();
-      const { headerLv } = editor.getHeaderByCursor();
-      if (headerLv > 1) {
-        let headerStr = '';
-        for (let i = 0; i < headerLv - 1; i += 1) {
-          headerStr += '#';
-        }
-
-        const { parentHeaderLastLineNum: insertLineNum }
-          = getNextSiblingHeaderLineNumByCurosr(editor, cm, headerLv, true);
-        const insertLineCh = cm.lineInfo(insertLineNum).text.length;
-        doc.replaceRange(`\n${headerStr} `, { line: insertLineNum, ch: insertLineCh }, { line: insertLineNum, ch: insertLineCh });
-        doc.setCursor({ line: insertLineNum + 1, ch: headerLv });
-      }
-    },
-
-    // degrageHeaders
+    // degrage headers
     [map.degrageHeaders]: (cm) => {
       const doc = cm.getDoc();
       const sel = doc.getSelection();
@@ -211,7 +214,7 @@ export default function (editor) {
         if (!text.match(/^(#+)\s/gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;
-          text = text.replace(/^\d+.\s/gm, `${'#'.repeat(headerLv + 1)} `);
+          text = text.replace(/^(\d+.\s)/gm, `${'#'.repeat(headerLv + 1)} $1`);
         } else {
           text = text.replace(/^(#+)\s/gm, (match, group1) => `${'#'.repeat(group1.length + 1)} `);
         }
@@ -222,6 +225,7 @@ export default function (editor) {
       }
     },
 
+    // upgrade headers
     [map.upgradeHeaders]: (cm) => {
       const doc = cm.getDoc();
       const sel = doc.getSelection();
@@ -245,7 +249,7 @@ export default function (editor) {
         if (!text.match(/^(#+) /gm)) {
           let { headerLv } = editor.getHeaderByCursor();
           if (!headerLv) headerLv = 0;
-          text = text.replace(/^\d+.\s/gm, `${'#'.repeat(headerLv)} `);
+          text = text.replace(/(^\d+.\s)/gm, `${'#'.repeat(headerLv)} $1`);
         } else {
           text = text.replace(/^(#+)\s/gm, (match, group1) => `${'#'.repeat(group1.length - 1 >= 1 ? group1.length - 1 : 1)} `);
         }
