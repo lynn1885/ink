@@ -36,6 +36,34 @@ const Images = {
       });
     return data;
   },
+
+
+  async getIllustrations(keyword, messager) {
+    let data;
+    await axios.get(`${serverUrl}images`, {
+      params: {
+        type: 'illustration',
+        keyword,
+      }
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          ({ data } = res);
+        } else {
+          if (messager) {
+            messager.error(`Images.getIllustrations(), Bad Http Status: ${res}`);
+          }
+          throw new Error(`Images.getIllustrations(), Bad Http Status: ${res}`);
+        }
+      })
+      .catch((err) => {
+        if (messager) {
+          messager.error(`Images.getIllustrations(), Get Illustrations Failed: ${err}`);
+        }
+        throw new Error(`Images.getIllustrations(), Get Illustrations Failed: ${err}`);
+      });
+    return data;
+  },
 };
 
 export default Images;

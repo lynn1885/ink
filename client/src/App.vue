@@ -35,7 +35,6 @@ import StatusBar from '@/views/status-bar/status-bar.vue';
 import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
-
 import Files from '@/models/files';
 
 export default {
