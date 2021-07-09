@@ -295,6 +295,7 @@ export default class {
    * @param {string} audioName 音频名
    */
   playAudio(audioName) {
+    console.log(123, audioName);
     if (this.audioPlayer && audioName && this.audioSrc[audioName]) {
       this.audioPlayer.attr('src', this.audioSrc[audioName]);
       this.audioPlayer[0].play();
@@ -421,9 +422,10 @@ export default class {
    * @param {pos} cursor 光标. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
    * @param {boolean} isGetPrev 是否获取当前标题之前的同级标题, 默认为true
    * @param {boolean} isGetNext 是否获取当前标题之后的同级标题, 默认为true. 如果前后都检索, 则优先检索前面的. 检索范围不会越过父级范围.
-   * @param {num} tagertGetNum 要检索的header个数. 可选, 如果不填, 则检索所有复合要求的header
+   * @param {num} tagertGetNum 要检索的header个数. 可选, 如果不填, 则检索所有符合要求的header
    * @returns {obj} 检索结果对象. 包含如下属性: firstNextHeaderIndex: [num] 第一个nextHeader在结果数组中的下标, data: 结果数组
    * 结果数组[0]始终是当前光标位于的header的信息. [1]-[firstNextHeaderIndex-1]是prevHeader的信息, 之后是nextHeader的信息
+   * 还有一个dataSorted属性, 值为数字, 里面是按顺序排列好的headers, 从上至下排列
    * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
    * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
    */
@@ -510,6 +512,7 @@ export default class {
     res = {
       firstNextHeaderIndex: prevHeaders.length + 1,
       data: data.concat(prevHeaders, nextHeaders),
+      dataSorted: prevHeaders.concat(firstHeader).concat(nextHeaders)
     };
     return res;
   }
@@ -530,10 +533,10 @@ export default class {
   }
 
   /**
-         * isThisTextAHeader: 检测传入的文本是不是一个标题
-         * @param {string} text
-         * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
-         */
+   * isThisTextAHeader: 检测传入的文本是不是一个标题
+   * @param {string} text
+   * @returns {boolean/number} 不是的话返回false, 是的话返回headerlv
+   */
   isThisTextAHeader(text) {
     let res = false;
     const headerLv = this.getHeaderLvByStr(text);

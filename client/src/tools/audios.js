@@ -4,6 +4,7 @@ const audios = {
   addHeader: '/audios/add-header.mp3',
   addHeader2: '/audios/add-header-2.mp3',
   addColon: '/audios/add-colon.mp3',
+  sort: '/audios/sort.mp3',
 };
 
 export default audios;

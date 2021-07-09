@@ -5,6 +5,7 @@ const map = {
   insertHeaderNextParent: 'Ctrl-H',
   insertNextLiUnderHeader: 'Ctrl-O',
   reorderCurHeaderLi: 'Ctrl-Alt-O',
+  addOrder: 'Ctrl-Alt-L',
   upgradeHeaders: 'Shift-Ctrl-[',
   degrageHeaders: 'Shift-Ctrl-]',
 };
@@ -153,8 +154,9 @@ export default function (editor) {
       }
     },
 
-    // reorder list
+    // add order for header
     [map.reorderCurHeaderLi]: (cm) => {
+      editor.playAudio('sort');
       const doc = cm.getDoc();
       const sel = doc.getSelection();
       if (sel) {
@@ -191,6 +193,62 @@ export default function (editor) {
           }
         }
       }
+    },
+
+    // add order
+    [map.addOrder]: (cm) => {
+      editor.playAudio('sort');
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = cm.lineInfo(cursor.line).text;
+      if (editor.isThisTextAHeader(lineText)) {
+        const headers = editor.getHeaderSiblings(cursor);
+        if (headers && headers.dataSorted && headers.dataSorted.length) {
+          headers.dataSorted.forEach((header, index) => {
+            doc.replaceRange(
+              header.headerLineText.replace(/(^#+\s)/, `$1${index + 1}. `),
+              { line: header.headerLineNum, ch: 0 },
+              { line: header.headerLineNum, ch: header.headerLineText.length },
+            );
+          });
+        }
+      }
+
+
+      // if (sel) {
+      //   let marker;
+      //   doc.replaceSelection(sel.replace(/^(\d+). /gm, (match, group1) => {
+      //     let res;
+      //     if (marker) {
+      //       marker += 1;
+      //       res = `${marker}. `;
+      //     } else {
+      //       marker = Number.parseInt(group1, 10);
+      //       res = `${marker}. `;
+      //     }
+      //     return res;
+      //   }));
+      // } else {
+      //   // eslint-disable-next-line prefer-const
+      //   let { headerLv, headerLineNum } = editor.getHeaderByCursor();
+      //   if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
+      //   const lineCount = doc.lineCount();
+      //   let marker = 1;
+      //   for (let i = headerLineNum + 1; i < lineCount; i += 1) {
+      //     const text = doc.getLine(i);
+      //     if (text.match(/^(#+) /)) {
+      //       break;
+      //     }
+      //     if (text.match(/^\d+. /)) {
+      //       doc.replaceRange(
+      //         text.replace(/^\d+. /, `${marker}. `),
+      //         { line: i, ch: 0 },
+      //         { line: i, ch: text.length },
+      //       );
+      //       marker += 1;
+      //     }
+      //   }
+      // }
     },
 
     // degrage headers
