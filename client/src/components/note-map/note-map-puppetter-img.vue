@@ -111,7 +111,7 @@ export default {
         flex-shrink: 0;
         position: absolute;
         background: rgba(255, 255, 255, 0.3);
-        color: #000;
+        color: #fff;
         backdrop-filter: blur(10px);
       }
       img {
