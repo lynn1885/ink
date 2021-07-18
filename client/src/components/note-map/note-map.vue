@@ -3,12 +3,32 @@
     <!-- 图片列表 -->
     <div class="found-images-list">
       <div class="found-images-container" v-for="(images, imgName) in curImgs" :key="imgName">
-        <div class="img-name">{{imgName}}</div>
-        <img :src="img" v-for="(img, index) of images" :key="index">
+        <div class="img-name">{{imgName.replace(/[0-9]+/, '')}}</div>
+        <img :src="img" v-for="(img, index) of images" :key="index" @click="changeImg(imgName, img)">
       </div>
     </div>
 
-    <textarea v-model="searchInput"></textarea>
+    <!-- 画板 -->
+    <div class="board" @mousemove="onBoardMouseMove" @mousedown="onBoardMouseDown" @mouseup="onBoardMouseUp">
+      <div
+        class="board-block"
+        :id="blockId"
+        v-for="(blockObj, blockId) in boardData.blocks"
+        :style="blockObj"
+        :key="blockId"
+        contenteditable="true"
+        :ref="blockId"
+        @keydown="searchText(blockId, true)"
+        @mousemove="onBlockMouseMove(blockId, $event)"
+      >
+      </div>
+    </div>
+
+    <div class="buttons">
+      <button class="clear" @click="clearBoard">清空</button>
+      <button class="search" @click="getBlockImgs">配图</button>
+      <button class="toggle-text" @click="toggleText">文字</button>
+    </div>
   </div>
 </template>
 <script>
@@ -19,10 +39,14 @@ export default {
   data() {
     return {
       editor: null,
-      searchInput: '',
       imgsTemp: {},
       curImgs: {},
       updateTimer: null,
+      boardData: {
+        isMouseDown: false,
+        blocks: {},
+        curEditBlock: null,
+      },
     };
   },
 
@@ -48,6 +72,7 @@ export default {
   },
 
   methods: {
+    // 暂时无用
     async build(inputText) {
       // 清理
       this.curImgs = {};
@@ -69,6 +94,131 @@ export default {
       const imgs = await Images.getIllustrations(searchText);
       this.$set(this.imgsTemp, searchText, imgs);
       return imgs;
+    },
+
+    // 画板按下鼠标
+    onBoardMouseDown(e) {
+      if (!e.ctrlKey) return;
+      this.boardData.isMouseDown = true;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      const blockId = Date.now();
+      const styleObj = {
+        left: `${offsetX}px`,
+        top: `${offsetY}px`,
+        width: '1px',
+        height: '1px',
+        'background-image': '',
+        color: '#333',
+        transform: '',
+        'z-index': 10
+      };
+
+      this.boardData.curEditBlock = blockId;
+      this.$set(this.boardData.blocks, blockId, styleObj);
+    },
+
+    // 画板鼠标移动
+    onBoardMouseMove(e) {
+      if (!e.ctrlKey) return;
+
+      const curBlock = this.boardData.blocks[this.boardData.curEditBlock];
+      if (this.boardData.isMouseDown && this.boardData.curEditBlock && curBlock) {
+        const rect = e.currentTarget.getBoundingClientRect();
+        const offsetX = e.clientX - rect.left;
+        const offsetY = e.clientY - rect.top;
+        curBlock.width = `${offsetX - Number.parseInt(curBlock.left, 10)}px`;
+        curBlock.height = `${offsetY - Number.parseInt(curBlock.top, 10)}px`;
+        this.$set(this.boardData.blocks, this.boardData.curEditBlock, curBlock);
+      }
+    },
+
+    // 画板鼠标弹起
+    onBoardMouseUp() {
+      this.boardData.isMouseDown = false;
+      this.boardData.curEditBlock = null;
+    },
+
+    // 方块鼠标移动
+    onBlockMouseMove(blockId, e) {
+      if (e.shiftKey) {
+        this.boardData.blocks[blockId].left = `${Number.parseInt(this.boardData.blocks[blockId].left, 10) + e.movementX}px`;
+        this.boardData.blocks[blockId].top = `${Number.parseInt(this.boardData.blocks[blockId].top, 10) + e.movementY}px`;
+      } else if (e.altKey) {
+        this.boardData.blocks[blockId].width = `${Number.parseInt(this.boardData.blocks[blockId].width, 10) + e.movementX}px`;
+        this.boardData.blocks[blockId].height = `${Number.parseInt(this.boardData.blocks[blockId].height, 10) + e.movementY}px`;
+      }
+    },
+
+    // 更改图片
+    changeImg(imgName, img) {
+      const blockId = imgName.split(' ')[0];
+      this.boardData.blocks[blockId]['background-image'] = `url(${img})`;
+    },
+
+    // 清理画板
+    clearBoard() {
+      this.curImgs = {};
+      this.boardData.blocks = {};
+    },
+
+    // 获取方块图片
+    getBlockImgs() {
+      for (const blockId in this.boardData.blocks) {
+        this.searchText(blockId);
+      }
+    },
+
+    // 搜索文本对应的图片
+    searchText(blockId, isKeyDown) {
+      setTimeout(async () => {
+        if (this.$refs[blockId] && this.$refs[blockId][0]) {
+          const text = this.$refs[blockId][0].innerText;
+          if (!isKeyDown) {
+            const imgs = await this.searchImgsOnline(text);
+            if (imgs && imgs.length) {
+              this.boardData.blocks[blockId]['background-image'] = `url(${imgs[0]})`;
+              this.$set(this.curImgs, `${blockId} ${text}`, imgs);
+              if (text.endsWith('-')) {
+                this.boardData.blocks[blockId].transform = 'rotateY(180deg)';
+              }
+              if (text.endsWith('2')) {
+                this.boardData.blocks[blockId]['z-index'] = '2';
+              }
+              if (text.endsWith('1')) {
+                this.boardData.blocks[blockId]['z-index'] = '1';
+              }
+            }
+          } else if (/\s|-|1|2/.test(text[text.length - 1])) {
+            const imgs = await this.searchImgsOnline(text);
+            if (imgs && imgs.length) {
+              this.boardData.blocks[blockId]['background-image'] = `url(${imgs[0]})`;
+              this.$set(this.curImgs, `${blockId} ${text}`, imgs);
+              if (text.endsWith('-')) {
+                this.boardData.blocks[blockId].transform = 'rotateY(180deg)';
+              }
+              if (text.endsWith('2')) {
+                this.boardData.blocks[blockId]['z-index'] = '2';
+              }
+              if (text.endsWith('1')) {
+                this.boardData.blocks[blockId]['z-index'] = '1';
+              }
+            }
+          }
+        }
+      }, 0);
+    },
+
+    // 显示或隐藏文字
+    toggleText() {
+      for (const blockId in this.boardData.blocks) {
+        if (this.boardData.blocks[blockId].color === 'transparent') {
+          this.boardData.blocks[blockId].color = '#333';
+        } else {
+          this.boardData.blocks[blockId].color = 'transparent';
+        }
+      }
     }
   },
 
@@ -91,10 +241,13 @@ export default {
   display: flex;
   height: 100%;
   overflow: hidden;
+  flex-direction: column;
+  /* 找到的图片 */
   .found-images-list {
     background: rgb(248, 246, 245);
-    flex-grow: 1;
-    height: 100%;
+    height: 50%;
+    flex-shrink: 0;
+    flex-grow: 0;
     overflow: auto;
     .found-images-container {
       display: flex;
@@ -102,7 +255,7 @@ export default {
       margin-bottom: 4px;
       position: relative;
       .img-name {
-        width: 50px;
+        width: 40px;
         height: 100%;
         display: flex;
         align-items: center;
@@ -113,25 +266,56 @@ export default {
         background: rgba(255, 255, 255, 0.3);
         color: #000;
         backdrop-filter: blur(10px);
+        overflow: hidden;
       }
       img {
-        height: 50px;
+        height: 40px;
         margin-right: 2px;
         border-radius: 2px;
         cursor: pointer;
       }
     }
   }
-  textarea {
-    height: 100%;
-    width: 150px;
-    border: none;
-    outline: none;
-    background: rgb(253, 252, 251);
-    border-right: 2px dashed #ddd;
-    border-radius: 2px;
-    color: rgb(117, 89, 50);
-    font-weight: bold;
+
+  .board {
+    flex-grow: 1;
+    background: #fff;
+    position: relative;
+    .board-block {
+      position: absolute;
+      display: block;
+      background-color: rgba(223, 236, 255, 0.5);
+      background-position: 0;
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      border-radius: 2px;
+      outline: none;
+    }
   }
+
+  .buttons {
+    display: flex;
+    height: 26px;
+    padding: 2px;
+    button {
+      flex-grow: 1;
+      margin-right: 10px;
+      border: 2px solid rgb(156, 148, 140);
+      color: rgb(143, 113, 82);
+      cursor: pointer;
+      border-radius: 0;
+      transition: all 0.2s;
+      &:hover {
+        box-shadow: 0px 0px 4px 0px #999;
+        transition: all 0.2s;
+      }
+    }
+    .clear {
+      background: rgb(238, 191, 191);
+      color: rgb(216, 98, 98);
+      border: 2px solid rgb(216, 98, 98);
+    }
+  }
+
 }
 </style>

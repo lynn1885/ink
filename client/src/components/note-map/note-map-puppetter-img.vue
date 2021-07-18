@@ -124,7 +124,7 @@ export default {
   }
   textarea {
     height: 100%;
-    width: 300px;
+    width: 150px;
     border: none;
     outline: none;
     background: rgb(253, 252, 251);
