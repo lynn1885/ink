@@ -7,7 +7,7 @@
         :id="'note-map-line-'+lv1Obj.lineNum"
         v-for="lv1Obj in noteHierarchy"
         :key="lv1Obj.lineNum + lv1Obj.text"
-        :style="calNodeStyle(lv1Obj.nextLine)"
+        :style="calNodeStyle(lv1Obj.nextLine1)"
       >
         <div class="cur-lv-content">
           {{lv1Obj.text.replace(/#+/, '')}}
@@ -19,7 +19,7 @@
             :id="'note-map-line-'+lv2Obj.lineNum"
             v-for="lv2Obj in lv1Obj.children"
             :key="lv2Obj.lineNum + lv2Obj.text"
-            :style="calNodeStyle(lv2Obj.nextLine)"
+            :style="calNodeStyle(lv2Obj.nextLine1)"
             @click.stop="onClickMapNode(lv2Obj)"
           >
             <div class="cur-lv-content">
@@ -32,7 +32,7 @@
                 :id="'note-map-line-'+lv3Obj.lineNum"
                 v-for="lv3Obj in lv2Obj.children"
                 :key="lv3Obj.lineNum + lv3Obj.text"
-                :style="calNodeStyle(lv3Obj.nextLine)"
+                :style="calNodeStyle(lv3Obj.nextLine1)"
                 @click.stop="onClickMapNode(lv3Obj)"
               >
                 <div class="cur-lv-content">
@@ -45,7 +45,7 @@
                     :id="'note-map-line-'+lv4Obj.lineNum"
                     v-for="lv4Obj in lv3Obj.children"
                     :key="lv4Obj.lineNum + lv4Obj.text"
-                    :style="calNodeStyle(lv4Obj.nextLine)"
+                    :style="calNodeStyle(lv4Obj.nextLine1)"
                     @click.stop="onClickMapNode(lv4Obj)"
                   >
                     <div class="cur-lv-content">
@@ -58,7 +58,7 @@
                         :id="'note-map-line-'+lv5Obj.lineNum"
                         v-for="lv5Obj in lv4Obj.children"
                         :key="lv5Obj.lineNum + lv5Obj.text"
-                        :style="calNodeStyle(lv5Obj.nextLine)"
+                        :style="calNodeStyle(lv5Obj.nextLine1)"
                         @click.stop="onClickMapNode(lv5Obj)"
                       >
                         <div class="cur-lv-content">
@@ -71,7 +71,7 @@
                             :id="'note-map-line-'+lv6Obj.lineNum"
                             v-for="lv6Obj in lv5Obj.children"
                             :key="lv6Obj.lineNum + lv6Obj.text"
-                            :style="calNodeStyle(lv6Obj.nextLine)"
+                            :style="calNodeStyle(lv6Obj.nextLine1)"
                             @click.stop="onClickMapNode(lv6Obj)"
                           >
                             <div class="cur-lv-content">
@@ -136,7 +136,6 @@ export default {
     // ⭐ 构建知识地图
     build() {
       this.noteHierarchy = this.editor.getHeadersHierarchy();
-      console.log(123, this.noteHierarchy);
     },
 
     // 编辑时
@@ -179,6 +178,7 @@ export default {
 
     // 计算当前节点的样式
     calNodeStyle(nextLine) {
+      console.log(111, nextLine);
       if (!nextLine || !nextLine.startsWith('![]')) return;
 
       const styleObj = {};
@@ -215,6 +215,7 @@ export default {
         }
       }
       // eslint-disable-next-line consistent-return
+      console.log(456, styleObj);
       return styleObj;
     }
   },

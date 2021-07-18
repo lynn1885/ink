@@ -153,7 +153,7 @@ export default {
           name: 'Note Map',
           icon: noteMapSvg,
           type: 'page',
-          sideBarWidth: '70%',
+          sideBarWidth: '50%',
         },
         {
           name: 'Todo',
