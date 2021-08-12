@@ -30,7 +30,7 @@ export default {
     onCursorActivity() {
       const selectionText = this.editor.cm.doc.getSelection();
       if (selectionText) {
-        this.editor.cm.doc.replaceSelection(`*${selectionText}*`);
+        this.editor.cm.doc.replaceSelection(`*${selectionText.trim()}*`);
         this.editor.playAudio('addEmphasis');
       }
     }
