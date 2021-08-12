@@ -1,10 +1,5 @@
 <template>
   <div id="note-map-container">
-    <div class="buttons">
-      <button class="clear" @click="clearBoard">清空</button>
-      <button class="search" @click="getBlockImgs">配图</button>
-      <button class="toggle-text" @click="toggleText">文字</button>
-    </div>
     <!-- 图片列表 -->
     <div class="found-images-list">
       <div class="found-images-container" v-for="(images, imgName) in curImgs" :key="imgName">
@@ -27,6 +22,13 @@
         @mousemove="onBlockMouseMove(blockId, $event)"
       >
       </div>
+    </div>
+
+    <!-- 按钮 -->
+    <div class="buttons">
+      <button class="clear" @click="clearBoard">清空</button>
+      <button class="search" @click="getBlockImgs">配图</button>
+      <button class="toggle-text" @click="toggleText">文字</button>
     </div>
   </div>
 </template>
@@ -109,9 +111,10 @@ export default {
         width: '1px',
         height: '1px',
         'background-image': '',
-        color: '#333',
+        color: 'inherit',
         transform: '',
-        'z-index': 10
+        'z-index': 10,
+        border: ''
       };
 
       this.boardData.curEditBlock = blockId;
@@ -174,48 +177,54 @@ export default {
       setTimeout(async () => {
         if (this.$refs[blockId] && this.$refs[blockId][0]) {
           const text = this.$refs[blockId][0].innerText;
-          if (!isKeyDown) {
-            const imgs = await this.searchImgsOnline(text);
-            if (imgs && imgs.length) {
-              this.boardData.blocks[blockId]['background-image'] = `url(${imgs[0]})`;
-              this.$set(this.curImgs, `${blockId} ${text}`, imgs);
-              if (text.endsWith('-')) {
-                this.boardData.blocks[blockId].transform = 'rotateY(180deg)';
-              }
-              if (text.endsWith('2')) {
-                this.boardData.blocks[blockId]['z-index'] = '2';
-              }
-              if (text.endsWith('1')) {
-                this.boardData.blocks[blockId]['z-index'] = '1';
-              }
-            }
-          } else if (/\s|-|1|2/.test(text[text.length - 1])) {
-            const imgs = await this.searchImgsOnline(text);
-            if (imgs && imgs.length) {
-              this.boardData.blocks[blockId]['background-image'] = `url(${imgs[0]})`;
-              this.$set(this.curImgs, `${blockId} ${text}`, imgs);
-              if (text.endsWith('-')) {
-                this.boardData.blocks[blockId].transform = 'rotateY(180deg)';
-              }
-              if (text.endsWith('2')) {
-                this.boardData.blocks[blockId]['z-index'] = '2';
-              }
-              if (text.endsWith('1')) {
-                this.boardData.blocks[blockId]['z-index'] = '1';
-              }
-            }
+          if (!isKeyDown) { // 批量设置
+            await this.setBlockStyle(blockId, text);
+          } else if (/\s|-|1|2|3|9/.test(text[text.length - 1])) {
+            await this.setBlockStyle(blockId, text); // 单个设置
           }
         }
       }, 0);
     },
 
+    // 设置block样式
+    async setBlockStyle(blockId, text) {
+      const searchText = text.replace(/\w|-/, '');
+      const imgs = await this.searchImgsOnline(searchText);
+      if (imgs && imgs.length) {
+        this.boardData.blocks[blockId]['background-image'] = `url(${imgs[0]})`;
+        this.boardData.blocks[blockId].transform = '';
+        this.boardData.blocks[blockId].filter = '';
+        this.$set(this.curImgs, `${blockId} ${text}`, imgs);
+        if (text.endsWith('-')) {
+          this.boardData.blocks[blockId].transform = 'rotateY(180deg)';
+        }
+        if (text.endsWith('1')) {
+          this.boardData.blocks[blockId]['z-index'] = '1';
+        }
+        if (text.endsWith('2')) {
+          this.boardData.blocks[blockId]['z-index'] = '2';
+        }
+        if (text.endsWith('3')) {
+          this.boardData.blocks[blockId].filter = 'blur(4px)';
+        }
+        if (text.endsWith('9')) {
+          this.boardData.blocks[blockId].background = 'rgb(239, 239, 239)';
+          this.boardData.blocks[blockId].border = '2px solid rgb(143, 113, 82)';
+        }
+      }
+    },
+
+
     // 显示或隐藏文字
     toggleText() {
       for (const blockId in this.boardData.blocks) {
-        if (this.boardData.blocks[blockId].color === 'transparent') {
-          this.boardData.blocks[blockId].color = '#333';
-        } else {
-          this.boardData.blocks[blockId].color = 'transparent';
+        const text = this.$refs[blockId][0].innerText;
+        if (!text.endsWith('9')) {
+          if (this.boardData.blocks[blockId].color === 'transparent') {
+            this.boardData.blocks[blockId].color = 'inherit';
+          } else {
+            this.boardData.blocks[blockId].color = 'transparent';
+          }
         }
       }
     }
@@ -240,10 +249,11 @@ export default {
   display: flex;
   height: 100%;
   overflow: hidden;
+  flex-direction: column;
   /* 找到的图片 */
   .found-images-list {
     background: rgb(248, 246, 245);
-    width: 50%;
+    height: 50%;
     flex-shrink: 0;
     flex-grow: 0;
     overflow: auto;
@@ -276,11 +286,14 @@ export default {
   }
 
   .board {
-    width: 50%;
+    flex-grow: 1;
     background: #fff;
     position: relative;
+    color: rgb(146, 111, 82);
     .board-block {
       position: absolute;
+      font-weight: bold;
+      text-align: center;
       display: block;
       background-color: rgba(223, 236, 255, 0.5);
       background-position: 0;
@@ -292,14 +305,21 @@ export default {
   }
 
   .buttons {
-    width: 60px;
+    display: flex;
+    height: 26px;
+    padding: 2px;
     button {
-      width: 100%;
+      flex-grow: 1;
+      margin-right: 10px;
       border: 2px solid rgb(156, 148, 140);
       color: rgb(143, 113, 82);
       cursor: pointer;
       border-radius: 0;
-      margin-bottom: 10px;
+      transition: all 0.2s;
+      &:hover {
+        box-shadow: 0px 0px 4px 0px #ccc;
+        transition: all 0.2s;
+      }
     }
     .clear {
       background: rgb(238, 191, 191);

@@ -40,6 +40,7 @@
 
     <!-- other components -->
     <sticky-note v-if="isShowStickyNote"></sticky-note>
+    <fluorescent-pen v-if="isUsingFluorescentPen"></fluorescent-pen>
     <search-note-bar v-if="isShowSearchNoteBar" @close="isShowSearchNoteBar = false"></search-note-bar>
   </div>
 </template>
@@ -50,6 +51,7 @@ import Outline from '@/components/outline/outline.vue';
 import NoteMap from '@/components/note-map/note-map.vue';
 import Todo from '@/components/todo/todo.vue';
 import StickyNote from '@/components/sticky-note/sticky-note.vue';
+import FluorescentPen from '@/components/fluorescent-pen/fluorescent-pen.vue';
 import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
 import MindMap from '@/components/mind-map/mind-map.vue';
 import Statistics from '@/components/statistics/statistics.vue';
@@ -68,6 +70,7 @@ import {
   todoSvg,
   statisticsSvg,
   nightModeSvg,
+  fluorescentPen
 } from './svg';
 
 const isEnableConsole = false;
@@ -84,6 +87,7 @@ export default {
     StickyNote,
     SearchNoteBar,
     Statistics,
+    FluorescentPen
   },
   data() {
     return {
@@ -92,6 +96,7 @@ export default {
       activeButtons: {}, // current active buttons
       isSideBarSmallMode: false, // whether to display side bar in small mode
       isShowStickyNote: false,
+      isUsingFluorescentPen: false,
       isShortcutKeyBinded: false,
       isShowSearchNoteBar: false,
       toggleToolPageShortcut: ['Ctrl', 'Shift', 'B'],
@@ -195,6 +200,17 @@ export default {
             this.$store.commit('updateIsNightModeOn', flag);
             return flag;
           },
+          lastStatus: false,
+        },
+        {
+          name: 'Fluorescent Pen',
+          icon: fluorescentPen,
+          type: 'button',
+          onclick: () => {
+            this.isUsingFluorescentPen = !this.isUsingFluorescentPen;
+            return this.isUsingFluorescentPen;
+          },
+          keyMap: ['Ctrl', 'Shift', 'X'],
           lastStatus: false,
         },
         // {
@@ -326,7 +342,11 @@ export default {
   flex-shrink: 0;
   flex-grow: 0;
   height: 100%;
+  overflow-y: auto;
   background-color: $icon-bar-bg;
+  &::-webkit-scrollbar {
+    width: 0px;
+  }
   /* backdrop-filter: blur(10px); */
   .tool-icon {
     width: $icon-bar-width;

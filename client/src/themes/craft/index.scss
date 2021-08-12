@@ -102,6 +102,10 @@
   padding-left: $header-6-indent !important;
 }
 
+.CodeMirror-line {
+  cursor: inherit!important;
+}
+
 .CodeMirror-line:not(.line-cm-header) {
   padding-left: $not-header-indent; // 修改这个也要修改图片插件的缩进
 }

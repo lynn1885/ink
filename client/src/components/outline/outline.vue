@@ -442,6 +442,7 @@ export default {
     padding: 0 4px;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(10px);
+
     width: 100%;
     .count {
       padding: 2px;
@@ -472,6 +473,9 @@ export default {
       color:rgb(236, 204, 134);
       flex-grow: 1;
       text-align: right;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 

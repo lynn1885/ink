@@ -1,5 +1,9 @@
 <template>
-  <div v-show="isFileLoaded" id="editor" ref="editor"></div>
+  <div
+    v-show="isFileLoaded"
+    id="editor"
+    ref="editor"
+  ></div>
 </template>
 
 <script>
