@@ -4,6 +4,8 @@
     <div id="main">
       <side-bar id="side-bar" :class="{'hide': !isShowSideBar}"></side-bar>
       <note-content id="note-content"></note-content>
+      <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
+      <img src="/imgs/ruler.png" class="zen-mode-item ruler">
     </div>
 
     <!-- status-bar-->
@@ -24,9 +26,7 @@
     <!-- 音频播放器 -->
     <audio src="" id="ink-audio-player"></audio>
 
-    <!--  -->
-    <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
-    <img src="/imgs/ruler.png" class="zen-mode-item ruler">
+
   </div>
 </template>
 
@@ -349,6 +349,11 @@ textarea {
     margin: 0 auto;
     margin-top: 100px;
     box-shadow: 0px -2px 4px 0px rgb(221, 211, 193);
+    z-index: 10;
+  }
+
+  #quick-open-bar {
+    backdrop-filter: blur(4px);
   }
 
   .zen-mode-item {
@@ -371,6 +376,7 @@ textarea {
       width: 300px;
       left: 0px;
       top: 0px;
+      z-index: 9;
     }
   }
 }
