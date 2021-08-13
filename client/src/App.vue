@@ -1,9 +1,9 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{'zen-mode-app': isZenMode }">
     <!-- main body -->
     <div id="main">
       <side-bar id="side-bar" :class="{'hide': !isShowSideBar}"></side-bar>
-      <note-content id="note-content" :class="{'zen-mode': isZenMode }"></note-content>
+      <note-content id="note-content"></note-content>
     </div>
 
     <!-- status-bar-->
@@ -15,7 +15,6 @@
       <img class="test-bg" :src="curBgImgSrc" @error="imgLoadError" />
       <!-- 用于真正显示背景 -->
       <img v-show="realBgImgSrc" class="real-bg" :src="realBgImgSrc"/>
-
     </div>
 
     <!-- modal -->
@@ -24,6 +23,10 @@
 
     <!-- 音频播放器 -->
     <audio src="" id="ink-audio-player"></audio>
+
+    <!--  -->
+    <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
+    <img src="/imgs/ruler.png" class="zen-mode-item ruler">
   </div>
 </template>
 
@@ -249,6 +252,9 @@ textarea {
   width: 100%;
   height: 100%;
   background: $app-bg;
+  .zen-mode-item {
+    display: none;
+  }
 }
 
 // main body
@@ -268,10 +274,7 @@ textarea {
     display: block;
     height: 100%;
   }
-  #note-content.zen-mode {
-    max-width: 1040px;
-    margin: 0 auto;
-  }
+
 }
 // side-bar
 #side-bar {
@@ -326,6 +329,50 @@ textarea {
   background: $catalog-modal-bg;
   cursor: wait;
   z-index: 500; // Do not cover the pop-up window used to create the file
+}
+
+// zen-mode
+.zen-mode-app {
+  #main {
+    background-image: url('/imgs/wood.jpg');
+    overflow: hidden;
+  }
+  .CodeMirror {
+    background-color: rgb(254, 253, 252)!important;
+    padding: 0px!important;
+  }
+  /* .CodeMirror-sizer {
+    background-image: url('/imgs/paper.jpg')!important;
+  } */
+   #note-content {
+    max-width: 1040px;
+    margin: 0 auto;
+    margin-top: 100px;
+    box-shadow: 0px -2px 4px 0px rgb(221, 211, 193);
+  }
+
+  .zen-mode-item {
+    display: block!important;
+    position: fixed;
+    z-index: 1000;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover {
+      filter: brightness(1.05);
+      transition: all 0.2s;
+    }
+    &.fluorescent-pen {
+      width: 50px;
+      right: 100px;
+      top: 340px;
+      transform: rotateZ(-50deg);
+    }
+    &.ruler {
+      width: 300px;
+      left: 0px;
+      top: 0px;
+    }
+  }
 }
 </style>
 

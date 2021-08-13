@@ -32,7 +32,7 @@ export default function (editor, config) {
   editor.cm.on('renderLine', (cm, line, el) => {
     if (line.text !== line.lastTimeText_image) {
       line.lastTimeText_image = line.text;
-      const imgMatchRes = line.text.match(/^!\[.*?\]\((.*?)\)/);
+      const imgMatchRes = line.text.match(/^!\[(.*?)\]\((.*?)\)/);
       if (imgMatchRes) {
         let baseUrl = '';
         baseUrl = `${editor.fileServer.staticImagesUrl}`;
@@ -51,15 +51,47 @@ export default function (editor, config) {
           const img = $('<img style="visibility:hidden"></img>');
           const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
           imgWidget.append(img);
+          // 解析贴纸
+          const imgName = imgMatchRes[1];
+          const imgCss = {
+            transform: ''
+          };
+          const imgWidgetCss = {};
+          if (imgName) {
+            const attrs = imgName.split(';');
+            if (attrs.includes('贴纸')) {
+              imgWidgetCss.position = 'absolute';
+              if (attrs[1]) {
+                const scale = Number.parseFloat(attrs[1]);
+                imgCss.transform = `scale(${scale})`;
+              }
+              if (attrs[2]) {
+                imgWidgetCss.left = `${attrs[2]}px`;
+              }
+              if (attrs[3]) {
+                imgWidgetCss.top = `${attrs[3]}px`;
+              }
+              if (attrs[4] === '-') {
+                imgCss.transform += ' rotateY(180deg)';
+                imgCss.transform = imgCss.transform.trim();
+              }
+            }
+          }
+          imgWidget.css({
+            width: 'fit-content',
+            cursor: 'pointer',
+            ...imgWidgetCss
+          });
           // don't know why the picture is bigger than the real size
           // scale it to 81% here
           img.on('load', () => {
             img.css({
               width: `${img[0].naturalWidth * 0.81}px`,
               visibility: 'visible',
+              ...imgCss
             });
           });
-          img.attr('src', baseUrl + imgMatchRes[1]);
+          img.attr('src', baseUrl + imgMatchRes[2]);
           editor.cm.getDoc().addLineWidget(line, imgWidget[0]);
         }, 0);
       }
