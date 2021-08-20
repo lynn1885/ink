@@ -5,7 +5,6 @@
       <side-bar id="side-bar" :class="{'hide': !isShowSideBar}"></side-bar>
       <note-content id="note-content"></note-content>
       <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
-      <img src="/imgs/ruler.png" class="zen-mode-item ruler">
     </div>
 
     <!-- status-bar-->
@@ -25,8 +24,6 @@
 
     <!-- 音频播放器 -->
     <audio src="" id="ink-audio-player"></audio>
-
-
   </div>
 </template>
 
@@ -334,7 +331,7 @@ textarea {
 // zen-mode
 .zen-mode-app {
   #main {
-    background-image: url('/imgs/wood.jpg');
+    /* background-image: url('/imgs/wood.jpg'); */
     overflow: hidden;
   }
   .CodeMirror {
@@ -348,7 +345,6 @@ textarea {
     max-width: 1040px;
     margin: 0 auto;
     margin-top: 100px;
-    box-shadow: 0px -2px 4px 0px rgb(221, 211, 193);
     z-index: 10;
   }
 
@@ -367,7 +363,7 @@ textarea {
       transition: all 0.2s;
     }
     &.fluorescent-pen {
-      width: 50px;
+      width: 40px;
       right: 100px;
       top: 340px;
       transform: rotateZ(-50deg);
