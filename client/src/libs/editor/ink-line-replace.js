@@ -55,6 +55,7 @@ export default function (editor, config) {
 
       // 执行替换
       if (tMap) {
+        editor.playAudio('replace');
         const cursor = cm.getCursor();
         const doc = cm.getDoc();
         let lineText = cm.lineInfo(cursor.line).text;
@@ -63,6 +64,12 @@ export default function (editor, config) {
         for (let i = 0; i < tMapKeys.length; i += 1) {
           lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
         }
+
+        // 换行替换, 把\n替换成换行, 并添加## 标题 或1. 2. 3.标号
+        const headerMatch = lineText.match(/^#+ {2}|^[0-9]\. /) || [''];
+        const headerStr = headerMatch[0];
+        lineText = lineText.replace(/\\n/g, `\n${headerStr}`);
+
         doc.replaceRange(
           lineText,
           { line: cursor.line, ch: 0 },

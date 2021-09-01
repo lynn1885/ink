@@ -295,7 +295,6 @@ export default class {
    * @param {string} audioName 音频名
    */
   playAudio(audioName) {
-    console.log(123, audioName);
     if (this.audioPlayer && audioName && this.audioSrc[audioName]) {
       this.audioPlayer.attr('src', this.audioSrc[audioName]);
       this.audioPlayer[0].play();

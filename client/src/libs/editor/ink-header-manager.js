@@ -204,9 +204,30 @@ export default function (editor) {
       if (editor.isThisTextAHeader(lineText)) {
         const headers = editor.getHeaderSiblings(cursor);
         if (headers && headers.dataSorted && headers.dataSorted.length) {
+          let jumpNum = 0;
           headers.dataSorted.forEach((header, index) => {
+            // 以空格结尾的标题, 仅清除旧标记, 不添加新标记
+            let isOnlyClearOldMark = false;
+            if (header.headerLineText.endsWith(' ')) {
+              jumpNum += 1;
+              isOnlyClearOldMark = true;
+            }
+
+            // 清除旧标记
+            header.headerLineText = header.headerLineText.replace(/(^#+\s)[0-9]+\.\s/, '$1');
+            console.log(header.headerLineText);
             doc.replaceRange(
-              header.headerLineText.replace(/(^#+\s)/, `$1${index + 1}. `),
+              header.headerLineText,
+              { line: header.headerLineNum, ch: 0 },
+              { line: header.headerLineNum, ch: header.headerLineText.length + 5 }, // 清除的时候, 需要比新生成的文本多几个字, 因为新生成的文本去除了标记号, length变短了
+            );
+
+            if (isOnlyClearOldMark) return;
+
+            // 添加新标记
+            header.headerLineText = header.headerLineText.replace(/(^#+\s)/, `$1${(index - jumpNum) + 1}. `);
+            doc.replaceRange(
+              header.headerLineText,
               { line: header.headerLineNum, ch: 0 },
               { line: header.headerLineNum, ch: header.headerLineText.length },
             );

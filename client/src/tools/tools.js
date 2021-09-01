@@ -83,7 +83,6 @@ const tools = {
     }
 
     imgs = line.split('|').filter(imgStr => imgStr).map((imgStr) => {
-      console.log(123, imgs);
       if (imgStr && imgStr.startsWith('![](')) {
         const imgName = imgStr.replace('![](', '').replace(')', '').replace('|', '');
         const imgSrc = config.server.staticImagesUrl + imgName;
