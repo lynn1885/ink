@@ -367,11 +367,12 @@ export default class {
    * getHeaderAncestors: 获取当前Header的祖先Header
    * @param {pos} pos 位置. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
    * @param {num} depth 向上检索的层级. 比如传入1, 就只检索到父级, 不检索爷爷级. 可选, 如果不填, 则默认一直检索到一级标题
+   * @param {boolean} isContainCurLineHeader 如果当前行也是个标题, 那是否在结果中包含当前行. 默认true
    * @returns {array} 检索结果数组, 数组第一项是父级, 第二项是爷爷级...
    * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
-   * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
+   * 如果当前cursor所在行也是一个header, 并且设定了在结果中包含当前行, 则数组的第一项会多出一个属性: isCursorInThisLine: true
    */
-  getHeaderAncestors(pos, depth) {
+  getHeaderAncestors(pos, depth, isContainCurLineHeader = true) {
     const res = [];
     if (!pos) {
       pos = this.cm.getCursor();
@@ -379,7 +380,7 @@ export default class {
     if (!depth) {
       depth = 99; // just a big number
     }
-    // first line res
+    // first line
     let curLineRes;
     const curLineText = (this.cm.lineInfo(pos.line) || { text: '' }).text;
     const firstLineHeaderLv = this.getHeaderLvByStr(curLineText);
@@ -390,10 +391,10 @@ export default class {
         headerLineText: curLineText,
         isCursorInThisLine: true,
       };
-      res.push(curLineRes);
+      if (isContainCurLineHeader) res.push(curLineRes);
     }
 
-    // other line res
+    // other line
     let lastHeaderLv = firstLineHeaderLv || 99; // just a big number
     let curDetectDepth = 0;
     let curDetectLineNum = pos.line - 1;
