@@ -67,10 +67,8 @@ export default function (editor, config) {
 
         // 换行替换, 把\n替换成换行, 并添加## 标题 或1. 2. 3.标号
         const headerMatch = lineText.match(/^#+\s|^[0-9]\.\s/) || [''];
-        const headerStr = headerMatch[0].replace(' ', '');
-        lineText = lineText.replace(/\\n\\n\\n/g, `\n${headerStr}## `);
-        lineText = lineText.replace(/\\n\\n/g, `\n${headerStr}# `);
-        lineText = lineText.replace(/\\n/g, `\n${headerStr} `);
+        const headerStr = headerMatch[0];
+        lineText = lineText.replace(/\\n/g, `\n${headerStr}`);
 
         doc.replaceRange(
           lineText,

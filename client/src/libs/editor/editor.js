@@ -641,7 +641,7 @@ export default class {
   }
 
   /**
-   * getHeadersArray
+   * getHeadersArray: 获取所有header, 按数组形式排列
    * @param {String} text 文本, 如果不传入则默认获取当前文档打开的文本
    */
   getHeadersArray(text) {

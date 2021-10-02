@@ -12,6 +12,8 @@
           header4: header.lv === 4,
           header5: header.lv === 5,
           header6: header.lv === 6,
+          important: header.text.includes('⭐'),
+          danger: header.text.includes('❗'),
           active: header.lineNum === activeHeaderLineNum
         }"
         :ref="`lineNum${header.lineNum}`"
@@ -27,13 +29,14 @@
 
     <!-- 标题计数: 下面的-1是, 为了去除最后一行命令行带来的干扰-->
     <div class="headers-counter">
-      <div class="count lv1">{{headerCount[1] - 1}}</div>
+      <div class="count lv1">{{headerCount[1]}}</div>
       <div class="count lv2">{{headerCount[2]}}</div>
       <div class="count lv3">{{headerCount[3]}}</div>
       <div class="count lv4">{{headerCount[4]}}</div>
       <div class="count lv5">{{headerCount[5]}}</div>
       <div class="count lv6">{{headerCount[6]}}</div>
-      <div class="count all">{{headerCount.all - 1}} 个知识点</div>
+      <div class="count important"> <span class="star">⭐</span> {{headerCount.important}}</div>
+      <div class="count all">{{headerCount.all}} 个知识点</div>
     </div>
   </div>
 </template>
@@ -64,6 +67,7 @@ export default {
         4: 0,
         5: 0,
         6: 0,
+        important: 0,
         all: 0,
       }, // 标题计数
     };
@@ -158,7 +162,8 @@ export default {
         3: 0,
         4: 0,
         5: 0,
-        6: 0
+        6: 0,
+        important: 0
       };
 
       function getHeaderCount(lv, headers) {
@@ -166,6 +171,7 @@ export default {
           headerCount[lv] += headers.length;
           headers.forEach((item) => {
             if (item.children && item.children.length) getHeaderCount(lv + 1, item.children);
+            if (item && item.text.includes('⭐')) headerCount.important += 1;
           });
         }
       }
@@ -426,6 +432,12 @@ export default {
       color: $header-6;
       padding-left: 80px;
     }
+    .important {
+      background: rgb(252, 247, 220);
+    }
+    .danger {
+      background: rgb(252, 226, 220);
+    }
     .active {
       background: $sidebar-item-active-bg;
     }
@@ -439,9 +451,9 @@ export default {
     display: flex;
     bottom: 0;
     box-sizing: border-box;
-    padding: 0 4px;
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
 
     width: 100%;
     .count {
@@ -467,6 +479,14 @@ export default {
     }
     .lv6 {
       color: $header-6;
+    }
+    .important {
+      .star {
+        display: inline-block;
+        font-size: 10px;
+        transform: translate(3px, -2px);
+      }
+      color:rgb(236, 204, 134);
     }
     .all {
       font-weight: bold;

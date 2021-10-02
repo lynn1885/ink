@@ -16,6 +16,7 @@ export default function (editor, keyMap) {
     colon: 'Alt-C',
     toUpperCase: 'Ctrl-Alt-U',
     toLowerCase: 'Ctrl-Alt-L',
+    addStar: 'Alt-S',
     // quotation: "Ctrl-'", // 这个快捷键不能用
     // italic: 'Ctrl-I',
     // link: 'Ctrl-L',
@@ -419,6 +420,23 @@ export default function (editor, keyMap) {
           { line: cursor.line, ch: lineText.length },
         );
       }
+    },
+
+    [mergedKeyMap.addStar]: (cm) => {
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = cm.lineInfo(cursor.line).text;
+      let newLineText = '';
+      if (lineText.endsWith(' ⭐')) {
+        newLineText = lineText.replace(/\s⭐$/, '');
+      } else {
+        newLineText = `${lineText} ⭐`;
+      }
+      doc.replaceRange(
+        newLineText,
+        { line: cursor.line, ch: 0 },
+        { line: cursor.line, ch: lineText.length },
+      );
     },
 
     // insert

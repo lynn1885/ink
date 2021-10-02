@@ -1,3 +1,5 @@
+import tools from '@/tools/tools'; // 临时导入, 记得删除
+
 // 一些快速插入header的快捷方式
 const map = {
   insertHeaderNext: 'Ctrl-J',
@@ -216,7 +218,6 @@ export default function (editor) {
 
             // 清除旧标记
             header.headerLineText = header.headerLineText.replace(/(^#+\s)[0-9]+\.\s/, '$1');
-            console.log(header.headerLineText);
             doc.replaceRange(
               header.headerLineText,
               { line: header.headerLineNum, ch: 0 },
@@ -242,8 +243,52 @@ export default function (editor) {
       // const cursor = doc.getCursor();
       // const headers = editor.getHeaderSiblings(cursor);
       // if (headers && headers.dataSorted && headers.dataSorted.length) {
-      //   const parentsHeaders = editor.getHeaderAncestors(cursor, 1, false);
-      //   console.log(parentsHeaders);
+      //   // 获取标题内容
+      //   const headersContent = {};
+      //   headers.dataSorted.forEach((headerObj, index) => {
+      //     if (index < headers.dataSorted.length - 1) {
+      //       const key = `${index}. ${headerObj.headerLineText}`;
+      //       const startLineNum = headerObj.headerLineNum;
+      //       const endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
+      //       let curHeaderContent = '';
+      //       for (let i = startLineNum; i <= endLineNum; i += 1) {
+      //         curHeaderContent += doc.getLine(i);
+      //         curHeaderContent += '\n';
+      //       }
+      //       headersContent[key] = curHeaderContent;
+      //     }
+      //   });
+
+      //   // 重新排序
+      //   const newHeaders = {};
+
+      //   let keyTextArr = Object.keys(headersContent).map((key) => {
+      //     let headerText = key.replace(/[#\s\d.*]+/g, '');
+      //     headerText = headerText.replace(/`.+`/g, '');
+      //     headerText = headerText.replace(/: /, '的');
+      //     headerText = headerText.replace(/:/, '');
+      //     headerText = headerText.replace(/, /, '');
+      //     headerText = headerText.replace(/，/, '');
+      //     headerText = headerText.replace(/名词/, '');
+      //     headerText = headerText.replace(/分类/, '');
+      //     headerText = headerText.replace(/简答/, '');
+      //     headerText = headerText.replace(/论述/, '');
+      //     headerText = headerText.replace(/简述/, '');
+      //     headerText = headerText.replace(/试论述/, '');
+      //     headerText = headerText.replace(/试述/, '');
+      //     headerText = headerText.replace(/\s+/, '');
+      //     console.log(headerText);
+      //     return [key, headerText];
+      //   });
+
+      //   keyTextArr = keyTextArr.sort((keyItem1, keyItem2) => keyItem1[1].localeCompare(keyItem2[1]));
+
+      //   keyTextArr.forEach((keyItem) => {
+      //     newHeaders[keyItem[0]] = headersContent[keyItem[0]];
+      //   });
+
+      //   const newText = Object.values(newHeaders).join('\n');
+      //   tools.copyText(newText);
       // }
     },
 
