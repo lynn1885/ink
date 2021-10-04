@@ -3,6 +3,7 @@ const config = require('../../config');
 const Images = require('../models/images');
 const Directories = require('../models/directories');
 
+// write a image into the image directory
 exports.create = async (req, res) => {
   if (!req.body.fileDir) {
     throw new Error(`create(), invalid req.body.fileDir: ${req.body}`);
@@ -15,6 +16,7 @@ exports.create = async (req, res) => {
   const { fileDir } = req.body;
   const { file } = req;
   const imageDir = config.user.dirs.noteImages;
+
   // images will be placed in different directories
   // create new directories base on time
   // averagely, create a new directory each month
@@ -43,4 +45,24 @@ exports.create = async (req, res) => {
       console.error(err);
       res.status(500).json(err);
     });
+};
+
+// get images
+exports.get = async (req, res) => {
+  if (!req.query || !req.query.keyword || !req.query.type) {
+    res.status(400).send('错误的keyword参数');
+    return;
+  }
+
+  switch (req.query.type) {
+    case 'illustration': {
+      const imgs = await Images.searchOnline(String(req.query.keyword));
+      res.send(imgs);
+    }
+      break;
+
+    default:
+      res.status(400).send('无法识别的type参数: ', req.query.type);
+      break;
+  }
 };

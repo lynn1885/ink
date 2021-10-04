@@ -13,7 +13,7 @@ const upload = multer();
 
 // home page
 router.get('/', (req, res) => {
-  res.send('hello');
+  res.send('hello ink');
 });
 
 // directory
@@ -30,6 +30,7 @@ router.put('/files', bodyParser.json({ limit: `${config.fileSizeLimit}kb` }), fi
 
 // image
 router.post('/images', upload.single('file'), images.create);
+router.get('/images', images.get);
 
 // user-config
 router.get('/user-config', userConfig.get);

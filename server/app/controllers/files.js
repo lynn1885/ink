@@ -11,6 +11,7 @@ const isEnableConsole = false;
 exports.get = async (req, res) => {
   if (!req.query.path) {
     res.status(400).send('错误的path参数');
+    return;
   }
   console.log(`${new Date().toLocaleString()}: [read file] `, req.query.path);
   await Files.read(config.user.dirs.notes + req.query.path)
@@ -31,6 +32,7 @@ exports.update = async (req, res) => {
   if (!req.body.path || typeof req.body.data !== 'string') {
     console.error('update file failed, no path or data: ', req.body);
     res.status(400).send('错误的path或data参数');
+    return;
   }
 
   // 写入

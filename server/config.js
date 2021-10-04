@@ -17,7 +17,7 @@ module.exports = {
     },
   },
 
-  // inner dirs & files, don't modify them
+  // dirs & files for internal use , don't modify them
   inner: {
     dirs: {
       config: __dirname,
@@ -34,7 +34,7 @@ module.exports = {
   // other
   port: 12340, // server will listen on this port
   backupInterval: 300, // seconds
-  maxBackupFilesNumber: 8,
-  fileSizeLimit: 200, // KB
+  maxBackupFilesNumber: 9,
+  fileSizeLimit: 300, // KB
   maxSearchNum: 200, // when searching globally, how many results can you find at most
 };

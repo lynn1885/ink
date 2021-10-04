@@ -440,7 +440,7 @@ export default {
       background: rgb(252, 242, 241);
     }
     .cutting {
-      text-align: center;
+      /* text-align: center; */
     }
     .active {
       background: $sidebar-item-active-bg;
