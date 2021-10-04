@@ -331,9 +331,13 @@
 
 .inserted-widget-image-small {
   img {
-    height: 10px;
+    height: 40px;
     width: auto!important;
-    border-radius: 1px;
+    transition: all 0.2s;
+    &:hover {
+      height: auto;
+      transition: all 0.2s;
+    }
   }
 }
 
@@ -387,6 +391,19 @@
     background: rgb(255, 243, 221) !important;
     padding: 0 6px;
     border-radius: 3px;
+  }
+}
+
+// cutting
+.line-cutting {
+  background: $line-cutting-bg!important;
+  text-align: center;
+  border-radius: 4px;
+  padding-top: 0!important;
+  line-height: 50px!important;
+  height: 50px;
+  span:not(.cm-formatting-header-1) {
+    font-size: 20px;
   }
 }
 

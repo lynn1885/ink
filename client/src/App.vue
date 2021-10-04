@@ -221,6 +221,9 @@ export default {
 * {
   font-family: $font-family-main;
 }
+textarea {
+  font-family: $font-family-main!important;
+}
 ::selection {
   background: $selection !important;
 }

@@ -13,7 +13,8 @@
           header5: header.lv === 5,
           header6: header.lv === 6,
           important: header.text.includes('⭐'),
-          danger: header.text.includes('❗'),
+          danger: header.text.includes('❌'),
+          cutting: header.text.startsWith('# - '),
           active: header.lineNum === activeHeaderLineNum
         }"
         :ref="`lineNum${header.lineNum}`"
@@ -433,10 +434,13 @@ export default {
       padding-left: 80px;
     }
     .important {
-      background: rgb(252, 247, 220);
+      background: rgb(252, 250, 241);
     }
     .danger {
-      background: rgb(252, 226, 220);
+      background: rgb(252, 242, 241);
+    }
+    .cutting {
+      text-align: center;
     }
     .active {
       background: $sidebar-item-active-bg;
@@ -452,7 +456,7 @@ export default {
     bottom: 0;
     box-sizing: border-box;
     padding: 4px;
-    background: rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(20px);
 
     width: 100%;

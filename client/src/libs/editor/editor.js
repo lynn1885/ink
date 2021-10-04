@@ -160,6 +160,11 @@ export default class {
       }
     }
 
+    // cutting-line
+    if (el.innerText.startsWith('# - ')) {
+      el.classList.add('line-cutting');
+    }
+
     // count render time
     const t2 = new Date() - t1;
     if (t2 >= 3) {
