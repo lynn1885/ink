@@ -1,7 +1,9 @@
 <template>
   <div id="status-bar">
     <div class="cur-note-path items" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
-    <div class="note-properties items" title="Set Current Note Properties">Prop</div>
+    <!-- <div class="note-properties items" title="Set Current Note Properties">Prop</div> -->
+    <div class="Time items" :title="'Time, click to restart'" @click="restartTime">Time: {{ timeStr }}</div>
+    <div class="progress items" :title="`Current Progress: ${progress}%`">Progress: {{ progress }}%</div>
     <div class="note-count items" :title="`Note Count: ${noteCount}`">Notes: {{ noteCount }}</div>
     <div class="line-count items" :title="`Line Count: ${lineCount}`">Lines: {{ lineCount }}</div>
     <div
@@ -23,13 +25,16 @@ export default {
       wordCount: 0, // cur note word count
       lineCount: 0, // cur note line count
       noteCount: 0, // cour note count
+      progress: 0, // progress
+      time: 0, // time number
+      timeStr: '0s', // time string
+      timeCounter: null, // time counter
       notePath: '', // current file path
-      updateTimer: null,
+      updateTime: null,
       updateDelay: 2000,
       changeSeasonTimeInterval: 3000,
       recommendedMaxNumOfWords: 30000,
       season: '',
-      time: '',
       curSeasonTimeType: 'season',
       seasonTimeTypes: ['season', 'time', 'icon'],
       seasonTimeIcons: ['___spring1___', '___summer1___', '___autumn1___', '___winter___'],
@@ -42,6 +47,7 @@ export default {
       if (value) {
         this.editor = value;
         this.editor.on('changes', this.changesHandler);
+        this.editor.on('cursorActivity', this.cursorActivityHandler);
       }
     },
     // eslint-disable-next-line func-names
@@ -58,15 +64,52 @@ export default {
     '$store.state.curFilePath': function (value) {
       if (value) {
         this.notePath = value.replace(/\/[^/]+.md/, '');
+        this.restartTime();
       }
     },
   },
   methods: {
+    // on change
     changesHandler() {
-      clearTimeout(this.updateTimer);
-      this.updateTimer = setTimeout(() => {
+      clearTimeout(this.updateTime);
+      this.updateTime = setTimeout(() => {
         this.getWordAndLineCount();
       }, this.updateDelay);
+    },
+
+    // on cursor activity
+    cursorActivityHandler(e) {
+      const curLineNum = e.doc.getCursor().line || 1;
+      const lineCount = e.doc.lineCount() || 1;
+      this.progress = ((curLineNum / lineCount) * 100).toFixed(2);
+    },
+
+    // restartTime
+    restartTime() {
+      clearInterval(this.timeCounter);
+      this.time = 0;
+      this.timeStr = '0s';
+      this.startTime();
+    },
+
+    // startTime
+    startTime() {
+      this.timeCounter = setInterval(() => {
+        this.time += 1;
+        this.timeStr = this.secondToStr(this.time);
+      }, 1000);
+    },
+
+    // convert a second number to a time string
+    secondToStr(timeNum) {
+      const hour = Math.floor(timeNum / 3600);
+      const minute = Math.floor((timeNum - (hour * 3600)) / 60);
+      const second = timeNum % 60;
+      let res = '';
+      if (hour) res += `${hour}h `;
+      if (minute) res += `${minute}m `;
+      res += `${second}s`;
+      return res;
     },
 
     /**
@@ -96,6 +139,12 @@ export default {
       tools.copyText(text);
     },
   },
+
+  beforeDestroy() {
+    this.editor.off('changes', this.changesHandler);
+    this.editor.off('cursorActivity', this.cursorActivityHandler);
+    clearInterval(this.timeCounter);
+  }
 };
 </script>
 
