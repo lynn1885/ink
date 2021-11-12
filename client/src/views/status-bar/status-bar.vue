@@ -35,7 +35,7 @@ export default {
       updateDelay: 2000,
       changeSeasonTimeInterval: 3000,
       recommendedMaxNumOfWords: 30000,
-      url: window.location.origin,
+      url: `${window.location.hostname}:9009`,
       season: '',
       curSeasonTimeType: 'season',
       seasonTimeTypes: ['season', 'time', 'icon'],
