@@ -142,7 +142,9 @@ export default {
         this.curBgImgSrc = this.possibleBgImgSrc[this.curBgImgIndex];
         this.curBgImgIndex += 1;
         this.changeBgImgTimer = setTimeout(() => {
-          if (this.curBgImg) this.realBgImgSrc = this.curBgImgSrc;
+          if (this.curBgImgSrc) {
+            this.realBgImgSrc = this.curBgImgSrc;
+          }
         }, 200);
       }
     },

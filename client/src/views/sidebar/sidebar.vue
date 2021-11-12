@@ -36,6 +36,7 @@
       <todo v-if="activePage === 'Todo'"></todo>
       <mind-map v-if="activePage === 'Mind Map'"></mind-map>
       <statistics v-if="activePage === 'Statistics'"></statistics>
+      <!-- <game v-if="activePage === 'Game'"></game> -->
     </div>
 
     <!-- other components -->
@@ -57,6 +58,7 @@ import MindMap from '@/components/mind-map/mind-map.vue';
 import Statistics from '@/components/statistics/statistics.vue';
 import readonly from '@/components/readonly/readonly';
 import review from '@/components/review/review';
+// import Game from '@/components/game/game';
 // eslint-disable-next-line no-unused-vars
 import {
   bookSvg,
@@ -70,7 +72,8 @@ import {
   todoSvg,
   statisticsSvg,
   nightModeSvg,
-  fluorescentPen
+  fluorescentPenSvg,
+  // gameSvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -87,7 +90,8 @@ export default {
     StickyNote,
     SearchNoteBar,
     Statistics,
-    FluorescentPen
+    FluorescentPen,
+    // Game
   },
   data() {
     return {
@@ -204,7 +208,7 @@ export default {
         },
         {
           name: 'Fluorescent Pen',
-          icon: fluorescentPen,
+          icon: fluorescentPenSvg,
           type: 'button',
           onclick: () => {
             this.isUsingFluorescentPen = !this.isUsingFluorescentPen;
@@ -213,6 +217,11 @@ export default {
           keyMap: ['Ctrl', 'Shift', 'X'],
           lastStatus: false,
         },
+        // {
+        //   name: 'Game',
+        //   icon: gameSvg,
+        //   type: 'page',
+        // },
         // {
         //   name: 'plugin', icon: pluginSvg, type: 'button', onclick: () => {}, lastStatus: false,
         // },

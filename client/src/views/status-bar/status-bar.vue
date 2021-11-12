@@ -1,6 +1,7 @@
 <template>
   <div id="status-bar">
     <div class="cur-note-path items" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
+    <div class="url items" :title="url" @click="copyUrl">Url</div>
     <!-- <div class="note-properties items" title="Set Current Note Properties">Prop</div> -->
     <div class="Time items" :title="'Time, click to restart'" @click="restartTime">Time: {{ timeStr }}</div>
     <div class="progress items" :title="`Current Progress: ${progress}%`">Progress: {{ progress }}%</div>
@@ -34,6 +35,7 @@ export default {
       updateDelay: 2000,
       changeSeasonTimeInterval: 3000,
       recommendedMaxNumOfWords: 30000,
+      url: window.location.origin,
       season: '',
       curSeasonTimeType: 'season',
       seasonTimeTypes: ['season', 'time', 'icon'],
@@ -136,6 +138,11 @@ export default {
      */
     copyNotePath() {
       const text = this.notePath;
+      tools.copyText(text);
+    },
+
+    copyUrl() {
+      const text = this.url;
       tools.copyText(text);
     },
   },
