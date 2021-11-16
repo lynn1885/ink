@@ -246,17 +246,22 @@ export default function (editor) {
         // 获取标题内容
         const headersContent = {};
         headers.dataSorted.forEach((headerObj, index) => {
-          if (index < headers.dataSorted.length - 1) {
-            const key = `${index}. ${headerObj.headerLineText}`;
-            const startLineNum = headerObj.headerLineNum;
-            const endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
-            let curHeaderContent = '';
-            for (let i = startLineNum; i <= endLineNum; i += 1) {
-              curHeaderContent += doc.getLine(i);
-              curHeaderContent += '\n';
-            }
-            headersContent[key] = curHeaderContent;
+          const key = `${index}. ${headerObj.headerLineText}`;
+          const startLineNum = headerObj.headerLineNum;
+          let endLineNum;
+          if (headers.dataSorted[index + 1]) { // 非最后一个标题的内容: 结束于下一个标题开始前
+            endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
+          } else { // 最后一个标题在哪里结束? 确定起来比较特殊
+            const headerArr = editor.getHeadersArray();
+            endLineNum = editor.getHeaderEndAtLineNum(headerArr, headerArr.lines[startLineNum]);
+            console.log(headerArr.lines, endLineNum);
           }
+          let curHeaderContent = '';
+          for (let i = startLineNum; i <= endLineNum; i += 1) {
+            curHeaderContent += doc.getLine(i);
+            curHeaderContent += '\n';
+          }
+          headersContent[key] = curHeaderContent;
         });
 
         // 重新排序

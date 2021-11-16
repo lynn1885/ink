@@ -655,17 +655,36 @@ export default class {
     }
     const lines = text.split('\n');
     const headers = [];
+    headers.lines = {};
+
     for (let i = 0; i < lines.length; i += 1) {
       const headerLv = this.getHeaderLvByStr(lines[i]);
       if (headerLv && headerLv > 0) {
-        headers.push({
+        const headerObj = {
           lineNum: i,
           lv: headerLv,
           text: lines[i],
-        });
+          index: headers.length,
+        };
+
+        headers.push(headerObj);
+        headers.lines[i] = headerObj;
       }
     }
     return headers;
+  }
+
+  /**
+   *
+   * @param {Array} headerArr getHeadersArray返回的header数组
+   * @param {Object} curHeaderObj getHeadersArray返回的header数组中的元素对象, 也是要查询的这个header的信息对象
+   * @returns {number} 当前header的结束行是哪一行(含这一行)
+   */
+  getHeaderEndAtLineNum(headerArr, curHeaderObj) {
+    headerArr = headerArr.filter(headerObj => headerObj.lv <= curHeaderObj.lv);
+    const index = headerArr.findIndex(headerObj => headerObj === curHeaderObj);
+    if (headerArr[index + 1]) return headerArr[index + 1].lineNum - 1;
+    return this.cm.getDoc().lineCount() - 1;
   }
 
   /**
