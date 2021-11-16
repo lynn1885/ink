@@ -239,57 +239,45 @@ export default function (editor) {
     },
 
     [map.assignHeader]: (cm) => {
-      // const doc = cm.getDoc();
-      // const cursor = doc.getCursor();
-      // const headers = editor.getHeaderSiblings(cursor);
-      // if (headers && headers.dataSorted && headers.dataSorted.length) {
-      //   // 获取标题内容
-      //   const headersContent = {};
-      //   headers.dataSorted.forEach((headerObj, index) => {
-      //     if (index < headers.dataSorted.length - 1) {
-      //       const key = `${index}. ${headerObj.headerLineText}`;
-      //       const startLineNum = headerObj.headerLineNum;
-      //       const endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
-      //       let curHeaderContent = '';
-      //       for (let i = startLineNum; i <= endLineNum; i += 1) {
-      //         curHeaderContent += doc.getLine(i);
-      //         curHeaderContent += '\n';
-      //       }
-      //       headersContent[key] = curHeaderContent;
-      //     }
-      //   });
+      const doc = cm.getDoc();
+      const cursor = doc.getCursor();
+      const headers = editor.getHeaderSiblings(cursor);
+      if (headers && headers.dataSorted && headers.dataSorted.length) {
+        // 获取标题内容
+        const headersContent = {};
+        headers.dataSorted.forEach((headerObj, index) => {
+          if (index < headers.dataSorted.length - 1) {
+            const key = `${index}. ${headerObj.headerLineText}`;
+            const startLineNum = headerObj.headerLineNum;
+            const endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
+            let curHeaderContent = '';
+            for (let i = startLineNum; i <= endLineNum; i += 1) {
+              curHeaderContent += doc.getLine(i);
+              curHeaderContent += '\n';
+            }
+            headersContent[key] = curHeaderContent;
+          }
+        });
 
-      //   // 重新排序
-      //   const newHeaders = {};
+        // 重新排序
+        const newHeaders = {};
 
-      //   let keyTextArr = Object.keys(headersContent).map((key) => {
-      //     let headerText = key.replace(/[#\s\d.*]+/g, '');
-      //     headerText = headerText.replace(/`.+`/g, '');
-      //     headerText = headerText.replace(/: /, '的');
-      //     headerText = headerText.replace(/:/, '');
-      //     headerText = headerText.replace(/, /, '');
-      //     headerText = headerText.replace(/，/, '');
-      //     headerText = headerText.replace(/名词/, '');
-      //     headerText = headerText.replace(/分类/, '');
-      //     headerText = headerText.replace(/简答/, '');
-      //     headerText = headerText.replace(/论述/, '');
-      //     headerText = headerText.replace(/简述/, '');
-      //     headerText = headerText.replace(/试论述/, '');
-      //     headerText = headerText.replace(/试述/, '');
-      //     headerText = headerText.replace(/\s+/, '');
-      //     console.log(headerText);
-      //     return [key, headerText];
-      //   });
+        let keyTagArr = Object.keys(headersContent).map((key) => {
+          const tag = key.match(/`.+`/);
+          if (tag && tag.length) {
+            return [key, tag[0]];
+          }
+          return [key, ''];
+        });
 
-      //   keyTextArr = keyTextArr.sort((keyItem1, keyItem2) => keyItem1[1].localeCompare(keyItem2[1]));
-
-      //   keyTextArr.forEach((keyItem) => {
-      //     newHeaders[keyItem[0]] = headersContent[keyItem[0]];
-      //   });
-
-      //   const newText = Object.values(newHeaders).join('\n');
-      //   tools.copyText(newText);
-      // }
+        keyTagArr = keyTagArr.sort((keyItem1, keyItem2) => keyItem2[1].localeCompare(keyItem1[1]));
+        keyTagArr.forEach((keyItem) => {
+          newHeaders[keyItem[0]] = headersContent[keyItem[0]];
+        });
+        const newText = Object.values(newHeaders).join('\n');
+        tools.copyText(newText);
+        editor.messager.success('已排序, 并复制到剪贴板. 请粘贴至某处');
+      }
     },
 
     // degrage headers
