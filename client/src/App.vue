@@ -132,7 +132,7 @@ export default {
 
       this.possibleBgImgSrc = possibleBgImgSrc;
       this.curBgImgIndex = 0;
-      this.curBgImgSrc = './';
+      this.curBgImgSrc = '';
     },
 
     // 测试背景图: 一张加载失败时, 尝试加载另一张
@@ -144,6 +144,8 @@ export default {
         this.changeBgImgTimer = setTimeout(() => {
           if (this.curBgImgSrc) {
             this.realBgImgSrc = this.curBgImgSrc;
+          } else {
+            this.realBgImgSrc = '';
           }
         }, 200);
       }

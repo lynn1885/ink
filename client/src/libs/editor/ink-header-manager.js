@@ -6,8 +6,7 @@ const map = {
   insertHeaderChild: 'Ctrl-L',
   insertHeaderNextParent: 'Ctrl-H',
   insertNextLiUnderHeader: 'Ctrl-O',
-  reorderList: 'Ctrl-Alt-O',
-  addHeaderOrder: 'Ctrl-Alt-L',
+  reorder: 'Ctrl-Alt-L',
   assignHeader: 'Ctrl-Alt-K',
   upgradeHeaders: 'Shift-Ctrl-[',
   degrageHeaders: 'Shift-Ctrl-]',
@@ -31,7 +30,6 @@ export default function (editor) {
         } else if (parentHeaderLastLineNum) {
           insertLineNum = parentHeaderLastLineNum;
         }
-        console.log(headerLineText);
         // 插入
         let headerStr = '';
         for (let i = 0; i < headerLv; i += 1) {
@@ -157,54 +155,16 @@ export default function (editor) {
       }
     },
 
-    // add order for header
-    [map.reorderList]: (cm) => {
-      editor.playAudio('sort');
-      const doc = cm.getDoc();
-      const sel = doc.getSelection();
-      if (sel) {
-        let marker;
-        doc.replaceSelection(sel.replace(/^(\d+). /gm, (match, group1) => {
-          let res;
-          if (marker) {
-            marker += 1;
-            res = `${marker}. `;
-          } else {
-            marker = Number.parseInt(group1, 10);
-            res = `${marker}. `;
-          }
-          return res;
-        }));
-      } else {
-        // eslint-disable-next-line prefer-const
-        let { headerLv, headerLineNum } = editor.getHeaderByCursor();
-        if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
-        const lineCount = doc.lineCount();
-        let marker = 1;
-        for (let i = headerLineNum + 1; i < lineCount; i += 1) {
-          const text = doc.getLine(i);
-          if (text.match(/^(#+) /)) {
-            break;
-          }
-          if (text.match(/^\d+. /)) {
-            doc.replaceRange(
-              text.replace(/^\d+. /, `${marker}. `),
-              { line: i, ch: 0 },
-              { line: i, ch: text.length },
-            );
-            marker += 1;
-          }
-        }
-      }
-    },
-
-    // add order for headers
-    [map.addHeaderOrder]: (cm) => {
+    // reorder or add order
+    [map.reorder]: (cm) => {
       editor.playAudio('sort');
       const doc = cm.getDoc();
       const cursor = doc.getCursor();
       const lineText = cm.lineInfo(cursor.line).text;
+      const sel = doc.getSelection();
+
       if (editor.isThisTextAHeader(lineText)) {
+        // 当前行是标题行, 标题重排序
         const headers = editor.getHeaderSiblings(cursor);
         if (headers && headers.dataSorted && headers.dataSorted.length) {
           let jumpNum = 0;
@@ -235,6 +195,52 @@ export default function (editor) {
             );
           });
         }
+      } else if (editor.isThisTextAList(lineText)) {
+        // 当前行是list, list重排序
+        if (sel) {
+          let marker;
+          doc.replaceSelection(sel.replace(/^(\d+). /gm, (match, group1) => {
+            let res;
+            if (marker) {
+              marker += 1;
+              res = `${marker}. `;
+            } else {
+              marker = Number.parseInt(group1, 10);
+              res = `${marker}. `;
+            }
+            return res;
+          }));
+        } else {
+          // eslint-disable-next-line prefer-const
+          let { headerLv, headerLineNum } = editor.getHeaderByCursor();
+          if (!headerLv) headerLineNum = -1; // 此时前面没有标题, 应该从第0行开始替换. 又因为下面循环中会+1, 所以标记为-1, (-1 + 1 = 0)
+          const lineCount = doc.lineCount();
+          let marker = 1;
+          for (let i = headerLineNum + 1; i < lineCount; i += 1) {
+            const text = doc.getLine(i);
+            if (text.match(/^(#+) /)) {
+              break;
+            }
+            if (text.match(/^\d+. /)) {
+              doc.replaceRange(
+                text.replace(/^\d+. /, `${marker}. `),
+                { line: i, ch: 0 },
+                { line: i, ch: text.length },
+              );
+              marker += 1;
+            }
+          }
+        }
+      } else if (sel) {
+        // 当前行既不是标题, 也不是list, 而且有选择, 则给选中的行添加需要
+        const newSel = sel.split('\n')
+          .map((line, index) => {
+            line = line.replace(/^\d+. /, '');
+            line = `${(index + 1)}. ${line}`;
+            return line;
+          })
+          .join('\n');
+        doc.replaceSelection(newSel);
       }
     },
 
@@ -254,7 +260,6 @@ export default function (editor) {
           } else { // 最后一个标题在哪里结束? 确定起来比较特殊
             const headerArr = editor.getHeadersArray();
             endLineNum = editor.getHeaderEndAtLineNum(headerArr, headerArr.lines[startLineNum]);
-            console.log(headerArr.lines, endLineNum);
           }
           let curHeaderContent = '';
           for (let i = startLineNum; i <= endLineNum; i += 1) {

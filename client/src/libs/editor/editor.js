@@ -550,6 +550,16 @@ export default class {
   }
 
   /**
+   * isThisTextAHeader: 检测传入的文本是不是一个list
+   * @param {string} text
+   * @returns {boolean} 是的话返回true, 否则返回false
+   */
+  // eslint-disable-next-line class-methods-use-this
+  isThisTextAList(text) {
+    return text.match(/^\d+. /);
+  }
+
+  /**
    * getHeaderLvByStr 根据传入的字符串, 判断header等级
    * @param {string} str
    * @returns {number} headerLv
@@ -614,7 +624,7 @@ export default class {
     const hierarchy = [];
     const lastMeetHeaders = []; // [lastHeader1, lastHeader2....lastHeader6]
     for (let i = 0; i < lineArr.length; i += 1) {
-      const matchRes = lineArr[i].match(/^(#+)\s(.+)/);
+      const matchRes = lineArr[i].match(/^(#+)\s(.*)/);
       if (matchRes && matchRes[1].length > 0) {
         const headerLv = matchRes[1].length;
         if (headerLv === 1) {

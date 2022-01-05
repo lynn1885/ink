@@ -19,6 +19,7 @@ export default {
       jm: null, // 脑图实例
       contentUpdateTimer: null, // 内容变更时的计时器, 用于实现节流
       isShowMindMap: true,
+      isProhibitLineJump: false, // 是否禁用行跳转
     };
   },
 
@@ -40,7 +41,7 @@ export default {
     '$store.state.editor.curCursorLineNum': {
       immediate: true,
       handler(lineNum) {
-        this.onCursorMove(lineNum);
+        if (!this.isProhibitLineJump) this.onCursorMove(lineNum);
       }
     }
   },
@@ -118,13 +119,15 @@ export default {
 
     // 编辑时
     onChanges(e) {
+      this.isProhibitLineJump = true; // 编辑时禁用跳转
+
       clearTimeout(this.contentUpdateTimer);
       this.contentUpdateTimer = setTimeout(() => {
         this.build(this.editor); // 重新构建mind map
         const curCursorLine = e.doc.getCursor().line;
-        this.onCursorMove(curCursorLine - 1, 'auto'); // 将mind map滚动到当前正在编辑的这一行
-        this.onCursorMove(curCursorLine, 'auto'); // hack. 这样先移动到目标行的前一行, 再移动到目标行, 可以防止位置闪烁
-      }, 1000);
+        this.onCursorMove(curCursorLine, 'auto');
+        this.isProhibitLineJump = false;
+      }, 500);
     },
 
     // 点击mind map时

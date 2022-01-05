@@ -91,6 +91,9 @@ export default {
   components: {
     NoteIcon,
   },
+  props: {
+    timestamp: Number
+  },
   data() {
     return {
       editor: null,
@@ -166,6 +169,12 @@ export default {
         }
       },
     },
+
+    timestamp: {
+      handler() {
+        if (this.$refs['search-bar']) this.$refs['search-bar'].focus();
+      }
+    }
   },
 
   computed: {

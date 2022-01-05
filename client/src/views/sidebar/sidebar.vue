@@ -28,14 +28,14 @@
     <!-- page -->
     <div id="tool-pages">
       <!--never close catalog-->
-      <catalog v-show="activePage === 'Catalog'"></catalog>
+      <catalog v-show="activePage === 'Catalog'" :timestamp="changeToolTimestamp"></catalog>
 
-      <search v-if="activePage === 'Search'"></search>
-      <outline v-if="activePage === 'Outline'"></outline>
-      <note-map v-if="activePage === 'Note Map'"></note-map>
-      <todo v-if="activePage === 'Todo'"></todo>
-      <mind-map v-if="activePage === 'Mind Map'"></mind-map>
-      <statistics v-if="activePage === 'Statistics'"></statistics>
+      <search v-if="activePage === 'Search'" :timestamp="changeToolTimestamp"></search>
+      <outline v-if="activePage === 'Outline'" :timestamp="changeToolTimestamp"></outline>
+      <note-map v-if="activePage === 'Note Map'" :timestamp="changeToolTimestamp"></note-map>
+      <todo v-if="activePage === 'Todo'" :timestamp="changeToolTimestamp"></todo>
+      <mind-map v-if="activePage === 'Mind Map'" :timestamp="changeToolTimestamp"></mind-map>
+      <statistics v-if="activePage === 'Statistics'" :timestamp="changeToolTimestamp"></statistics>
       <!-- <game v-if="activePage === 'Game'"></game> -->
     </div>
 
@@ -106,6 +106,7 @@ export default {
       toggleToolPageShortcut: ['Ctrl', 'Shift', 'B'],
       sideBarWidth: '380px',
       defaultSideBarWidth: '380px',
+      changeToolTimestamp: Date.now(), // 切换工具的时间戳
       // tool name must be unique
       tools: [
         {
@@ -261,6 +262,7 @@ export default {
 
   methods: {
     changeTool(tool, isOpenSideBar) {
+      this.changeToolTimestamp = Date.now();
       if (isEnableConsole) {
         console.log('change tool: ', tool);
       }
@@ -315,8 +317,9 @@ export default {
         if (!tool.keyMap) {
           continue;
         } else {
-          this.editor.bindShortcutKeyMap(document, tool.keyMap, () =>
-            this.changeTool(tool, true));
+          this.editor.bindShortcutKeyMap(document, tool.keyMap, () => {
+            this.changeTool(tool, true);
+          });
         }
       }
     },

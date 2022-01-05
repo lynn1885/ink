@@ -70,6 +70,7 @@ export default {
 
 // build mind map data
 function buildMindMapData(hierarchy, root) {
+  console.log(123, hierarchy);
   const data = [root];
   let i = 1;
   for (const node1 of hierarchy) {
