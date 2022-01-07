@@ -24,6 +24,8 @@ export default function (editor, config) {
     if (item && item.type.includes('image')) {
       e.preventDefault();
       formData.append('file', item.getAsFile()); // don't modify the argu value 'file', sever will use this value for receive file
+      console.log(item.getAsFile());
+
       await _upload(formData, editor, config.upload, config.messager);
     }
   });

@@ -36,13 +36,14 @@
       <todo v-if="activePage === 'Todo'" :timestamp="changeToolTimestamp"></todo>
       <mind-map v-if="activePage === 'Mind Map'" :timestamp="changeToolTimestamp"></mind-map>
       <statistics v-if="activePage === 'Statistics'" :timestamp="changeToolTimestamp"></statistics>
-      <!-- <game v-if="activePage === 'Game'"></game> -->
+      <batch v-if="activePage === 'Batch'" :timestamp="changeToolTimestamp"></batch>
+      <paint v-if="activeButtons.Paint" :timestamp="changeToolTimestamp"></paint>
     </div>
 
     <!-- other components -->
-    <sticky-note v-if="isShowStickyNote"></sticky-note>
-    <fluorescent-pen v-if="isUsingFluorescentPen"></fluorescent-pen>
-    <search-note-bar v-if="isShowSearchNoteBar" @close="isShowSearchNoteBar = false"></search-note-bar>
+    <sticky-note v-if="activeButtons['Sticky Note']"></sticky-note>
+    <fluorescent-pen v-if="activeButtons['Fluorescent Pen']"></fluorescent-pen>
+    <search-note-bar v-if="activeButtons['Search Note Bar']" @close="activeButtons['Search Note Bar'] = false"></search-note-bar>
   </div>
 </template>
 <script>
@@ -56,9 +57,11 @@ import FluorescentPen from '@/components/fluorescent-pen/fluorescent-pen.vue';
 import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
 import MindMap from '@/components/mind-map/mind-map.vue';
 import Statistics from '@/components/statistics/statistics.vue';
-import readonly from '@/components/readonly/readonly';
-import review from '@/components/review/review';
-// import Game from '@/components/game/game';
+import Readonly from '@/components/readonly/readonly';
+import Review from '@/components/review/review';
+import Batch from '@/components/batch/batch';
+import Paint from '@/components/paint/paint';
+
 // eslint-disable-next-line no-unused-vars
 import {
   bookSvg,
@@ -73,7 +76,8 @@ import {
   statisticsSvg,
   nightModeSvg,
   fluorescentPenSvg,
-  // gameSvg
+  batchSvg,
+  paintSvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -91,7 +95,8 @@ export default {
     SearchNoteBar,
     Statistics,
     FluorescentPen,
-    // Game
+    Batch,
+    Paint
   },
   data() {
     return {
@@ -117,10 +122,9 @@ export default {
         },
         {
           name: 'Read Only',
-          icon: readonly.icon,
+          icon: Readonly.icon,
           type: 'button',
-          onclick: readonly.handler,
-          lastStatus: false,
+          onclick: Readonly.handler,
         },
         {
           name: 'Search',
@@ -132,26 +136,16 @@ export default {
           name: 'Sticky Note',
           icon: stickyNoteSvg,
           type: 'button',
-          onclick: () => {
-            this.isShowStickyNote = !this.isShowStickyNote;
-            return this.isShowStickyNote;
-          },
           keyMap: ['Ctrl', 'Shift', 'Y'],
-          lastStatus: false,
         },
         {
           name: 'Search Note Bar',
           icon: null,
           type: 'button',
-          onclick: () => {
-            this.isShowSearchNoteBar = !this.isShowSearchNoteBar;
-            return this.isShowSearchNoteBar;
-          },
           keyMap: ['Ctrl', 'P'],
           onEsc: () => {
             this.isShowSearchNoteBar = false;
           },
-          lastStatus: false,
         },
         {
           name: 'Outline',
@@ -172,18 +166,14 @@ export default {
         },
         {
           name: 'Review',
-          icon: review.icon,
+          icon: Review.icon,
           type: 'button',
-          onclick: review.handler,
-          lastStatus: false,
+          onclick: Review.handler,
           keyMap: ['Ctrl', 'Shift', 'R'],
         },
         {
           name: 'Mind Map',
           icon: mindMapSvg,
-          // type: 'button',
-          // onclick: mindMap.handler,
-          // lastStatus: false,
           type: 'page',
           sideBarWidth: '50%',
           keyMap: ['Ctrl', 'Shift', 'M'],
@@ -194,29 +184,27 @@ export default {
           type: 'page',
         },
         {
+          name: 'Batch',
+          icon: batchSvg,
+          type: 'page',
+        },
+        {
           name: 'Night Mode',
           icon: nightModeSvg,
-          type: 'button',
           onclick: (editor, lastStatus) => {
-            let flag = false;
-            if (lastStatus === false) {
-              flag = true;
-            }
-            this.$store.commit('updateIsNightModeOn', flag);
-            return flag;
+            this.$store.commit('updateIsNightModeOn', !lastStatus);
           },
-          lastStatus: false,
+          type: 'button',
         },
         {
           name: 'Fluorescent Pen',
           icon: fluorescentPenSvg,
           type: 'button',
-          onclick: () => {
-            this.isUsingFluorescentPen = !this.isUsingFluorescentPen;
-            return this.isUsingFluorescentPen;
-          },
-          keyMap: ['Ctrl', 'Shift', 'X'],
-          lastStatus: false,
+        },
+        {
+          name: 'Paint',
+          icon: paintSvg,
+          type: 'button',
         },
         // {
         //   name: 'Game',
@@ -276,19 +264,19 @@ export default {
         this.activePage = tool.name;
         this.sideBarWidth = tool.sideBarWidth || this.defaultSideBarWidth;
         // "button" tool is a button, which will trigger something
-      } else if (tool.type === 'button' && tool.onclick) {
-        tool.lastStatus = tool.onclick(
-          this.$store.state.editor,
-          tool.lastStatus,
-          this
-        );
+      } else if (tool.type === 'button') {
+        if (tool.onclick) {
+          tool.onclick(
+            this.$store.state.editor,
+            this.activeButtons[tool.name],
+            this
+          );
+        }
+
         if (!this.activeButtons[tool.name]) {
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
-        }
-        if (tool.lastStatus) {
-          this.activeButtons[tool.name] = true;
         } else {
-          this.activeButtons[tool.name] = false;
+          this.$set(this.activeButtons, tool.name, false);
         }
       }
     },
