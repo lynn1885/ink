@@ -24,11 +24,22 @@ export default function (editor, config) {
     if (item && item.type.includes('image')) {
       e.preventDefault();
       formData.append('file', item.getAsFile()); // don't modify the argu value 'file', sever will use this value for receive file
-      console.log(item.getAsFile());
-
       await _upload(formData, editor, config.upload, config.messager);
     }
   });
+
+  // 手动上传图片函数
+  editor.uploadImg = async function uploadImg(base64Str) {
+    const matchRes = base64Str.match(/data:(.+?);/);
+    if (matchRes && matchRes.length) {
+      const fileType = matchRes[1];
+      const imgFile = convertBase64ToImgFile(base64Str, 'paint', fileType);
+      console.log(imgFile);
+      const formData = new FormData();
+      formData.append('file', imgFile);
+      await _upload(formData, editor, config.upload, config.messager, imgFile.name);
+    }
+  };
 
   // render image
   editor.cm.on('renderLine', (cm, line, el) => {
@@ -107,8 +118,9 @@ export default function (editor, config) {
  * @param {object} editor editor对象
  * @param {function} upload 上传图片的函数, 从外部传入, 需要是个异步函数
  * @param {function} messager 通知器
+ * @param {string} fileName 文件名, 仅用于笔记中显示
  */
-async function _upload(formData, editor, upload, messager) {
+async function _upload(formData, editor, upload, messager, fileName) {
   formData.set('fileDir', editor.fileServer.curFileDir);
   const imgInfo = await upload(formData, messager);
   const doc = editor.cm.getDoc();
@@ -134,7 +146,22 @@ async function _upload(formData, editor, upload, messager) {
     startChar = 0;
     addLineNum = 2;
   }
-  doc.replaceRange(`${beforeText}![](${imgInfo.dir}/${imgInfo.fileName})\n${endText}`, { line: lineNum, ch: startChar }, { line: lineNum, ch: lineText.length });
+  doc.replaceRange(`${beforeText}![${fileName || ''}](${imgInfo.dir}/${imgInfo.fileName})\n${endText}`, { line: lineNum, ch: startChar }, { line: lineNum, ch: lineText.length });
   doc.setCursor({ line: lineNum + addLineNum, ch: 0 });
 }
 
+// 把base64字符串转换为img文件
+function convertBase64ToImgFile(base64Str, fileName, fileType) {
+  base64Str = base64Str.substring(base64Str.indexOf(',') + 1); // 图片base64, 要先去掉开头的data:image/gif;头部
+  const bytes = window.atob(base64Str); // 解码base64
+  const ab = new ArrayBuffer(bytes.length);
+  const ia = new Int8Array(ab);
+  for (let index = 0; index < bytes.length; index += 1) {
+    ia[index] = bytes.charCodeAt(index);
+  }
+
+  const blob = new Blob([ab], { type: fileType });
+  blob.lastModifiedDate = new Date();
+  blob.name = fileName;
+  return blob;
+}

@@ -37,7 +37,7 @@
       <mind-map v-if="activePage === 'Mind Map'" :timestamp="changeToolTimestamp"></mind-map>
       <statistics v-if="activePage === 'Statistics'" :timestamp="changeToolTimestamp"></statistics>
       <batch v-if="activePage === 'Batch'" :timestamp="changeToolTimestamp"></batch>
-      <paint v-if="activeButtons.Paint" :timestamp="changeToolTimestamp"></paint>
+      <paint v-if="activeButtons.Paint" :timestamp="changeToolTimestamp" @close="activeButtons.Paint = false"></paint>
     </div>
 
     <!-- other components -->
@@ -205,6 +205,7 @@ export default {
           name: 'Paint',
           icon: paintSvg,
           type: 'button',
+          keyMap: ['Ctrl', 'Shift', 'P'],
         },
         // {
         //   name: 'Game',

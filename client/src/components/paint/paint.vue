@@ -4,12 +4,34 @@
     <div class="tools-container">
       <!-- 撤回 -->
       <div
+        class="tool replace"
+        @click="replaceThisLine"
+      >
+        <div class="tool-name">
+          <i class="el-icon-refresh"></i>
+          替换这一行: {{curLineNum}}. {{curLineText}}
+        </div>
+      </div>
+      <!-- 撤回 -->
+      <div
        class="tool"
         @click="undo()"
       >
         <i class="el-icon-back"></i>
         <div class="tool-name">
           撤回
+        </div>
+      </div>
+
+      <!-- 清空 -->
+      <div
+        class="tool"
+        title="双击按钮, 清空画布"
+        @dblclick="empty()"
+      >
+        <i class="el-icon-delete"></i>
+        <div class="tool-name">
+          清空
         </div>
       </div>
 
@@ -21,7 +43,7 @@
         @click="setTool(toolName, toolObj)"
       >
         <div
-          :class="['inner', toolObj.type]"
+          :class="['inner', toolObj.type, toolObj.brush]"
           :style="{
             width: toolObj.width * 3 + 'px',
             height: toolObj.width * 3 + 'px',
@@ -39,14 +61,14 @@
       <canvas
         id="canvas"
         width="700px"
-        height="1000px"
+        height="700px"
         ref="canvas"
       ></canvas>
     </div>
 
     <!-- 预览 -->
     <div class="img-preview">
-      <img :src="imgPreviewData">
+      <img :src="imgPreviewData" ref="img-preview">
     </div>
 
   </div>
@@ -54,6 +76,7 @@
 <script>
 // fabric基础库
 import { fabric } from 'fabric';
+import config from '@/config';
 
 export default {
   name: 'paint',
@@ -61,10 +84,14 @@ export default {
     return {
       editor: null,
       canvas: null, // 画板
+      emptyCanvas: null, // 空画板
       activeToolName: 'pen1', // 当前激活的工具,
       historyArr: [], // 历史状态
       isPreventRecordHistory: false, // 是否禁用历史记录, 有些操作需要禁用
       imgPreviewData: null, // 预览的图片
+      curLineNum: null, // 当前鼠标所在行
+      curLineText: '', // 当前鼠标所在行的文字
+      previewImgTimer: null, // 预览图片的timer
       tools: {
         eraser: {
           width: 20,
@@ -126,59 +153,142 @@ export default {
           type: 'pen'
         },
         penOpacityBlack: {
-          color: 'rgba(0, 0, 0, 0.3)',
+          color: 'rgba(0, 0, 0, 0.6)',
           width: 20,
           name: '透黑',
           type: 'pen'
         },
         penOpacityBigGray: {
-          color: 'rgba(120, 120, 120, 0.3)',
+          color: 'rgba(120, 120, 120, 0.6)',
           width: 20,
           name: '透灰',
           type: 'pen'
         },
         penOpacityGreen: {
-          color: 'rgba(39, 169, 59, 0.3)',
+          color: 'rgba(39, 169, 59, 0.6)',
           width: 20,
           name: '透绿',
           type: 'pen'
         },
         penOpacityCyan: {
-          color: 'rgb(67, 254, 245, 0.3)',
+          color: 'rgb(67, 254, 245, 0.6)',
           width: 20,
           name: '透青',
           type: 'pen'
         },
         penOpacityBlue: {
-          color: 'rgba(73, 121, 255, 0.3)',
+          color: 'rgba(73, 121, 255, 0.6)',
           width: 20,
           name: '透蓝',
           type: 'pen'
         },
         penOpacityYellow: {
-          color: 'rgba(255, 212, 64, 0.3)',
+          color: 'rgba(255, 212, 64, 0.6)',
           width: 20,
           name: '透黄',
           type: 'pen'
         },
         penOpacityOrange: {
-          color: 'rgba(255, 178, 64, 0.3)',
+          color: 'rgba(255, 178, 64, 0.6)',
           width: 20,
           name: '透橙',
           type: 'pen'
         },
+        penOpacityPink: {
+          color: 'rgba(255, 182, 182, 0.6)',
+          width: 20,
+          name: '透粉',
+          type: 'pen'
+        },
         penOpacityRed: {
-          color: 'rgba(255, 93, 82, 0.3)',
+          color: 'rgba(255, 93, 82, 0.6)',
           width: 20,
           name: '透红',
           type: 'pen'
         },
         penOpacityPurple: {
-          color: 'rgba(179, 64, 217, 0.3)',
+          color: 'rgba(179, 64, 217, 0.6)',
           width: 20,
           name: '透紫',
           type: 'pen'
-        }
+        },
+        penFillBlack: {
+          color: 'black',
+          width: 2,
+          name: '填充黑',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillWhite: {
+          color: '#fcfcfc',
+          width: 2,
+          name: '填充白',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillGray: {
+          color: '#aaa',
+          width: 2,
+          name: '填充灰',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillGreen: {
+          color: 'rgb(101, 204, 103)',
+          width: 2,
+          name: '填充绿',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillCyan: {
+          color: 'rgb(154, 255, 255)',
+          width: 2,
+          name: '填充青',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillBlue: {
+          color: 'rgb(153, 204, 253)',
+          width: 2,
+          name: '填充蓝',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillLightYellow: {
+          color: 'rgb(243, 219, 194)',
+          width: 2,
+          name: '填充土',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillYellow: {
+          color: 'rgb(255, 212, 64)',
+          width: 2,
+          name: '填充黄',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillOrange: {
+          color: 'rgb(255, 178, 64)',
+          width: 2,
+          name: '填充橙',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillRed: {
+          color: 'rgb(255, 153, 153)',
+          width: 2,
+          name: '填充红',
+          type: 'pen',
+          brush: 'fill'
+        },
+        penFillPurple: {
+          color: 'rgb(203, 152, 255)',
+          width: 2,
+          name: '填充紫',
+          type: 'pen',
+          brush: 'fill'
+        },
       }
     };
   },
@@ -190,13 +300,25 @@ export default {
       handler(value) {
         if (value) {
           this.editor = value;
+          setTimeout(() => {
+            this.getOldImg();
+          }, 0);
         }
+      },
+    },
+    // eslint-disable-next-line func-names
+    '$store.state.editor.curCursorLineNum': {
+      immediate: true,
+      handler(value) {
+        this.onEditorLineChange(value);
       },
     },
   },
 
   methods: {
+    // 创建画布
     buildCanvas() {
+      // 创建画布
       this.canvas = new fabric.Canvas('canvas'); // 可以通过鼠标方法缩小,旋转
       this.canvas.isDrawingMode = true;
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
@@ -208,8 +330,17 @@ export default {
           return;
         }
         this.historyArr.push(JSON.stringify(this.canvas));
-        console.log(this.historyArr.length);
+        console.log('历史步骤:', this.historyArr.length);
         if (this.historyArr.length > 50) this.historyArr.shift(); // 最多保留50步
+      });
+
+      // fill画笔, 起笔自动填充
+      this.canvas.on('mouse:up', () => {
+        const curTool = this.tools[this.activeToolName];
+        if (curTool && curTool.type === 'pen' && curTool.brush === 'fill') {
+          const objects = this.canvas.getObjects();
+          objects[objects.length - 1].fill = curTool.color;
+        }
       });
 
       // 添加白底
@@ -220,8 +351,48 @@ export default {
         top: 0,
         fill: '#fff',
       });
-      // 绘制矩形
       this.canvas.add(backgroundRect);
+
+      // 记录初始状态
+      this.emptyCanvas = JSON.stringify(this.canvas);
+
+      // 恢复旧画布
+      const previousPaint = localStorage.getItem('previousPaint');
+      if (previousPaint) {
+        this.canvas.loadFromJSON(previousPaint);
+      }
+    },
+
+    // 当光标所在行变化时
+    onEditorLineChange(lineNum) {
+      const doc = this.editor.cm.getDoc();
+      const lineText = doc.getLine(lineNum);
+      this.curLineNum = lineNum;
+      this.curLineText = lineText;
+    },
+
+    // 获取旧的图片
+    getOldImg() {
+      const doc = this.editor.cm.getDoc();
+      const cursor = doc.getCursor();
+      const lineText = doc.getLine(cursor.line);
+      if (lineText.startsWith('![')) {
+        const matchRes = lineText.match(/!\[.*?\]\((.+?)\)/);
+        console.log(matchRes);
+        if (matchRes && matchRes.length) {
+          const imgSrc = config.server.staticImagesUrl + matchRes[1];
+
+          const imgEl = new Image(); // 创建新的图片对象
+          imgEl.onload = (e) => { // 图片加载完，再draw 和 toDataURL
+            if (e && e.path && e.path[0] && e.path[0].width && e.path[0].height) {
+              this.canvas.setDimensions({ width: e.path[0].width, height: e.path[0].height });
+            }
+            this.canvas.add(new fabric.Image(imgEl));
+          };
+          imgEl.crossOrigin = 'anonymous'; // 设置跨域
+          imgEl.src = imgSrc;
+        }
+      }
     },
 
     // 设置工具
@@ -231,8 +402,10 @@ export default {
       if (toolObj.type === 'pen') {
         switch (toolObj.brush) {
           // 粉笔
-          case 'crayon':
-
+          case 'fill':
+            this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
+            this.canvas.freeDrawingBrush.color = 'black';
+            this.canvas.freeDrawingBrush.width = 2;
             break;
           // 默认笔
           default:
@@ -259,20 +432,48 @@ export default {
       }
     },
 
+    // 清空
+    empty() {
+      this.canvas.loadFromJSON(this.emptyCanvas);
+    },
+
     // 保存图片
     previewImg() {
-      setInterval(() => {
-        this.isPreventRecordHistory = true;
-        // 去除两个像素编创
-        const imgData = this.canvas.toDataURL({
-          width: this.canvas.width - 2,
-          height: this.canvas.height - 2,
-          left: 2,
-          top: 2,
-          format: 'jpeg',
-        });
-        this.imgPreviewData = imgData;
+      this.previewImgTimer = setInterval(() => {
+        this.imgPreviewData = this.getImgBase64();
       }, 3000);
+    },
+
+    // 获取画布图片base64
+    getImgBase64() {
+      this.isPreventRecordHistory = true;
+      // 去除两个像素边框
+      return this.canvas.toDataURL({
+        width: this.canvas.width - 2,
+        height: this.canvas.height - 2,
+        left: 2,
+        top: 2,
+        format: 'jpeg',
+      });
+    },
+
+    // 替换这一行
+    replaceThisLine() {
+      if (this.editor && this.editor.uploadImg) {
+        // 清空当前行
+        const doc = this.editor.cm.getDoc();
+        doc.replaceRange(
+          '',
+          { line: this.curLineNum, ch: 0 },
+          { line: this.curLineNum, ch: this.curLineText.length },
+        );
+
+        const imgData = this.getImgBase64();
+        this.imgPreviewData = imgData;
+        this.editor.uploadImg(imgData);
+
+        this.$emit('close');
+      }
     }
   },
 
@@ -281,8 +482,13 @@ export default {
     this.previewImg();
   },
 
-  destroyed() {
-  },
+  beforeDestroy() {
+    clearInterval(this.previewImgTimer);
+    if (this.historyArr.length) {
+      localStorage.setItem('previousPaint', this.historyArr[this.historyArr.length - 1]);
+    }
+  }
+
 };
 </script>
 
@@ -293,7 +499,7 @@ export default {
   position: fixed;
   left: $icon-bar-width;
   right: $icon-bar-width;
-  bottom: $icon-bar-width;
+  bottom: 30px;
   height: 450px;
   border-radius: 4px;
   overflow: hidden;
@@ -310,6 +516,14 @@ export default {
     backdrop-filter: blur(10px);
     padding: 4px;
     box-sizing: border-box;
+    /* 替换 */
+    .replace {
+      flex-shrink: 0;
+      flex-basis: 100%;
+      flex-grow: 1;
+      margin: 4px 0px!important;
+      border-radius: 2px!important;
+    }
     /* 每个工具 */
     .tool {
       flex-shrink: 0;
@@ -318,8 +532,8 @@ export default {
       justify-content: center;
       align-items: center;
       flex-direction: column;
-      width: 40px;
-      height: 40px;
+      width: 30px;
+      height: 30px;
       border-radius: 100%;
       margin: 4px;
       cursor: pointer;
@@ -335,18 +549,22 @@ export default {
         margin-bottom: 4px;
         &.pen {
           border-radius: 100%;
-          max-width: 15px;
-          max-height: 15px;
+          max-width: 12px;
+          max-height: 12px;
+          // 填充笔刷
+          &.fill {
+            border-radius: 0px;
+          }
         }
         &.eraser {
-          max-width: 15px;
-          max-height: 15px;
+          max-width: 12px;
+          max-height: 12px;
           background: rgb(236, 230, 230);
         }
       }
       .tool-name {
         color: #999;
-        font-size: 10px;
+        font-size: 8px;
       }
     }
   }
