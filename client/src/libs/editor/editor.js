@@ -529,7 +529,7 @@ export default class {
    */
   isThisLineAHeader(lineNum) {
     let res = false;
-    if (!lineNum) {
+    if (typeof lineNum !== 'number') {
       ({ lineNum } = this.cm.getCursor());
     }
     const headerLv = this.getHeaderLvByStr(this.cm.lineInfo(lineNum).text);
@@ -690,11 +690,42 @@ export default class {
    * @param {Object} curHeaderObj getHeadersArray返回的header数组中的元素对象, 也是要查询的这个header的信息对象
    * @returns {number} 当前header的结束行是哪一行(含这一行)
    */
-  getHeaderEndAtLineNum(headerArr, curHeaderObj) {
+  getHeaderEndAtLineNumByHeaderArray(headerArr, curHeaderObj) {
     headerArr = headerArr.filter(headerObj => headerObj.lv <= curHeaderObj.lv);
     const index = headerArr.findIndex(headerObj => headerObj === curHeaderObj);
     if (headerArr[index + 1]) return headerArr[index + 1].lineNum - 1;
     return this.cm.getDoc().lineCount() - 1;
+  }
+
+  /**
+   * 获取当前标题的结尾行
+   * @param {number} headerLineNum 标题所在行行号
+   * @returns {undefined | number} 标题结束行行号, 没有找到则返回undefined
+   */
+  getHeaderEndAtLineNum(headerLineNum) {
+    const headerArr = this.getHeadersArray();
+    const curHeaderObj = headerArr.lines[headerLineNum];
+    if (!curHeaderObj) return undefined;
+    return this.getHeaderEndAtLineNumByHeaderArray(headerArr, curHeaderObj);
+  }
+
+
+  getHeaderContent(headerLineNum) {
+    // 如果当前行不是header, 直接返回
+    if (!this.isThisLineAHeader(headerLineNum)) return '';
+
+    // 获取当前标题结束行, 获取不到则直接返回
+    const endLineNum = this.getHeaderEndAtLineNum(headerLineNum);
+    if (!endLineNum) return '';
+
+
+    // 获取文本
+    const doc = this.cm.getDoc();
+    const res = [];
+    for (let i = headerLineNum; i <= endLineNum; i += 1) {
+      res.push(doc.getLine(i));
+    }
+    return res.join('\n');
   }
 
   /**

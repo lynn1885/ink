@@ -13,7 +13,10 @@
   </div>
 </template>
 <script>
+import tools from '@/tools/tools';
+
 const opeartionKeys = {
+  ADD_LIST_MARK: 'ADD_LIST_MARK',
   CHANGE_LIST_MARK_1: 'CHANGE_LIST_MARK_1',
   CHANGE_LIST_MARK_2: 'CHANGE_LIST_MARK_2',
   CHANGE_LIST_MARK_3: 'CHANGE_LIST_MARK_3',
@@ -41,6 +44,8 @@ export default {
     return {
       editor: null,
       operations: {
+        [opeartionKeys.ADD_LIST_MARK]: '给光标所在的标题下的内容添加序号①②③',
+        separator3: 'separator',
         [opeartionKeys.CHANGE_LIST_MARK_1]: '把（1）替换为1. ',
         [opeartionKeys.CHANGE_LIST_MARK_7]: '把(1)替换为1. ',
         [opeartionKeys.CHANGE_LIST_MARK_2]: '把（一）替换为1. ',
@@ -84,14 +89,33 @@ export default {
       if (!this.editor) return;
       const doc = this.editor.cm.getDoc();
       const selection = doc.getSelection();
-      if (!selection) {
+      if (!selection && key !== opeartionKeys.ADD_LIST_MARK) {
         this.editor.messager.warning('请先用鼠标框选要修改的文本');
         return;
       }
-      const selectionLines = selection.split('\n');
+      let selectionLines = selection.split('\n');
 
       // 修改
       switch (key) {
+        // 给当前标题内容添加需要
+        case opeartionKeys.ADD_LIST_MARK: {
+          const startLineNum = doc.getCursor().line;
+          const endLineNum = this.editor.getHeaderEndAtLineNum(startLineNum);
+          const endLineText = doc.getLine(endLineNum);
+          doc.setSelection({ line: startLineNum, ch: 0 }, { line: endLineNum, ch: endLineText.length });
+          selectionLines = doc.getSelection().split('\n');
+
+          const newText = selectionLines
+            .map((line, index) => {
+              line += ' ';
+              line += tools.indexMark[(index + 1)];
+              return line;
+            })
+            .join('\n');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
         // 把（1）替换为1.
         case opeartionKeys.CHANGE_LIST_MARK_1: {
           const newText = selectionLines
@@ -288,12 +312,13 @@ export default {
       /* 分隔符 */
       &.separator {
         width: 100%;
-        height: 10px;
+        height: 0px;
+        border-bottom: 2px dashed #ccc;
         margin: 0;
         padding: 0;
+        background: transparent;
         color: transparent;
         border-radius: 0;
-        /* background: $sidebar-item-hover-bg */
       }
     }
 

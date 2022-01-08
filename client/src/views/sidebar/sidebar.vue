@@ -205,6 +205,11 @@ export default {
           name: 'Paint',
           icon: paintSvg,
           type: 'button',
+          onclick: () => {
+            if (!this.activeButtons.Paint) { // 展开侧边栏, 防止paint界面无法显示
+              this.isSideBarSmallMode = false;
+            }
+          },
           keyMap: ['Ctrl', 'Shift', 'P'],
         },
         // {

@@ -259,7 +259,7 @@ export default function (editor) {
             endLineNum = headers.dataSorted[index + 1].headerLineNum - 1;
           } else { // 最后一个标题在哪里结束? 确定起来比较特殊
             const headerArr = editor.getHeadersArray();
-            endLineNum = editor.getHeaderEndAtLineNum(headerArr, headerArr.lines[startLineNum]);
+            endLineNum = editor.getHeaderEndAtLineNumByHeaderArray(headerArr, headerArr.lines[startLineNum]);
           }
           let curHeaderContent = '';
           for (let i = startLineNum; i <= endLineNum; i += 1) {

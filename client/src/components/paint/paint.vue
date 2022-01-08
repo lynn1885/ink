@@ -2,16 +2,17 @@
   <div id="paint">
     <!-- 工具 -->
     <div class="tools-container">
-      <!-- 撤回 -->
+      <!-- 导出 -->
       <div
-        class="tool replace"
+        class="tool tool-button replace"
         @click="replaceThisLine"
       >
         <div class="tool-name">
           <i class="el-icon-refresh"></i>
-          替换这一行: {{curLineNum}}. {{curLineText}}
+          {{isThisAImgLine ? '替换这一行: ' : '在这一行后插入: '}}{{curLineNum}}. {{curLineText}}
         </div>
       </div>
+
       <!-- 撤回 -->
       <div
        class="tool"
@@ -41,6 +42,7 @@
         v-for="(toolObj, toolName) of tools"
         :key="toolName"
         @click="setTool(toolName, toolObj)"
+        @dblclick="setBackgroundColor(toolObj)"
       >
         <div
           :class="['inner', toolObj.type, toolObj.brush]"
@@ -58,6 +60,16 @@
 
     <!-- 画板 -->
     <div class="canvas-container">
+      <div class="numbers">
+        <div
+          class="number"
+          v-for="(mark, index) of indexMark"
+          :key="index"
+          @click="onClickMark(mark)"
+        >
+          {{mark}}
+        </div>
+      </div>
       <canvas
         id="canvas"
         width="700px"
@@ -77,6 +89,7 @@
 // fabric基础库
 import { fabric } from 'fabric';
 import config from '@/config';
+import tools from '@/tools/tools';
 
 export default {
   name: 'paint',
@@ -85,29 +98,39 @@ export default {
       editor: null,
       canvas: null, // 画板
       emptyCanvas: null, // 空画板
-      activeToolName: 'pen1', // 当前激活的工具,
+      activeToolName: 'penBlack', // 当前激活的工具,
       historyArr: [], // 历史状态
       isPreventRecordHistory: false, // 是否禁用历史记录, 有些操作需要禁用
       imgPreviewData: null, // 预览的图片
       curLineNum: null, // 当前鼠标所在行
       curLineText: '', // 当前鼠标所在行的文字
-      previewImgTimer: null, // 预览图片的timer
+      startPreviewImgTimer: null, // 预览图片的timer
+      isThisAImgLine: false, // 这一行是图片行吗
+      indexMark: tools.indexMark,
+      curMark: null, // 当前mark
+      markTextPair: JSON.parse(JSON.stringify(tools.markEmpty)),
       tools: {
         eraser: {
           width: 20,
           type: 'eraser',
           name: '橡皮'
         },
-        penBlack: {
-          color: 'black',
+        penWhite: {
+          color: '#fff',
           width: 2,
-          name: '黑',
+          name: '白',
           type: 'pen'
         },
         penGray: {
           color: '#aaa',
           width: 2,
           name: '灰',
+          type: 'pen'
+        },
+        penBlack: {
+          color: 'black',
+          width: 2,
+          name: '黑',
           type: 'pen'
         },
         penGreen: {
@@ -150,6 +173,12 @@ export default {
           color: 'rgb(179, 64, 217)',
           width: 2,
           name: '紫',
+          type: 'pen'
+        },
+        penNone: {
+          color: '#fff',
+          width: 0,
+          name: '空',
           type: 'pen'
         },
         penOpacityBlack: {
@@ -307,12 +336,12 @@ export default {
       },
     },
     // eslint-disable-next-line func-names
-    '$store.state.editor.curCursorLineNum': {
-      immediate: true,
-      handler(value) {
-        this.onEditorLineChange(value);
-      },
-    },
+    // '$store.state.editor.curCursorLineNum': {
+    //   immediate: true,
+    //   handler(value) {
+    //     this.onEditorLineChange(value);
+    //   },
+    // },
   },
 
   methods: {
@@ -322,6 +351,8 @@ export default {
       this.canvas = new fabric.Canvas('canvas'); // 可以通过鼠标方法缩小,旋转
       this.canvas.isDrawingMode = true;
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
+      this.canvas.freeDrawingBrush.width = 2;
+      this.canvas.freeDrawingBrush.color = 'black';
 
       // 画布上添加图形或使用橡皮擦会触发 after:render 事件，我们在此时保存当前画布状态
       this.canvas.on('after:render', () => {
@@ -340,6 +371,38 @@ export default {
         if (curTool && curTool.type === 'pen' && curTool.brush === 'fill') {
           const objects = this.canvas.getObjects();
           objects[objects.length - 1].fill = curTool.color;
+        }
+      });
+
+      // 添加mark
+      this.canvas.on('mouse:down', (e) => {
+        if (this.curMark) {
+          // 添加①②③...
+          const markTextObj = new fabric.Textbox(this.curMark, {
+            left: e.pointer.x - 10,
+            top: e.pointer.y - 10,
+            fontSize: 14,
+            fill: 'red'
+          });
+          this.canvas.add(markTextObj);
+
+          // 添加内容
+          const lineTextObj = new fabric.Textbox(this.markTextPair[this.curMark] || '', {
+            left: e.pointer.x + 10,
+            top: e.pointer.y - 10,
+            width: 200,
+            fontSize: 12,
+            fill: '#333'
+          });
+          this.canvas.add(lineTextObj);
+
+          // 恢复画笔
+          setTimeout(() => {
+            const toolObj = this.tools[this.activeToolName];
+            this.canvas.freeDrawingBrush.width = toolObj.width;
+            this.canvas.freeDrawingBrush.color = toolObj.color;
+            this.curMark = '';
+          }, 500);
         }
       });
 
@@ -363,13 +426,31 @@ export default {
       }
     },
 
-    // 当光标所在行变化时
-    onEditorLineChange(lineNum) {
+    // 获取光标所在行
+    getCursorLine() {
+      // 获取光标所在行
       const doc = this.editor.cm.getDoc();
-      const lineText = doc.getLine(lineNum);
-      this.curLineNum = lineNum;
-      this.curLineText = lineText;
+      const cursor = doc.getCursor();
+      this.curLineNum = cursor.line;
+      this.curLineText = doc.getLine(this.curLineNum);
+      doc.setCursor({ line: this.curLineNum, ch: this.curLineText.length });
+
+      // 获取当前标题内容
+      const headerContent = this.editor.getHeaderContent(this.curLineNum);
+      const headerContentArr = headerContent.split('\n');
+      headerContentArr.forEach((line) => {
+        const mark = line[line.length - 1];
+        this.markTextPair[mark] = line.slice(0, -1).replace(/^#+ /, '');
+      });
     },
+
+    // 当光标所在行变化时
+    // onEditorLineChange(lineNum) {
+    //   const doc = this.editor.cm.getDoc();
+    //   const lineText = doc.getLine(lineNum);
+    //   this.curLineNum = lineNum;
+    //   this.curLineText = lineText;
+    // },
 
     // 获取旧的图片
     getOldImg() {
@@ -377,11 +458,12 @@ export default {
       const cursor = doc.getCursor();
       const lineText = doc.getLine(cursor.line);
       if (lineText.startsWith('![')) {
+        this.isThisAImgLine = true;
         const matchRes = lineText.match(/!\[.*?\]\((.+?)\)/);
         console.log(matchRes);
         if (matchRes && matchRes.length) {
+          this.canvas.loadFromJSON(this.emptyCanvas);
           const imgSrc = config.server.staticImagesUrl + matchRes[1];
-
           const imgEl = new Image(); // 创建新的图片对象
           imgEl.onload = (e) => { // 图片加载完，再draw 和 toDataURL
             if (e && e.path && e.path[0] && e.path[0].width && e.path[0].height) {
@@ -423,6 +505,17 @@ export default {
       }
     },
 
+    // 设置背景颜色
+    setBackgroundColor(toolObj) {
+      if (toolObj.color) {
+        const objects = this.canvas.getObjects();
+        if (objects && objects[0]) {
+          this.canvas.getObjects()[0].set('fill', toolObj.color);
+          this.canvas.renderAll();
+        }
+      }
+    },
+
     // 撤销
     undo() {
       this.isPreventRecordHistory = true;
@@ -438,8 +531,8 @@ export default {
     },
 
     // 保存图片
-    previewImg() {
-      this.previewImgTimer = setInterval(() => {
+    startPreviewImg() {
+      this.startPreviewImgTimer = setInterval(() => {
         this.imgPreviewData = this.getImgBase64();
       }, 3000);
     },
@@ -460,13 +553,15 @@ export default {
     // 替换这一行
     replaceThisLine() {
       if (this.editor && this.editor.uploadImg) {
-        // 清空当前行
         const doc = this.editor.cm.getDoc();
-        doc.replaceRange(
-          '',
-          { line: this.curLineNum, ch: 0 },
-          { line: this.curLineNum, ch: this.curLineText.length },
-        );
+        // 如果这一行是图片行, 则清空当前行
+        if (this.isThisAImgLine) {
+          doc.replaceRange(
+            '',
+            { line: this.curLineNum, ch: 0 },
+            { line: this.curLineNum, ch: this.curLineText.length },
+          );
+        }
 
         const imgData = this.getImgBase64();
         this.imgPreviewData = imgData;
@@ -474,21 +569,29 @@ export default {
 
         this.$emit('close');
       }
+    },
+
+    // 点击mark
+    onClickMark(mark) {
+      this.curMark = mark;
+      this.canvas.freeDrawingBrush.width = 0;
+      this.canvas.freeDrawingBrush.color = 'white';
     }
+
   },
 
   mounted() {
-    this.buildCanvas();
-    this.previewImg();
+    this.buildCanvas(); // 创建画布
+    this.startPreviewImg(); // 定期显示预览
+    this.getCursorLine(); // 获取光标所在行
   },
 
   beforeDestroy() {
-    clearInterval(this.previewImgTimer);
+    clearInterval(this.startPreviewImgTimer);
     if (this.historyArr.length) {
       localStorage.setItem('previousPaint', this.historyArr[this.historyArr.length - 1]);
     }
   }
-
 };
 </script>
 
@@ -498,9 +601,9 @@ export default {
   display: flex;
   position: fixed;
   left: $icon-bar-width;
-  right: $icon-bar-width;
-  bottom: 30px;
-  height: 450px;
+  right: 0;
+  bottom: 0;
+  height: 360px;
   border-radius: 4px;
   overflow: hidden;
   z-index: 1000;
@@ -509,15 +612,15 @@ export default {
   .tools-container {
     display: flex;
     background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
     justify-content: space-between;
     align-content: flex-start;
     flex-wrap: wrap;
     width: 200px;
-    backdrop-filter: blur(10px);
     padding: 4px;
     box-sizing: border-box;
     /* 替换 */
-    .replace {
+    .tool-button {
       flex-shrink: 0;
       flex-basis: 100%;
       flex-grow: 1;
@@ -574,7 +677,26 @@ export default {
     height: 400px;
     overflow: auto;
     background: #f6f6f6;
-    padding: 30px;
+    padding: 40px 30px;
+    position: relative;
+    /* 数字 */
+    .numbers {
+      display: flex;
+      position: fixed;
+      align-items: center;
+      background: #fff;
+      box-shadow: 0px 0px 4px 0px #eee;
+      height: 30px;
+      border-radius: 6px;
+      margin-top: -35px;
+      width: fit-content;
+      z-index: 10;
+      .number  {
+        padding: 6px 10px;
+        border-right: 1px solid #eee;
+        cursor: pointer;
+      }
+    }
     #canvas {
       background: #fff;
     }
