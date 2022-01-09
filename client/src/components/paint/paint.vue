@@ -97,6 +97,8 @@ export default {
     return {
       editor: null,
       canvas: null, // 画板
+      paintImgName: 'PAINT', // 此画板导出图片的名字
+      isThisImgAPaintImg: false, // 标记这是否是一个paint生成的图片
       emptyCanvas: null, // 空画板
       activeToolName: 'penBlack', // 当前激活的工具,
       historyArr: [], // 历史状态
@@ -335,13 +337,6 @@ export default {
         }
       },
     },
-    // eslint-disable-next-line func-names
-    // '$store.state.editor.curCursorLineNum': {
-    //   immediate: true,
-    //   handler(value) {
-    //     this.onEditorLineChange(value);
-    //   },
-    // },
   },
 
   methods: {
@@ -382,7 +377,10 @@ export default {
             left: e.pointer.x - 10,
             top: e.pointer.y - 10,
             fontSize: 14,
-            fill: 'red'
+            fill: 'red',
+            paintFirst: 'stroke',
+            stroke: '#fff',
+            strokeWidth: 1.5
           });
           this.canvas.add(markTextObj);
 
@@ -392,7 +390,10 @@ export default {
             top: e.pointer.y - 10,
             width: 200,
             fontSize: 12,
-            fill: '#333'
+            fill: '#333',
+            paintFirst: 'stroke',
+            stroke: '#fff',
+            strokeWidth: 1.5
           });
           this.canvas.add(lineTextObj);
 
@@ -413,6 +414,7 @@ export default {
         left: 0,
         top: 0,
         fill: '#fff',
+        strokeWidth: 0,
       });
       this.canvas.add(backgroundRect);
 
@@ -444,14 +446,6 @@ export default {
       });
     },
 
-    // 当光标所在行变化时
-    // onEditorLineChange(lineNum) {
-    //   const doc = this.editor.cm.getDoc();
-    //   const lineText = doc.getLine(lineNum);
-    //   this.curLineNum = lineNum;
-    //   this.curLineText = lineText;
-    // },
-
     // 获取旧的图片
     getOldImg() {
       const doc = this.editor.cm.getDoc();
@@ -459,21 +453,39 @@ export default {
       const lineText = doc.getLine(cursor.line);
       if (lineText.startsWith('![')) {
         this.isThisAImgLine = true;
-        const matchRes = lineText.match(/!\[.*?\]\((.+?)\)/);
+        const matchRes = lineText.match(/!\[(.*?)\]\((.+?)\)/);
         console.log(matchRes);
         if (matchRes && matchRes.length) {
+          const imgName = matchRes[1];
+          const imgPath = matchRes[2];
           this.canvas.loadFromJSON(this.emptyCanvas);
-          const imgSrc = config.server.staticImagesUrl + matchRes[1];
+          const imgSrc = config.server.staticImagesUrl + imgPath;
           const imgEl = new Image(); // 创建新的图片对象
           imgEl.onload = (e) => { // 图片加载完，再draw 和 toDataURL
             if (e && e.path && e.path[0] && e.path[0].width && e.path[0].height) {
-              this.canvas.setDimensions({ width: e.path[0].width, height: e.path[0].height });
+              let { width, height } = e.path[0];
+              const imgObj = new fabric.Image(imgEl, {
+                left: 0,
+                top: 0,
+              });
+              if (imgName === this.paintImgName) { // 对于此画板生成的图片, 导入时尺寸/2, 因为导出时尺寸会*2
+                width /= 2;
+                height /= 2;
+                imgObj.set({
+                  scaleX: 0.5,
+                  scaleY: 0.5
+                });
+                this.isThisImgAPaintImg = true;
+              }
+              this.canvas.setDimensions({ width, height });
+              this.canvas.add(imgObj);
             }
-            this.canvas.add(new fabric.Image(imgEl));
           };
           imgEl.crossOrigin = 'anonymous'; // 设置跨域
           imgEl.src = imgSrc;
         }
+      } else {
+        this.isThisImgAPaintImg = true;
       }
     },
 
@@ -540,12 +552,12 @@ export default {
     // 获取画布图片base64
     getImgBase64() {
       this.isPreventRecordHistory = true;
-      // 去除两个像素边框
       return this.canvas.toDataURL({
-        width: this.canvas.width - 2,
-        height: this.canvas.height - 2,
-        left: 2,
-        top: 2,
+        width: this.canvas.width,
+        height: this.canvas.height,
+        left: 0,
+        top: 0,
+        multiplier: this.isThisImgAPaintImg ? 2 : 1, // 本画板生成的图片, 导出时分辨率 * 2
         format: 'jpeg',
       });
     },
@@ -565,7 +577,7 @@ export default {
 
         const imgData = this.getImgBase64();
         this.imgPreviewData = imgData;
-        this.editor.uploadImg(imgData);
+        this.editor.uploadImg(imgData, this.isThisImgAPaintImg ? this.paintImgName : '');
 
         this.$emit('close');
       }
@@ -688,6 +700,7 @@ export default {
       box-shadow: 0px 0px 4px 0px #eee;
       height: 30px;
       border-radius: 6px;
+      overflow: hidden;
       margin-top: -35px;
       width: fit-content;
       z-index: 10;

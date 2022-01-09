@@ -29,14 +29,14 @@ export default function (editor, config) {
   });
 
   // 手动上传图片函数
-  editor.uploadImg = async function uploadImg(base64Str) {
+  editor.uploadImg = async function uploadImg(base64Str, fileName) {
     const matchRes = base64Str.match(/data:(.+?);/);
     if (matchRes && matchRes.length) {
       const fileType = matchRes[1];
       const imgFile = convertBase64ToImgFile(base64Str, 'paint', fileType);
       const formData = new FormData();
       formData.append('file', imgFile);
-      await _upload(formData, editor, config.upload, config.messager, imgFile.name);
+      await _upload(formData, editor, config.upload, config.messager, fileName);
     }
   };
 
