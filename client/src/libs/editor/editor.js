@@ -530,7 +530,7 @@ export default class {
   isThisLineAHeader(lineNum) {
     let res = false;
     if (typeof lineNum !== 'number') {
-      ({ lineNum } = this.cm.getCursor());
+      ({ line: lineNum } = this.cm.getDoc().getCursor());
     }
     const headerLv = this.getHeaderLvByStr(this.cm.lineInfo(lineNum).text);
     if (headerLv) res = headerLv;
@@ -709,8 +709,20 @@ export default class {
     return this.getHeaderEndAtLineNumByHeaderArray(headerArr, curHeaderObj);
   }
 
+  /**
+   * 获取某个标题下面的内容
+   * @param {number} headerLineNum 标题所在行
+   * @param {number} onlyHeaderDeep 只获取标题(不获取内容), 并指定获取标题的深度
+   *  0: 不是只获取标题, 而是获取所有内容
+   *  1: 只获取一层标题, 比如当前标题行是四级, 就只获取四级标题
+   *  2: 只获取两层标题, 比如当前标题行是四级, 就只获取四级标题 + 五级标题
+   *  ...
+   *  6: 获取六层标题
+   * @param {boolean} isSelectionAllContent 是否同时选中当前标题(含)下的所有内容
 
-  getHeaderContent(headerLineNum) {
+   * @returns 获取到的内容
+   */
+  getHeaderContent(headerLineNum, onlyHeaderDeep = 0, isSelectionAllContent = false) {
     // 如果当前行不是header, 直接返回
     if (!this.isThisLineAHeader(headerLineNum)) return '';
 
@@ -718,13 +730,37 @@ export default class {
     const endLineNum = this.getHeaderEndAtLineNum(headerLineNum);
     if (!endLineNum) return '';
 
-
     // 获取文本
     const doc = this.cm.getDoc();
-    const res = [];
+    const endLineText = doc.getLine(endLineNum);
+    let res = [];
     for (let i = headerLineNum; i <= endLineNum; i += 1) {
       res.push(doc.getLine(i));
     }
+
+    // 按需求提取标题
+    if (onlyHeaderDeep && res.length) {
+      const firstHeaderLevelNum = this.getHeaderLvByStr(res[0]);
+      const maxHeaderLv = firstHeaderLevelNum + (onlyHeaderDeep - 1);
+      if (maxHeaderLv) {
+        res = res.filter((line) => {
+          const curLineHeaderLv = this.getHeaderLvByStr(line);
+          if (curLineHeaderLv && curLineHeaderLv <= maxHeaderLv) {
+            return true;
+          }
+          return false;
+        });
+      }
+    }
+
+    // 按需求选中当前标题下的所有内容
+    if (isSelectionAllContent) {
+      doc.setSelection(
+        { line: headerLineNum, ch: 0 },
+        { line: endLineNum, ch: endLineText.length }
+      );
+    }
+
     return res.join('\n');
   }
 
