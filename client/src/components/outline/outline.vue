@@ -353,6 +353,21 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  /* &.float {
+    display: flex;
+    position: fixed;
+    right: 10px;
+    bottom: 30px;
+    width: 230px;
+    height: 400px;
+    background: $float-bg-alpha;
+    backdrop-filter: blur(10px);
+    border-radius: 10px;
+    z-index: $float-window-index;
+    font-size: $font-size-sidebar;
+    color: $tool-page-color;
+    box-shadow: $float-box-shadow;
+  } */
 
   /* 信息栏 */
   #outline-info {
@@ -454,15 +469,14 @@ export default {
     position: absolute;
     display: flex;
     bottom: 0;
-    box-sizing: border-box;
     padding: 4px;
-    background: rgba(255, 255, 255, 0.6);
-    backdrop-filter: blur(20px);
-
+    box-sizing: border-box;
+    background: rgba(255, 255, 255, 0.9);
     width: 100%;
     .count {
       padding: 2px;
       margin: 2px;
+      flex-shrink: 0;
     }
     .lv1 {
       color: $header-1;

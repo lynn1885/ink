@@ -1,6 +1,6 @@
 /* eslint-disable import/no-unresolved */
 /**
- * 1. 目录结构硬编码为3层, 且和后端接口耦合, 较难修改
+ * 1. 目录结构硬编码为3层, 且和后端接口耦合, 不能修改
  * 2. 为了保证数据流动的简洁性
  * 所有对后端的写操作, 包括: 创建目录, 重命名, 目录排序. 都先修改后端, 然后重新获取后端数据, 前端再应用更新
  */
@@ -1044,8 +1044,6 @@ export default {
   width: 100%;
   box-sizing: border-box;
   height: 100%;
-  font-size: $font-size-sidebar;
-  color: $tool-page-color;
 }
 
 // 目录

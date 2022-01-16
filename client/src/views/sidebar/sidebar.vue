@@ -27,17 +27,57 @@
 
     <!-- page -->
     <div id="tool-pages">
+      <!-- 悬浮按钮 -->
+      <div id="float" @click="changeFloatTool" title="悬浮或取消悬浮">
+        <i class="icon el-icon-rank"></i>
+      </div>
       <!--never close catalog-->
-      <catalog v-show="activePage === 'Catalog'" :timestamp="changeToolTimestamp"></catalog>
-
-      <search v-if="activePage === 'Search'" :timestamp="changeToolTimestamp"></search>
-      <outline v-if="activePage === 'Outline'" :timestamp="changeToolTimestamp"></outline>
-      <note-map v-if="activePage === 'Note Map'" :timestamp="changeToolTimestamp"></note-map>
-      <todo v-if="activePage === 'Todo'" :timestamp="changeToolTimestamp"></todo>
-      <mind-map v-if="activePage === 'Mind Map'" :timestamp="changeToolTimestamp"></mind-map>
-      <statistics v-if="activePage === 'Statistics'" :timestamp="changeToolTimestamp"></statistics>
-      <batch v-if="activePage === 'Batch'" :timestamp="changeToolTimestamp"></batch>
-      <paint v-if="activeButtons.Paint" :timestamp="changeToolTimestamp" @close="activeButtons.Paint = false"></paint>
+      <catalog
+        v-show="activePage === 'Catalog' || floatTools.Catalog"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Catalog}"
+      ></catalog>
+      <outline
+        v-show="activePage === 'Outline' || floatTools.Outline"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Outline}"
+      ></outline>
+      <search
+        v-if="activePage === 'Search' || floatTools.Search"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Search}"
+      ></search>
+      <note-map
+        v-if="activePage === 'Note Map'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></note-map>
+      <todo
+        v-if="activePage === 'Todo' || floatTools.Todo"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Todo}"
+      ></todo>
+      <mind-map
+        v-if="activePage === 'Mind Map' || floatTools['Mind Map']"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools['Mind Map']}"
+      ></mind-map>
+      <statistics
+        v-if="activePage === 'Statistics' || floatTools.Statistics"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Statistics}"
+      ></statistics>
+      <batch
+        v-if="activePage === 'Batch' || floatTools.Batch"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true, float: floatTools.Batch}"
+      ></batch>
+      <paint
+        v-if="activeButtons.Paint"
+        :timestamp="changeToolTimestamp"
+        @close="activeButtons.Paint = false"
+        :class="{tool: true}"
+      ></paint>
     </div>
 
     <!-- other components -->
@@ -112,6 +152,15 @@ export default {
       sideBarWidth: '380px',
       defaultSideBarWidth: '380px',
       changeToolTimestamp: Date.now(), // 切换工具的时间戳
+      floatTools: {
+        Catalog: false,
+        Outline: false,
+        Search: false,
+        Todo: false,
+        'Mind Map': false,
+        Statistics: false,
+        Batch: false,
+      }, // 悬浮工具
       // tool name must be unique
       tools: [
         {
@@ -320,6 +369,17 @@ export default {
 
     resize() {
       console.log(1);
+    },
+
+    // 改变悬浮窗口
+    changeFloatTool() {
+      if (this.floatTools[this.activePage] === undefined) {
+        this.editor.messager.warning('当前工具不支持悬浮');
+      } else if (this.floatTools[this.activePage] === false) {
+        this.floatTools[this.activePage] = true;
+      } else if (this.floatTools[this.activePage] === true) {
+        this.floatTools[this.activePage] = false;
+      }
     }
   },
 
@@ -394,6 +454,41 @@ export default {
   /* backdrop-filter: blur(10px); */
   color: $tool-page-color;
   font-size: $font-size-sidebar;
+  /* 悬浮按钮 */
+  #float {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
+    right: 10px;
+    bottom: 10px;
+    height: 34px;
+    width: 34px;
+    border-radius: 60px;
+    background: $float-bg-alpha-transparent;
+    box-shadow: $float-box-shadow;
+    z-index: $float-window-index;
+    cursor: pointer;
+    .icon {
+      font-size: 16px;
+      color: #999;
+      font-weight: bold;
+    }
+  }
+  .tool.float {
+    position: fixed;
+    right: 10px;
+    bottom: 40px;
+    width: 200px;
+    height: 300px;
+    border-radius: 4px;
+    z-index: $float-window-index;
+    background: $float-bg-alpha;
+    backdrop-filter: blur(8px);
+    box-shadow: $float-box-shadow;
+    overflow: auto;
+  }
 }
 
 // other components

@@ -37,6 +37,7 @@ export default function (editor, keyMap) {
 
   const mergedKeyMap = Object.assign(defaultKeyMap, keyMap);
 
+  // 快捷键
   editor.cm.addKeyMap({
     // header
     [mergedKeyMap.header1]: (cm) => {
@@ -569,5 +570,39 @@ export default function (editor, keyMap) {
     // other
     [mergedKeyMap.alt]: () => {
     },
+  });
+
+  // 事件
+  editor.cm.on('beforeChange', (cm, change) => {
+    // 粘贴后智能格式化
+    if (change.origin === 'paste') {
+      const doc = editor.cm.getDoc();
+      const cursor = doc.getCursor();
+      const curLineText = doc.getLine(cursor.line);
+
+      const targetLineMatchRes = curLineText.match(/^(#+)\s$/);
+      if (targetLineMatchRes && targetLineMatchRes[1]) {
+        const targetLv = targetLineMatchRes[1].length;
+        if (change.text && change.text[0]) {
+          const sourceTextMatchRes = change.text[0].match(/^(#+)\s/);
+          if (sourceTextMatchRes && sourceTextMatchRes[1]) {
+            const sourceLv = sourceTextMatchRes[1].length;
+            const diffLv = sourceLv - targetLv;
+            const newText = change.text.map((line, index) => {
+              if (index === 0) return line.replace(/^(#+)\s/, '');
+              const lineMatchRes = line.match(/^(#+)\s/);
+              if (lineMatchRes && lineMatchRes[1]) {
+                const curLineLv = lineMatchRes[1].length;
+                const newLineHeader = `${'#'.repeat((curLineLv - diffLv))} `;
+                return line.replace(/^(#+)\s/, newLineHeader);
+              }
+              return line;
+            });
+            change.update(null, null, newText);
+            editor.messager.success('已智能格式化到指定等级');
+          }
+        }
+      }
+    }
   });
 }
