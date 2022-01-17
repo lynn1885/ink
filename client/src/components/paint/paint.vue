@@ -72,7 +72,7 @@
       </div>
       <canvas
         id="canvas"
-        width="700px"
+        width="1000px"
         height="700px"
         ref="canvas"
       ></canvas>
@@ -208,7 +208,7 @@ export default {
           type: 'pen'
         },
         penOpacityBlue: {
-          color: 'rgba(73, 121, 255, 0.6)',
+          color: 'rgba(73, 121, 205, 0.6)',
           width: 20,
           name: '透蓝',
           type: 'pen'
@@ -246,77 +246,77 @@ export default {
         penFillBlack: {
           color: 'black',
           width: 2,
-          name: '填充黑',
+          name: '填黑',
           type: 'pen',
           brush: 'fill'
         },
         penFillWhite: {
           color: '#fcfcfc',
           width: 2,
-          name: '填充白',
+          name: '填白',
           type: 'pen',
           brush: 'fill'
         },
         penFillGray: {
           color: '#aaa',
           width: 2,
-          name: '填充灰',
+          name: '填灰',
           type: 'pen',
           brush: 'fill'
         },
         penFillGreen: {
           color: 'rgb(101, 204, 103)',
           width: 2,
-          name: '填充绿',
+          name: '填绿',
           type: 'pen',
           brush: 'fill'
         },
         penFillCyan: {
           color: 'rgb(154, 255, 255)',
           width: 2,
-          name: '填充青',
+          name: '填青',
           type: 'pen',
           brush: 'fill'
         },
         penFillBlue: {
           color: 'rgb(153, 204, 253)',
           width: 2,
-          name: '填充蓝',
+          name: '填蓝',
           type: 'pen',
           brush: 'fill'
         },
         penFillLightYellow: {
           color: 'rgb(243, 219, 194)',
           width: 2,
-          name: '填充土',
+          name: '填土',
           type: 'pen',
           brush: 'fill'
         },
         penFillYellow: {
           color: 'rgb(255, 212, 64)',
           width: 2,
-          name: '填充黄',
+          name: '填黄',
           type: 'pen',
           brush: 'fill'
         },
         penFillOrange: {
           color: 'rgb(255, 178, 64)',
           width: 2,
-          name: '填充橙',
+          name: '填橙',
           type: 'pen',
           brush: 'fill'
         },
         penFillRed: {
           color: 'rgb(255, 153, 153)',
           width: 2,
-          name: '填充红',
+          name: '填红',
           type: 'pen',
           brush: 'fill'
         },
         penFillPurple: {
           color: 'rgb(203, 152, 255)',
           width: 2,
-          name: '填充紫',
+          name: '填紫',
           type: 'pen',
           brush: 'fill'
         },
@@ -348,6 +348,7 @@ export default {
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
       this.canvas.freeDrawingBrush.width = 2;
       this.canvas.freeDrawingBrush.color = 'black';
+
 
       // 画布上添加图形或使用橡皮擦会触发 after:render 事件，我们在此时保存当前画布状态
       this.canvas.on('after:render', () => {
@@ -388,8 +389,8 @@ export default {
           const lineTextObj = new fabric.Textbox(this.markTextPair[this.curMark] || '', {
             left: e.pointer.x + 10,
             top: e.pointer.y - 10,
-            width: 200,
-            fontSize: 12,
+            width: 70,
+            fontSize: 10,
             fill: '#333',
             paintFirst: 'stroke',
             stroke: '#fff',
@@ -415,6 +416,7 @@ export default {
         top: 0,
         fill: '#fff',
         strokeWidth: 0,
+        strokeColor: '#fff'
       });
       this.canvas.add(backgroundRect);
 
@@ -454,7 +456,6 @@ export default {
       if (lineText.startsWith('![')) {
         this.isThisAImgLine = true;
         const matchRes = lineText.match(/!\[(.*?)\]\((.+?)\)/);
-        console.log(matchRes);
         if (matchRes && matchRes.length) {
           const imgName = matchRes[1];
           const imgPath = matchRes[2];
@@ -588,7 +589,7 @@ export default {
       this.curMark = mark;
       this.canvas.freeDrawingBrush.width = 0;
       this.canvas.freeDrawingBrush.color = 'white';
-    }
+    },
 
   },
 
@@ -623,6 +624,7 @@ export default {
   /* 工具栏 */
   .tools-container {
     display: flex;
+    flex-shrink: 0;
     background: rgba(255, 255, 255, 0.3);
     backdrop-filter: blur(10px);
     justify-content: space-between;
@@ -705,7 +707,7 @@ export default {
       width: fit-content;
       z-index: 10;
       .number  {
-        padding: 6px 10px;
+        padding: 4px;
         border-right: 1px solid #eee;
         cursor: pointer;
       }
@@ -722,7 +724,7 @@ export default {
     background: #fff;
     position: absolute;
     right: 10px;
-    top: 10px;
+    top: 30px;
     z-index: 10;
     border-radius: 8px;
     box-shadow: 0px 0px 10px 0px #ddd;
