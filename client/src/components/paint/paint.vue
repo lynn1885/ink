@@ -24,18 +24,6 @@
         </div>
       </div>
 
-      <!-- 清空 -->
-      <div
-        class="tool"
-        title="双击按钮, 清空画布"
-        @dblclick="empty()"
-      >
-        <i class="el-icon-delete"></i>
-        <div class="tool-name">
-          清空
-        </div>
-      </div>
-
       <!-- 画笔 -->
       <div
         :class="['tool', activeToolName === toolName ? 'active' : '']"
@@ -54,6 +42,18 @@
         ></div>
         <div class="tool-name">
           {{toolObj.name}}
+        </div>
+      </div>
+
+      <!-- 清空 -->
+      <div
+        class="tool"
+        title="双击按钮, 清空画布"
+        @dblclick="empty()"
+      >
+        <i class="el-icon-delete"></i>
+        <div class="tool-name">
+          清空
         </div>
       </div>
     </div>
@@ -616,7 +616,7 @@ export default {
   left: $icon-bar-width;
   right: 0;
   bottom: 0;
-  height: 360px;
+  height: 440px;
   border-radius: 4px;
   overflow: hidden;
   z-index: 1000;
@@ -630,7 +630,7 @@ export default {
     justify-content: space-between;
     align-content: flex-start;
     flex-wrap: wrap;
-    width: 200px;
+    width: 180px;
     padding: 4px;
     box-sizing: border-box;
     /* 替换 */
@@ -691,7 +691,7 @@ export default {
     height: 400px;
     overflow: auto;
     background: #f6f6f6;
-    padding: 40px 30px;
+    padding: 40px;
     position: relative;
     /* 数字 */
     .numbers {
