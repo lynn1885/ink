@@ -172,6 +172,7 @@ export default {
 
     timestamp: {
       handler() {
+        console.log(123);
         if (this.$refs['search-bar']) this.$refs['search-bar'].focus();
       }
     }

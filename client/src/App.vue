@@ -2,8 +2,9 @@
   <div id="app" :class="{'zen-mode-app': isZenMode }">
     <!-- main body -->
     <div id="main">
-      <side-bar id="side-bar" :class="{'hide': !isShowSideBar}"></side-bar>
+      <side-bar id="side-bar" :class="{'hide': !isShowSideBar}" @changeRightSideBarStatus = changeRightSideBarStatus></side-bar>
       <note-content id="note-content"></note-content>
+      <div v-show="isShowRightSideBar" id="right-side-bar"></div>
       <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
     </div>
 
@@ -61,6 +62,7 @@ export default {
       defaultTheme: null,
       defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
       noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
+      isShowRightSideBar: false, // 是否展示右侧边栏
     };
   },
   watch: {
@@ -189,6 +191,11 @@ export default {
           console.warn('cannot find default theme');
         });
     },
+
+    // 改变右侧边栏状态
+    changeRightSideBarStatus(status) {
+      this.isShowRightSideBar = status;
+    }
   },
   async mounted() {
     // this is the first keydown event
@@ -263,6 +270,7 @@ textarea {
 
 // main body
 #main {
+  display: flex;
   width: 100%;
   // 使用height而非flex-basis, 是为了防止子元素撑破父元素高度(参见flex-basis章节)
   // 而设置为10%(而非100%), 是因为ios上, 100%高度无法被shrink压缩, 会而导致高度溢出
@@ -270,15 +278,19 @@ textarea {
   flex-grow: 1;
   z-index: 10;
   #side-bar {
-    float: left;
     height: 100%;
     overflow: auto;
   }
   #note-content {
+    flex-grow: 1;
     display: block;
     height: 100%;
   }
-
+  #right-side-bar {
+    width: $right-sidebar-width;
+    height: 100%;
+    flex-shrink: 0;
+  }
 }
 // side-bar
 #side-bar {
@@ -293,8 +305,8 @@ textarea {
   width: 100%;
   flex-grow: 0;
   flex-shrink: 0;
-  line-height: 24px;
-  flex-basis: 24px;
+  line-height: $status-bar-height;
+  flex-basis: $status-bar-height;
   z-index: 10;
   &.hide {
     width: 0px;

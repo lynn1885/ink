@@ -469,9 +469,10 @@ export default {
     position: absolute;
     display: flex;
     bottom: 0;
-    padding: 4px;
+    padding: 0 4px;
     box-sizing: border-box;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
     width: 100%;
     .count {
       padding: 2px;

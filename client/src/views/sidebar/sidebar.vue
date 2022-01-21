@@ -12,68 +12,74 @@
       <div
         v-for="t of tools"
         v-show="t.icon"
-        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '')"
+        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '') + '. 按住ctrl点击置于常用工具区'"
         :class="{
           'tool-icon': true,
           'active': t.name === activePage || activeButtons[t.name],
           'bottom-icon': t.isBottom
         }"
         :key="t.name"
-        @click="changeTool(t)"
+        @click.exact="changeTool(t)"
+        @click.ctrl="changeCommonTool(t.name)"
       >
         <svg viewBox="0 0 1024 1024" version="1.1" v-html="t.icon" />
       </div>
     </div>
 
     <!-- page -->
-    <div id="tool-pages">
+    <div id="tool-page" class="tool-page">
       <!-- 悬浮按钮 -->
-      <div id="float" @click="changeFloatTool" title="悬浮或取消悬浮">
-        <i class="icon el-icon-rank"></i>
+      <div
+        v-show="commonTools[activePage] === false"
+        id="float"
+        @click="changeCommonTool(activePage)"
+        title="置于右侧常用工具栏"
+      >
+        <i class="icon el-icon-arrow-right"></i>
       </div>
       <!--never close catalog-->
       <catalog
-        v-show="activePage === 'Catalog' || floatTools.Catalog"
+        v-show="activePage === 'Catalog'"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Catalog}"
+        :class="{tool: true}"
       ></catalog>
       <outline
-        v-show="activePage === 'Outline' || floatTools.Outline"
+        v-if="activePage === 'Outline' && !commonTools.Outline"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Outline}"
+        :class="{tool: true}"
       ></outline>
       <search
-        v-if="activePage === 'Search' || floatTools.Search"
+        v-if="activePage === 'Search' && !commonTools.Search"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Search}"
+        :class="{tool: true}"
       ></search>
       <note-map
-        v-if="activePage === 'Note Map'"
+        v-if="activePage === 'Note Map' && !commonTools['Note Map']"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></note-map>
       <todo
-        v-if="activePage === 'Todo' || floatTools.Todo"
+        v-if="activePage === 'Todo' && !commonTools.Todo"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Todo}"
+        :class="{tool: true}"
       ></todo>
       <mind-map
-        v-if="activePage === 'Mind Map' || floatTools['Mind Map']"
-        :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools['Mind Map']}"
+        v-if="activePage === 'Mind Map' && !commonTools['Mind Map']"
+        :timestamp="changeToolTimestamp "
+        :class="{tool: true}"
       ></mind-map>
       <statistics
-        v-if="activePage === 'Statistics' || floatTools.Statistics"
+        v-if="activePage === 'Statistics' && !commonTools.Statistics"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Statistics}"
+        :class="{tool: true}"
       ></statistics>
       <batch
-        v-if="activePage === 'Batch' || floatTools.Batch"
+        v-if="activePage === 'Batch' && !commonTools.Batch"
         :timestamp="changeToolTimestamp"
-        :class="{tool: true, float: floatTools.Batch}"
+        :class="{tool: true}"
       ></batch>
       <paint
-        v-if="activeButtons.Paint"
+        v-if="activeButtons.Paint  && !commonTools.Paint"
         :timestamp="changeToolTimestamp"
         @close="activeButtons.Paint = false"
         :class="{tool: true}"
@@ -84,6 +90,24 @@
     <sticky-note v-if="activeButtons['Sticky Note']"></sticky-note>
     <fluorescent-pen v-if="activeButtons['Fluorescent Pen']"></fluorescent-pen>
     <search-note-bar v-if="activeButtons['Search Note Bar']" @close="activeButtons['Search Note Bar'] = false"></search-note-bar>
+
+    <!-- common tools -->
+    <div v-show="isShowCommonTools" class="common-tools tool-page">
+      <div class="common-tool-container" v-for="toolName of activeCommonTools" :key="toolName">
+        <div class="title">
+          {{toolName}}
+          <i class="el-icon-close" title="关闭当前工具" @click="changeCommonTool(toolName)"></i>
+        </div>
+        <div class="tool-container">
+          <component
+          :is="toolName"
+          :timestamp="changeToolTimestamp"
+          :class="{tool: true}"
+          ></component>
+        </div>
+
+      </div>
+    </div>
   </div>
 </template>
 <script>
@@ -152,12 +176,11 @@ export default {
       sideBarWidth: '380px',
       defaultSideBarWidth: '380px',
       changeToolTimestamp: Date.now(), // 切换工具的时间戳
-      floatTools: {
-        Catalog: false,
+      isShowCommonTools: false, // 是否显示常用工具栏
+      commonTools: {
         Outline: false,
         Search: false,
         Todo: false,
-        'Mind Map': false,
         Statistics: false,
         Batch: false,
       }, // 悬浮工具
@@ -206,7 +229,7 @@ export default {
           name: 'Note Map',
           icon: noteMapSvg,
           type: 'page',
-          sideBarWidth: '50%',
+          sideBarWidth: '38%',
         },
         {
           name: 'Todo',
@@ -224,7 +247,7 @@ export default {
           name: 'Mind Map',
           icon: mindMapSvg,
           type: 'page',
-          sideBarWidth: '50%',
+          sideBarWidth: '38%',
           keyMap: ['Ctrl', 'Shift', 'M'],
         },
         {
@@ -303,6 +326,12 @@ export default {
     },
   },
 
+  computed: {
+    activeCommonTools() {
+      return Object.keys(this.commonTools).filter(tool => this.commonTools[tool]);
+    }
+  },
+
   methods: {
     changeTool(tool, isOpenSideBar) {
       this.changeToolTimestamp = Date.now();
@@ -372,13 +401,26 @@ export default {
     },
 
     // 改变悬浮窗口
-    changeFloatTool() {
-      if (this.floatTools[this.activePage] === undefined) {
-        this.editor.messager.warning('当前工具不支持悬浮');
-      } else if (this.floatTools[this.activePage] === false) {
-        this.floatTools[this.activePage] = true;
-      } else if (this.floatTools[this.activePage] === true) {
-        this.floatTools[this.activePage] = false;
+    changeCommonTool(toolName) {
+      if (this.commonTools[toolName] === undefined) {
+        this.editor.messager.warning('当前工具不支持置于常用工具区');
+        return;
+      } else if (this.commonTools[toolName] === false) {
+        if (this.activeCommonTools.length >= 2) {
+          this.editor.messager.warning('最多支持放置 2 个常用工具');
+        } else {
+          this.commonTools[toolName] = true;
+        }
+      } else if (this.commonTools[toolName] === true) {
+        this.commonTools[toolName] = false;
+      }
+
+      if (Object.values(this.commonTools).filter(tool => tool).length) {
+        this.$emit('changeRightSideBarStatus', true);
+        this.isShowCommonTools = true;
+      } else {
+        this.$emit('changeRightSideBarStatus', false);
+        this.isShowCommonTools = false;
       }
     }
   },
@@ -396,7 +438,7 @@ export default {
   transition: width 0.2s;
   &.side-bar-small-mode {
     width: $icon-bar-width!important;
-    #tool-pages {
+    #tool-page {
       display: none;
     }
   }
@@ -445,15 +487,11 @@ export default {
 }
 
 // pages
-#tool-pages {
+#tool-page {
   display: block;
   height: 100%;
   flex-grow: 1;
-  overflow: auto;
-  background-color: $tool-page-bg;
-  /* backdrop-filter: blur(10px); */
-  color: $tool-page-color;
-  font-size: $font-size-sidebar;
+
   /* 悬浮按钮 */
   #float {
     position: absolute;
@@ -488,6 +526,61 @@ export default {
     backdrop-filter: blur(8px);
     box-shadow: $float-box-shadow;
     overflow: auto;
+  }
+}
+
+/* 工具页 */
+.tool-page {
+  overflow: auto;
+  background-color: $tool-page-bg;
+  /* backdrop-filter: blur(10px); */
+  color: $tool-page-color;
+  font-size: $font-size-sidebar;
+}
+
+/* 常用工具 */
+.common-tools {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  width: 260px;
+  right: 0;
+  top: 0;
+  bottom: $status-bar-height;
+  overflow: hidden;
+  z-index: $float-window-index;
+  box-sizing: border-box;
+  /* 每个工具的容器 */
+  .common-tool-container {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 33%;
+    box-sizing: border-box;
+    border-bottom: 2px dashed #eee;
+    overflow: hidden;
+    .title {
+      padding: 0 4px;
+      display: flex;
+      flex-shrink: 0;
+      flex-grow: 0;
+      align-items: center;
+      justify-content: space-between;
+      color: #999;
+      flex-basis: 20px;
+      i {
+        background: $tool-page-bg;
+        margin-right: 4px;
+        font-size: 16px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+    }
+    .tool-container {
+      flex-grow: 1;
+      overflow: auto;
+    }
   }
 }
 

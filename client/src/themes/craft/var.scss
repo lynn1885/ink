@@ -57,6 +57,8 @@ $sidebar-item-hover-bg: rgba(237, 229, 245, 0.6);
 $sidebar-item-active-border-color: rgba(164, 119, 222, 0.9);
 $sidebar-line-height: 1.8;
 
+$right-sidebar-width: 250px;
+
 // sidebar: catalog
 $catalog-modal-bg: transparent;
 $catalog-col-border: none;
@@ -135,3 +137,5 @@ $float-box-shadow: 0px 0px 4px 0px #ddd;
 $float-bg: rgb(251, 250, 249);
 $float-bg-alpha: rgba(251, 250, 249, 0.8);
 $float-bg-alpha-transparent: rgba(251, 250, 249, 0.5);
+
+$status-bar-height: 24px;

@@ -109,11 +109,13 @@ export default {
       // 将mind map该节点滚动到视野中
       const curCursorMindNodeDom = $(`jmnode[nodeid='${curCursorMindNodeId}']`);
       if (curCursorMindNodeDom && curCursorMindNodeDom[0]) {
-        curCursorMindNodeDom[0].scrollIntoView({
-          behavior,
-          block: 'center',
-          inline: 'center',
-        });
+        setTimeout(() => {
+          curCursorMindNodeDom[0].scrollIntoView({
+            behavior,
+            block: 'center',
+            inline: 'center',
+          });
+        }, 100);
       }
     },
 

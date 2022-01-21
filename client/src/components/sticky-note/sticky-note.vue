@@ -111,7 +111,7 @@ export default {
   position: fixed;
   right: 10px;
   top: 10px;
-  z-index: $float-window-index;
+  z-index: $above-float-window-index;
   width: 240px;
   height: 240px;
   box-shadow: $float-box-shadow;
