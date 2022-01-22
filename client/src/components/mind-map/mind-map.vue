@@ -88,7 +88,7 @@ export default {
       if (!isJmCreated) {
         jm.view.zoomOut();
         jm.view.zoomOut();
-        // jm.view.zoomOut();
+        jm.view.zoomOut();
       }
 
       return false;
@@ -109,13 +109,11 @@ export default {
       // 将mind map该节点滚动到视野中
       const curCursorMindNodeDom = $(`jmnode[nodeid='${curCursorMindNodeId}']`);
       if (curCursorMindNodeDom && curCursorMindNodeDom[0]) {
-        setTimeout(() => {
-          curCursorMindNodeDom[0].scrollIntoView({
-            behavior,
-            block: 'center',
-            inline: 'center',
-          });
-        }, 100);
+        curCursorMindNodeDom[0].scrollIntoView({
+          behavior,
+          block: 'center',
+          inline: 'center',
+        });
       }
     },
 

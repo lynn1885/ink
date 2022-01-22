@@ -330,10 +330,14 @@ export default {
       immediate: true,
       handler(value) {
         if (value) {
-          this.editor = value;
-          setTimeout(() => {
-            this.getOldImg();
-          }, 0);
+          if (!this.editor) {
+            this.editor = value;
+            setTimeout(() => {
+              this.getOldImg();
+            }, 0);
+          } else {
+            this.$message.warning('暂不支持切换编辑器, 请重新打开画图组件');
+          }
         }
       },
     },

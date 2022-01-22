@@ -48,8 +48,7 @@ export default {
     '$store.state.editor': function (value) {
       if (value) {
         this.editor = value;
-        this.editor.on('changes', this.changesHandler);
-        this.editor.on('cursorActivity', this.cursorActivityHandler);
+        this.start();
       }
     },
     // eslint-disable-next-line func-names
@@ -64,13 +63,20 @@ export default {
     },
     // eslint-disable-next-line func-names
     '$store.state.curFilePath': function (value) {
-      if (value) {
+      if (value && this.editor) {
         this.notePath = value.replace(/\/[^/]+.md/, '');
-        this.restartTime();
+        this.start();
       }
     },
   },
   methods: {
+    start() {
+      this.clear();
+      this.editor.on('changes', this.changesHandler);
+      this.editor.on('cursorActivity', this.cursorActivityHandler);
+      this.restartTime();
+      this.getWordAndLineCount();
+    },
     // on change
     changesHandler() {
       clearTimeout(this.updateTime);
@@ -145,12 +151,18 @@ export default {
       const text = this.url;
       tools.copyText(text);
     },
+
+    clear() {
+      if (this.editor) {
+        this.editor.off('changes', this.changesHandler);
+        this.editor.off('cursorActivity', this.cursorActivityHandler);
+      }
+      clearInterval(this.timeCounter);
+    }
   },
 
   beforeDestroy() {
-    this.editor.off('changes', this.changesHandler);
-    this.editor.off('cursorActivity', this.cursorActivityHandler);
-    clearInterval(this.timeCounter);
+    this.clear();
   }
 };
 </script>

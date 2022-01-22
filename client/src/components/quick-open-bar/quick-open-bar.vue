@@ -25,17 +25,19 @@
 <script>
 import NoteIcon from '@/components/note-icon/note-icon.vue';
 
-const isEnableConsole = false;
+const isEnableConsole = true;
 
 export default {
   name: 'quick-open-bar',
   components: {
     NoteIcon,
   },
+  props: {
+    editor: null,
+    curFilePath: '',
+  },
   data() {
     return {
-      editor: null,
-      curFilePath: '',
       curFileDir: '',
       fixedNoteDirs: [],
       tempNoteDir: '',
@@ -45,9 +47,7 @@ export default {
   },
 
   watch: {
-    // eslint-disable-next-line func-names
-    '$store.state.editor': {
-      immediate: true,
+    editor: {
       handler(value) {
         if (value) {
           this.editor = value;
@@ -59,15 +59,12 @@ export default {
       },
     },
 
-    // eslint-disable-next-line func-names
-    '$store.state.curFilePath': {
-      immediate: true,
+    curFilePath: {
       handler(value) {
         if (value) {
           if (isEnableConsole) {
             console.log('curFilePath changed:', value);
           }
-          this.curFilePath = value;
           const curFilePathArr = this.curFilePath.split('/');
           this.curFileDir = `${curFilePathArr[0]}/${curFilePathArr[1]}/${curFilePathArr[2]}/`;
           if (!this.fixedNoteDirs.includes(this.curFileDir)) {
@@ -75,7 +72,6 @@ export default {
           }
         // when open nothing
         } else {
-          this.curFilePath = '';
           this.curFileDir = '';
           if (this.tempNoteDir === this.curFileDir) {
             this.tempNoteDir = '';
@@ -244,13 +240,12 @@ export default {
     // change note
     async _changeNote(noteDir) {
       // save & record cursor position
-      // As long as the notedir is switched, save will be triggered
+      // As long as the notedir is switched, saving will be triggered
       // regardless of whether the current note has changed.
       // beacuse we need to save the cursor position
       // change note
-      console.log(this.curFilePath);
-      if (this.curFilePath) {
-        await this.$store.state.editor.runCommand('SAVE', {
+      if (this.curFilePathArr && this.curFilePathArr.length) {
+        await this.editor.runCommand('SAVE', {
           triggerType: 'SWITCH_TAB',
         });
       }

@@ -1,7 +1,7 @@
 <template>
   <div
     v-show="isFileLoaded"
-    id="editor"
+    class="editor"
     ref="editor"
   ></div>
 </template>
@@ -21,6 +21,8 @@ import Files from '@/models/files';
 import Images from '@/models/images';
 import UserConfig from '@/models/user-config';
 import config from '@/config';
+
+const isEnableConsole = true;
 
 export default {
   name: 'editor',
@@ -73,7 +75,7 @@ export default {
       // 给editor添加快捷键
       this.editor.cm.addKeyMap({
         'Ctrl-S': async () => {
-          await this.saveFile('MANUAL', true);
+          await this._saveFile('MANUAL', true);
         },
       });
 
@@ -87,9 +89,37 @@ export default {
       };
       this.editor.cm.on('change', () => {
         this.isFileContentChanged = true;
+        // 如果还有别的编辑器打开了当前笔记, 则同步更新那些编辑器中的内容
+        const curEditingFilePath = this.editor.fileServer.curFilePath;
+        const curFileContent = this.editor.cm.getValue();
+        for (const editor of this.$store.state.allEditors.values()) {
+          if (
+            editor !== this.editor // 别的编辑器
+            && editor.fileServer.curFilePath === curEditingFilePath // 打开了相同页面
+            && editor.cm.getValue() !== curFileContent // 但是和我们的内容不一样
+          ) {
+            console.log('同步更新编辑器: ', editor.id);
+            editor.cm.getDoc().setValue(curFileContent); // 更新那些别的编辑器
+          }
+        }
       });
 
+      // 给editor添加id
+      let editorId = Number(sessionStorage.getItem('editorId') || 0);
+      editorId += 1;
+      this.editor.id = editorId;
+      this.$set(this.editor, 'isActive', false);
+      sessionStorage.setItem('editorId', editorId);
+      this.$emit('editor', this.editor);
+      if (isEnableConsole) {
+        console.log('创建editor: ', this.editor.id, this.editor);
+      }
+
       // 上传editor到vuex
+      this.$store.commit('updateAllEditors', {
+        operation: 'add',
+        editor: this.editor
+      });
       this.$store.commit('updateEditor', this.editor);
     },
 
@@ -112,14 +142,14 @@ export default {
       this.$store.commit('updateIsProhibitOperation', true);
       // 指令: 清空编辑器. 清空编辑器不会保存当前文件未保存的内容, 也不会删除后台的物理文件
       if (command === 'CLEAN') {
-        this.cleanEditor();
+        this._cleanEditor();
         // 指令: 保存
       } else if (command === 'SAVE') {
         // 保存
         if (typeof info === 'object') {
-          await this.saveFile(info.triggerType, info.isShowSuccessInfo);
+          await this._saveFile(info.triggerType, info.isShowSuccessInfo);
         } else {
-          await this.saveFile();
+          await this._saveFile();
         }
         // 指令: 打开新文件
       } else if (command === 'OPENFILE') {
@@ -131,7 +161,7 @@ export default {
         try {
           if (this.isFileContentChanged) {
             this._turnOffAutoSave();
-            await this.saveFile('CLOSE');
+            await this._saveFile('CLOSE');
           }
           await this._loadFile(info);
         } catch (e) {
@@ -172,6 +202,7 @@ export default {
       this._autoFold(this.curFilePath);
       this._setCurNoteTheme();
       this._markCmdLine();
+      this.$emit('curEditFilePath', filePath);
       this.$store.commit('updateCurFilePath', filePath); // 标记着加载完成
     },
 
@@ -196,7 +227,7 @@ export default {
      * 默认: 'AUTO'
      * @param {boolean} isShowSuccessInfo 保存成功后是否显示保存成功信息
      */
-    async saveFile(triggerType, isShowSuccessInfo) {
+    async _saveFile(triggerType, isShowSuccessInfo) {
       const filePath = this.curFilePath;
       if (!filePath) {
         this.$message.error('save file: invalid filePath');
@@ -265,12 +296,12 @@ export default {
         path: filePath,
         data,
       };
-
+      console.log('保存文件', this.editor.id, content.path);
       await Files.update(content, this.$message, isShowSuccessInfo);
     },
 
     // 清理编辑器
-    cleanEditor() {
+    _cleanEditor() {
       this.curFileDir = null;
       this.curFilePath = null;
       this._turnOffAutoSave();
@@ -287,7 +318,7 @@ export default {
      */
     onbeforeunload(event) {
       if (this.isFileContentChanged && this.curFilePath) {
-        this.saveFile('BEFOREUNLOAD', true);
+        this._saveFile('BEFOREUNLOAD', true);
         event.returnValue = 'has a unsaved file!';
         return 'has a unsaved file!';
       }
@@ -315,7 +346,7 @@ export default {
       if (this.autoSaveInterval > 0) {
         this.autoSaveTimer = setInterval(async () => {
           if (this.isFileContentChanged) {
-            await this.saveFile('AUTO');
+            await this._saveFile('AUTO');
           }
         }, this.autoSaveInterval);
         console.log(`[start auto save]: ${this.curFilePath}, interval: ${this
@@ -445,5 +476,19 @@ export default {
     // 设置网页卸载前自动保存
     window.addEventListener('beforeunload', this.onbeforeunload);
   },
+
+  async beforeDestory() {
+    if (isEnableConsole) {
+      console.log('关闭editor:', this.editor.id, this.editor);
+    }
+    this.$store.commit('updateAllEditors', {
+      operation: 'remove',
+      editor: this.editor
+    });
+    await this.runCommand('SAVE');
+    await this.runCommand('CLEAN');
+
+    window.removeEventListener('beforeunload', this.onbeforeunload);
+  }
 };
 </script>

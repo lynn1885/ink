@@ -39,6 +39,7 @@
 
     <!-- search info -->
     <div id="search-info">
+      {{curFilePath}}
       <div v-show="isSearchDone">
         <div
           v-if="searchedItemsNum < maxSearchResLength"
@@ -172,7 +173,6 @@ export default {
 
     timestamp: {
       handler() {
-        console.log(123);
         if (this.$refs['search-bar']) this.$refs['search-bar'].focus();
       }
     }

@@ -12,7 +12,7 @@
       <div
         v-for="t of tools"
         v-show="t.icon"
-        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '') + '. 按住ctrl点击置于常用工具区'"
+        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '')"
         :class="{
           'tool-icon': true,
           'active': t.name === activePage || activeButtons[t.name],
@@ -122,6 +122,7 @@ import SearchNoteBar from '@/components/search-note-bar/search-note-bar.vue';
 import MindMap from '@/components/mind-map/mind-map.vue';
 import Statistics from '@/components/statistics/statistics.vue';
 import Readonly from '@/components/readonly/readonly';
+import SplitScreen from '@/components/split-screen/split-screen';
 import Review from '@/components/review/review';
 import Batch from '@/components/batch/batch';
 import Paint from '@/components/paint/paint';
@@ -199,6 +200,19 @@ export default {
           onclick: Readonly.handler,
         },
         {
+          name: 'Split Screen',
+          icon: SplitScreen.icon,
+          type: 'button',
+          isCannotActive: true,
+          onclick: SplitScreen.handler
+        },
+        {
+          name: 'Outline',
+          icon: outlineSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'Shift', 'O'],
+        },
+        {
           name: 'Search',
           icon: searchSvg,
           type: 'page',
@@ -218,12 +232,6 @@ export default {
           onEsc: () => {
             this.isShowSearchNoteBar = false;
           },
-        },
-        {
-          name: 'Outline',
-          icon: outlineSvg,
-          type: 'page',
-          keyMap: ['Ctrl', 'Shift', 'O'],
         },
         {
           name: 'Note Map',
@@ -247,7 +255,7 @@ export default {
           name: 'Mind Map',
           icon: mindMapSvg,
           type: 'page',
-          sideBarWidth: '38%',
+          sideBarWidth: '35%',
           keyMap: ['Ctrl', 'Shift', 'M'],
         },
         {
@@ -357,7 +365,9 @@ export default {
           );
         }
 
-        if (!this.activeButtons[tool.name]) {
+        if (tool.isCannotActive) { // 始终无法激活的按钮
+          this.$set(this.activeButtons, tool.name, false);
+        } else if (!this.activeButtons[tool.name]) { // 可以激活的按钮
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
         } else {
           this.$set(this.activeButtons, tool.name, false);
@@ -406,8 +416,8 @@ export default {
         this.editor.messager.warning('当前工具不支持置于常用工具区');
         return;
       } else if (this.commonTools[toolName] === false) {
-        if (this.activeCommonTools.length >= 2) {
-          this.editor.messager.warning('最多支持放置 2 个常用工具');
+        if (this.activeCommonTools.length >= 3) {
+          this.editor.messager.warning('最多支持放置 3 个常用工具');
         } else {
           this.commonTools[toolName] = true;
         }
@@ -543,7 +553,7 @@ export default {
   display: flex;
   flex-direction: column;
   position: fixed;
-  width: 260px;
+  width: $right-sidebar-width;
   right: 0;
   top: 0;
   bottom: $status-bar-height;
@@ -569,6 +579,8 @@ export default {
       justify-content: space-between;
       color: #999;
       flex-basis: 20px;
+      font-weight: bold;
+      padding-left: 4px;
       i {
         background: $tool-page-bg;
         margin-right: 4px;

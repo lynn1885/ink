@@ -3,9 +3,11 @@
     <!-- main body -->
     <div id="main">
       <side-bar id="side-bar" :class="{'hide': !isShowSideBar}" @changeRightSideBarStatus = changeRightSideBarStatus></side-bar>
-      <note-content id="note-content"></note-content>
+      <div id="all-note-content" :class="[splitScreenClass]">
+        <note-content class="note-content note-content-1"></note-content>
+        <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="true"></note-content>
+      </div>
       <div v-show="isShowRightSideBar" id="right-side-bar"></div>
-      <img src="/imgs/fluorescent-pen.png" class="zen-mode-item fluorescent-pen">
     </div>
 
     <!-- status-bar-->
@@ -63,6 +65,8 @@ export default {
       defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
       noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
       isShowRightSideBar: false, // 是否展示右侧边栏
+      isSplitScreen: false, // 是否分屏
+      splitScreenClass: '', // 分屏模式class
     };
   },
   watch: {
@@ -109,6 +113,26 @@ export default {
     '$store.state.curCatalogArr': {
       handler(value) {
         this.calculateCurBgImg(value);
+      }
+    },
+    '$store.state.splitScreenMode': {
+      handler(value) {
+        switch (value) {
+          case 0:
+            this.splitScreenClass = 'no-split-screen';
+            this.isSplitScreen = false;
+            break;
+          case 1:
+            this.splitScreenClass = 'up-down-split-screen';
+            this.isSplitScreen = true;
+            break;
+          case 2:
+            this.splitScreenClass = 'left-right-split-screen';
+            this.isSplitScreen = true;
+            break;
+          default:
+            break;
+        }
       }
     }
   },
@@ -281,11 +305,27 @@ textarea {
     height: 100%;
     overflow: auto;
   }
-  #note-content {
+  #all-note-content {
+    display: flex;
     flex-grow: 1;
-    display: block;
     height: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    &.up-down-split-screen {
+      transition: all 0.2s;
+      flex-direction: column;
+    }
+    &.left-right-split-screen {
+      transition: all 0.2s;
+      flex-direction: row;
+    }
+    .note-content {
+      transition: all 0.2s;
+      flex-grow: 1;
+      display: block;
+    }
   }
+
   #right-side-bar {
     width: $right-sidebar-width;
     height: 100%;
@@ -360,10 +400,9 @@ textarea {
   /* .CodeMirror-sizer {
     background-image: url('/imgs/paper.jpg')!important;
   } */
-   #note-content {
+   #all-note-content {
     max-width: 1040px;
     margin: 0 auto;
-    margin-top: 100px;
     z-index: 10;
   }
 

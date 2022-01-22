@@ -220,10 +220,17 @@ export default {
     async curCatLv3(value) {
       if (value && typeof this.catalog[this.curCatLv1][this.curCatLv2][value] === 'object') {
         this.$store.commit('updateCurCatalogArr', [this.curCatLv1, this.curCatLv2, this.curCatLv3]);
-        await this.$store.state.editor.runCommand(
-          'OPENFILE',
-          `${this.curCatLv1}/${this.curCatLv2}/${this.curCatLv3}/${this.curCatLv3}.md`,
-        );
+        const curOpenFilePath = this.$store.state.editor.fileServer.curFilePath;
+        const nextOpenFilePath = `${this.curCatLv1}/${this.curCatLv2}/${this.curCatLv3}/${this.curCatLv3}.md`;
+        if (curOpenFilePath !== nextOpenFilePath) {
+          await this.$store.state.editor.runCommand(
+            'OPENFILE',
+            nextOpenFilePath,
+          );
+        } else {
+          this.$store.commit('updateCurFilePath', curOpenFilePath);
+          console.log('当前打开的路径就是目标路径, 不能/无需重复打开', curOpenFilePath);
+        }
       }
     },
 
@@ -1018,8 +1025,9 @@ export default {
   // 生命周期: dom加载完毕后
   async mounted() {
     this.closeCatalogContextMenuOnClick(); // 设置在别的地方点击时会关闭右键菜单
-    this.$watch('$store.state.editor', async (editor) => { // 等待editor加载完成
+    const unwatch = this.$watch('$store.state.editor', async (editor) => { // 等待editor加载完成
       if (editor) {
+        unwatch();
         this.$store.state.editor.catalogPlugin = { // mount method
           getNoteCount: this._getNoteCount,
         };

@@ -84,13 +84,15 @@ export default {
           if (isEnableConsole) {
             console.log('get editor', this.editor);
           }
-          if (!this.isUpdatedAfterSwitch) {
-            if (isEnableConsole) {
-              console.log('update after switch');
-            }
-            this.updateAllHeaders();
-            this.isUpdatedAfterSwitch = true;
-          }
+          this.updateAllHeaders();
+          this.calDisplayHeaders(0);
+          // if (!this.isUpdatedAfterSwitch) {
+          //   if (isEnableConsole) {
+          //     console.log('update after switch');
+          //   }
+          //   this.updateAllHeaders();
+          //   this.isUpdatedAfterSwitch = true;
+          // }
           this.editor.on('changes', this.changesHandler);
         }
       },
@@ -199,7 +201,7 @@ export default {
             inline: 'center',
           });
         }
-      }, 0);
+      }, 200);
     },
 
     // calculate headers to disply in the outline area
