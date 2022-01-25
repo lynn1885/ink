@@ -11,7 +11,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
     "@types/codemirror": "^5.60.5",
-    "axios": "^0.18.1",
+    "axios": "^0.21.2",
     "codemirror": "^5.40.2",
     "codemirror-widgets": "^1.4.2",
     "element-ui": "^2.4.8",
