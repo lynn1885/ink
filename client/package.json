@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
+    "@types/codemirror": "^5.60.5",
     "axios": "^0.18.1",
     "codemirror": "^5.40.2",
     "codemirror-widgets": "^1.4.2",

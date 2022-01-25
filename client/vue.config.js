@@ -11,6 +11,7 @@ module.exports = {
       })
     ]
   },
+  // 把node-sass替换为sass
   css: {
     loaderOptions: {
       sass: {

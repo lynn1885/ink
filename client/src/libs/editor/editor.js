@@ -563,10 +563,11 @@ export default class {
    * getHeaderLvByStr 根据传入的字符串, 判断header等级
    * @param {string} str
    * @returns {number} headerLv
+   * @returns {number} header等级, 不是header则返回0
    */
   // eslint-disable-next-line class-methods-use-this
   getHeaderLvByStr(str) {
-    let headerLv;
+    let headerLv = 0;
     const matchRes = str.match(/^(#+)\s/);
     if (matchRes && matchRes[1].length > 0) {
       headerLv = matchRes[1].length;

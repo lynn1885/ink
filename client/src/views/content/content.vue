@@ -79,6 +79,8 @@ export default {
 
     // 激活当前编辑器
     async activeThisEditor() {
+      if (!this.curActiveEditor || !this.thisEditor) return;
+
       if (this.curActiveEditor.id !== this.thisEditor.id) {
         this.$store.commit('updateEditor', this.thisEditor); // 更新编辑器对象
         if (this.thisEditor.fileServer.curFilePath) { // 让目录指向当前编辑器打开的路径

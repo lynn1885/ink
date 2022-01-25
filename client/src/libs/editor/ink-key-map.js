@@ -1,7 +1,13 @@
 // 基础快捷键
+/**
+ *
+ * @param {InkEditor} editor
+ * @param {Object} keyMap
+ */
 export default function (editor, keyMap) {
   const defaultKeyMap = {
     // header
+    removeHeader: 'Ctrl-0',
     header1: 'Ctrl-1',
     header2: 'Ctrl-2',
     header3: 'Ctrl-3',
@@ -40,221 +46,33 @@ export default function (editor, keyMap) {
   // 快捷键
   editor.cm.addKeyMap({
     // header
-    [mergedKeyMap.header1]: (cm) => {
+    [mergedKeyMap.removeHeader]: (cm) => {
       const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 2) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 2 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes.length !== 2) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '# ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
+      const selection = doc.getSelection();
+      if (selection) {
+        // 有选中
+        doc.replaceSelection(
+          selection.split('\n').map(lineText => changeLineTextHash(lineText, 'REMOVE')).join('\n'),
+          'around'
         );
       } else {
-        editor.playAudio('addHeader2');
+        // 无选中
+        const cursor = doc.getCursor();
+        const lineText = doc.getLine(cursor.line);
         doc.replaceRange(
-          '# ',
+          changeLineTextHash(lineText, 'REMOVE'),
           { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
+          { line: cursor.line, ch: lineText.length },
         );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
       }
+      editor.messager.success('移除标题');
     },
-
-    [mergedKeyMap.header2]: (cm) => {
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 3) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 3 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes[0].length !== 3) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '## ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
-        );
-      } else {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '## ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      }
-    },
-
-    [mergedKeyMap.header3]: (cm) => {
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 4) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 4 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes[0].length !== 4) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
-        );
-      } else {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      }
-    },
-
-    [mergedKeyMap.header4]: (cm) => {
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 5) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 5 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes[0].length !== 5) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '#### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
-        );
-      } else {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '#### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      }
-    },
-
-    [mergedKeyMap.header5]: (cm) => {
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 6) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 6 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes[0].length !== 6) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '##### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
-        );
-      } else {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '##### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      }
-    },
-
-    [mergedKeyMap.header6]: (cm) => {
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const lineText = doc.getLine(cursor.line);
-      const matchRes = lineText.match(/^#+?\s/);
-      if (matchRes && matchRes[0].length === 7) {
-        doc.replaceRange(
-          '',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: 7 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      } else if (matchRes && matchRes[0].length !== 7) {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '###### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes[0].length },
-        );
-      } else {
-        editor.playAudio('addHeader2');
-        doc.replaceRange(
-          '###### ',
-          { line: cursor.line, ch: 0 },
-          { line: cursor.line, ch: matchRes ? matchRes[0].length : 0 },
-        );
-        doc.setCursor({
-          line: cursor.line,
-          ch: doc.getLine(cursor.line).length,
-        });
-      }
-    },
+    [mergedKeyMap.header1]: cm => changeHeader(1, editor, cm),
+    [mergedKeyMap.header2]: cm => changeHeader(2, editor, cm),
+    [mergedKeyMap.header3]: cm => changeHeader(3, editor, cm),
+    [mergedKeyMap.header4]: cm => changeHeader(4, editor, cm),
+    [mergedKeyMap.header5]: cm => changeHeader(5, editor, cm),
+    [mergedKeyMap.header6]: cm => changeHeader(6, editor, cm),
 
     // format
     [mergedKeyMap.bold]: (cm) => {
@@ -605,4 +423,90 @@ export default function (editor, keyMap) {
       }
     }
   });
+}
+
+/**
+ * 改变header
+ * @param {number} headerLv
+ * @param {InkEditor} editor
+ * @param {CodeMirror.Editor} cm
+ */
+function changeHeader(headerLv, editor, cm) {
+  const doc = cm.getDoc();
+  const cursor = doc.getCursor();
+  const selection = doc.getSelection();
+  if (selection) {
+    // 有选中
+    const selectionArr = selection.split('\n');
+    let hasHeader = false; // 选中的文本中包含标题
+    for (const lineText of selectionArr) {
+      if (editor.isThisTextAHeader(lineText)) {
+        hasHeader = true;
+        break;
+      }
+    }
+    // 选中的有标题: 只改变标题等级
+    let newText = '';
+    if (hasHeader) {
+      newText = selectionArr.map((lineText) => {
+        if (editor.isThisTextAHeader(lineText)) { // 改变标题行
+          return changeLineTextHash(lineText, 'CHANGETO', headerLv);
+        }
+        return lineText;
+      }).join('\n');
+    } else {
+      // 选中的没有标题: 修改所有选中的文本行
+      newText = selectionArr.map(lineText => changeLineTextHash(lineText, 'CHANGETO', headerLv)).join('\n');
+    }
+    doc.replaceSelection(newText, 'around');
+  } else {
+    // 没有选中
+    const lineText = doc.getLine(cursor.line);
+    const curHeaderLv = editor.getHeaderLvByStr(lineText);
+    let newText = '';
+    switch (curHeaderLv) {
+      case headerLv: // 当前标题headerLv, 就是目标headerLv. 则移除header
+        newText = changeLineTextHash(lineText, 'REMOVE');
+        break;
+      default: // 不是标题, 或者标题不是目标headerLv. 则都转换为目标headerLv
+        newText = changeLineTextHash(lineText, 'CHANGETO', headerLv);
+        break;
+    }
+    doc.replaceRange(
+      newText,
+      { line: cursor.line, ch: 0 },
+      { line: cursor.line, ch: lineText.length },
+    );
+    doc.setCursor({
+      line: cursor.line,
+      ch: doc.getLine(cursor.line).length,
+    });
+  }
+}
+
+/**
+ * 给文本添加或删除hash
+ * @param {string} lineText 原来的文本
+ */
+/**
+ *
+ * @param {string} lineText 原来的文本
+ * @param {'CHANGETO' | 'REMOVE'} action
+ *  CHANGETO: 修改到指定等级
+ *  REMOVE: 移除开头的所有####
+ * @param {number} hashNum 要添加的#的个数
+ * @returns {string} 修改后的文本
+ */
+function changeLineTextHash(lineText, action, hashNum) {
+  switch (action) {
+    case 'CHANGETO': {
+      lineText = lineText.replace(/^#+\s/, '');
+      return `${'#'.repeat(hashNum)} ${lineText}`;
+    }
+    case 'REMOVE': {
+      return lineText.replace(/^#+\s/, '');
+    }
+    default:
+      return undefined;
+  }
 }
