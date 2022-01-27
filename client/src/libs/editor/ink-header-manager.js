@@ -387,7 +387,7 @@ function getNextSiblingHeaderLineNumByCurosr(
       }
     }
     const curDetectLineHeaderLv = editor.getHeaderLvByStr(curDetectLineText);
-    if (curDetectLineHeaderLv <= curHeaderLv) {
+    if (curDetectLineHeaderLv && curDetectLineHeaderLv <= curHeaderLv) {
       parentHeaderLastLineNum = curDetectLineNum - 1;
       break;
     }
