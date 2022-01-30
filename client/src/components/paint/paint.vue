@@ -62,7 +62,7 @@
     <div class="canvas-container">
       <div class="numbers">
         <div
-          class="number"
+          :class="['number', lastMark === mark ? 'active' : '']"
           v-for="(mark, index) of indexMark"
           :key="index"
           @click="onClickMark(mark)"
@@ -109,6 +109,7 @@ export default {
       startPreviewImgTimer: null, // 预览图片的timer
       isThisAImgLine: false, // 这一行是图片行吗
       indexMark: tools.indexMark,
+      lastMark: null, // 上次点击的mark
       curMark: null, // 当前mark
       markTextPair: JSON.parse(JSON.stringify(tools.markEmpty)),
       tools: {
@@ -169,6 +170,12 @@ export default {
           color: 'rgb(255, 93, 82)',
           width: 2,
           name: '红',
+          type: 'pen'
+        },
+        penPink: {
+          color: 'rgb(255, 211, 211)',
+          width: 2,
+          name: '粉',
           type: 'pen'
         },
         penPurple: {
@@ -313,6 +320,13 @@ export default {
           type: 'pen',
           brush: 'fill'
         },
+        penFillPink: {
+          color: 'rgb(255, 211, 211)',
+          width: 2,
+          name: '填粉',
+          type: 'pen',
+          brush: 'fill'
+        },
         penFillPurple: {
           color: 'rgb(203, 152, 255)',
           width: 2,
@@ -430,6 +444,7 @@ export default {
       // 恢复旧画布
       const previousPaint = localStorage.getItem('previousPaint');
       if (previousPaint) {
+        console.log('恢复');
         this.canvas.loadFromJSON(previousPaint);
       }
     },
@@ -537,8 +552,10 @@ export default {
     undo() {
       this.isPreventRecordHistory = true;
       if (this.historyArr.length > 1) {
-        this.canvas.loadFromJSON(this.historyArr[this.historyArr.length - 2]);
-        this.historyArr.pop();
+        if (this.historyArr[this.historyArr.length - 2]) {
+          this.canvas.loadFromJSON(this.historyArr[this.historyArr.length - 2]);
+          this.historyArr.pop();
+        }
       }
     },
 
@@ -549,9 +566,14 @@ export default {
 
     // 保存图片
     startPreviewImg() {
-      this.startPreviewImgTimer = setInterval(() => {
-        this.imgPreviewData = this.getImgBase64();
-      }, 3000);
+      try {
+        this.startPreviewImgTimer = setInterval(() => {
+          this.imgPreviewData = this.getImgBase64();
+          localStorage.setItem('previousPaint', this.historyArr[this.historyArr.length - 1]);
+        }, 3000);
+      } catch (error) {
+        console.error('预览图像失败', error);
+      }
     },
 
     // 获取画布图片base64
@@ -591,6 +613,7 @@ export default {
     // 点击mark
     onClickMark(mark) {
       this.curMark = mark;
+      this.lastMark = mark;
       this.canvas.freeDrawingBrush.width = 0;
       this.canvas.freeDrawingBrush.color = 'white';
     },
@@ -599,7 +622,7 @@ export default {
 
   mounted() {
     this.buildCanvas(); // 创建画布
-    this.startPreviewImg(); // 定期显示预览
+    // this.startPreviewImg(); // 定期显示预览
     this.getCursorLine(); // 获取光标所在行
   },
 
@@ -714,6 +737,12 @@ export default {
         padding: 4px;
         border-right: 1px solid #eee;
         cursor: pointer;
+        transition: all 0.2s;
+        border-radius: 2px;
+        &.active {
+          background: $sidebar-item-active-bg;
+          transition: all 0.2s;
+        }
       }
     }
     #canvas {
