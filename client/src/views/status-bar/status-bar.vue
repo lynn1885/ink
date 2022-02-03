@@ -166,7 +166,8 @@ export default {
 
   mounted() {
     this.inkCommon.addPluginObject(this.name, {
-      restartTime: this.restartTime
+      restartTime: this.restartTime,
+      getCurTime: () => this.time
     });
   },
 

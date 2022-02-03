@@ -74,6 +74,7 @@
         width="1100px"
         height="800px"
         ref="canvas"
+
       ></canvas>
     </div>
 
@@ -108,9 +109,13 @@ export default {
       startPreviewImgTimer: null, // 预览图片的timer
       isThisAImgLine: false, // 这一行是图片行吗
       indexMark: tools.indexMark,
+      markIndex: tools.markIndex,
       lastMark: null, // 上次点击的mark
       curMark: null, // 当前mark
       markTextPair: JSON.parse(JSON.stringify(tools.markEmpty)),
+      lastPaintMouseDownTime: 0, // 上次落笔时间戳
+      lastPaintMouseDownPos: { x: 0, y: 0 }, // 上次落笔位置
+      addMarkTime: [], // 添加mark的耗时
       tools: {
         eraser: {
           width: 20,
@@ -408,8 +413,40 @@ export default {
 
       // 添加mark
       this.canvas.on('mouse:down', (e) => {
+        // 双击自动添加
+        const curPaintMouseDownTime = Date.now();
+        const curPointer = e.pointer;
+
+        const interval = curPaintMouseDownTime - this.lastPaintMouseDownTime;
+        const distanceX = Math.abs(curPointer.x - this.lastPaintMouseDownPos.x);
+        const distanceY = Math.abs(curPointer.y - this.lastPaintMouseDownPos.y);
+
+        this.lastPaintMouseDownTime = curPaintMouseDownTime;
+        this.lastPaintMouseDownPos = curPointer;
+
+        if (interval < 200 && distanceX < 1 && distanceY < 1) {
+          console.log('添加mark', interval, distanceX, distanceY);
+          if (!this.lastMark) {
+            // eslint-disable-next-line prefer-destructuring
+            this.lastMark = this.indexMark[1];
+            // eslint-disable-next-line prefer-destructuring
+            this.curMark = this.indexMark[1];
+          } else if (this.lastMark) {
+            const key = this.markIndex[this.lastMark];
+            if (key) {
+              // eslint-disable-next-line prefer-destructuring
+              this.lastMark = this.indexMark[key + 1];
+              // eslint-disable-next-line prefer-destructuring
+              this.curMark = this.indexMark[key + 1];
+            }
+          }
+        }
+
         if (this.curMark) {
           try {
+            const curAddMarkTime = this.inkCommon.plugins['status-bar'].getCurTime();
+            this.addMarkTime.push(curAddMarkTime);
+            this.editor.messager.success(`本次耗时: ${this.inkCommon.plugins['status-bar'].getCurTime()}s, 平均耗时: ${(this.addMarkTime.reduce((a, b) => a + b) / this.addMarkTime.length).toFixed(1)}s`);
             this.inkCommon.plugins['status-bar'].restartTime();
           } catch (error) {
             console.warn('重设状态栏时间失败', error);
@@ -439,15 +476,16 @@ export default {
           });
           this.canvas.add(lineTextObj);
 
+          this.curMark = '';
           // 恢复画笔
           setTimeout(() => {
             const toolObj = this.tools[this.activeToolName];
             this.canvas.freeDrawingBrush.width = toolObj.width;
             this.canvas.freeDrawingBrush.color = toolObj.color;
-            this.curMark = '';
-          }, 500);
+          }, 0);
         }
       });
+
 
       // 添加白底
       const backgroundRect = new fabric.Rect({
@@ -561,9 +599,14 @@ export default {
       }
     },
 
+    // 重设为黑色笔
     resetTool() {
       this.setTool('penBlack', this.tools.penBlack);
       this.editor.messager.success('重置为黑色画笔');
+    },
+
+    autoAddMark(e) {
+      console.log(123, e.target);
     },
 
     // 设置背景颜色

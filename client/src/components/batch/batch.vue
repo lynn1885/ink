@@ -140,7 +140,7 @@ export default {
           let i = 0;
           const newText = selectionLines
             .map((line) => {
-              if (line && !line.startsWith('>')) {
+              if (line && !line.startsWith('>') && !line.startsWith('![')) {
                 line = line.trim();
                 i += 1;
                 line = line.replace(markReg, '');
