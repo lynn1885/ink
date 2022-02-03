@@ -26,7 +26,6 @@ import 'codemirror/addon/dialog/dialog.css';
 // import 'codemirror/addon/hint/javascript-hint'; // 针对具体语言的hint包
 // import 'codemirror/keymap/vim';
 
-
 export default class {
   /**
    * @param {dom} el 原生dom元素, 会在这个元素中初始化editor
@@ -305,7 +304,6 @@ export default class {
       this.audioPlayer[0].play();
     }
   }
-
 
   /**
    * foldHeaderTo: 折叠代码至headerLv

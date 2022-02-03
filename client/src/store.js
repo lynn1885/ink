@@ -36,7 +36,7 @@ export default new Vuex.Store({
       } else if (data.operation === 'remove') {
         state.allEditors.delete(data.editor);
       }
-      if (isEnableConsole) console.log('更新编辑器, 更新后所有编辑器实例: ', state.allEditors);
+      if (isEnableConsole) console.log('更新编辑器群组, 更新后所有编辑器实例: ', state.allEditors);
     },
 
     // 更新分屏模式

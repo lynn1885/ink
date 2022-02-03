@@ -25,7 +25,7 @@
 <script>
 import NoteIcon from '@/components/note-icon/note-icon.vue';
 
-const isEnableConsole = true;
+const isEnableConsole = false;
 
 export default {
   name: 'quick-open-bar',

@@ -112,7 +112,7 @@ export default {
       sessionStorage.setItem('editorId', editorId);
       this.$emit('editor', this.editor);
       if (isEnableConsole) {
-        console.log('创建editor: ', this.editor.id, this.editor);
+        console.log('创建编辑器: ', this.editor.id, this.editor);
       }
 
       // 上传editor到vuex

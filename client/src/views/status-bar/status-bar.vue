@@ -17,11 +17,13 @@
 import tools from '@/tools/tools';
 
 const isEnableConsole = false;
+const compName = 'status-bar';
 
 export default {
-  name: 'status-bar',
+  name: compName,
   data() {
     return {
+      name: compName,
       editor: null,
       wordCount: 0, // cur note word count
       lineCount: 0, // cur note line count
@@ -158,11 +160,19 @@ export default {
         this.editor.off('cursorActivity', this.cursorActivityHandler);
       }
       clearInterval(this.timeCounter);
-    }
+    },
+
+  },
+
+  mounted() {
+    this.inkCommon.addPluginObject(this.name, {
+      restartTime: this.restartTime
+    });
   },
 
   beforeDestroy() {
     this.clear();
+    this.inkCommon.removePluginObject(this.name);
   }
 };
 </script>

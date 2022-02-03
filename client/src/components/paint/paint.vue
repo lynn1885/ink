@@ -30,7 +30,6 @@
         v-for="(toolObj, toolName) of tools"
         :key="toolName"
         @click="setTool(toolName, toolObj)"
-        @dblclick="setBackgroundColor(toolObj)"
       >
         <div
           :class="['inner', toolObj.type, toolObj.brush]"
@@ -47,9 +46,9 @@
 
       <!-- 清空 -->
       <div
-        class="tool"
+        class="tool delete"
         title="双击按钮, 清空画布"
-        @dblclick="empty()"
+        @click="empty()"
       >
         <i class="el-icon-delete"></i>
         <div class="tool-name">
@@ -59,7 +58,7 @@
     </div>
 
     <!-- 画板 -->
-    <div class="canvas-container">
+    <div class="canvas-container" @dblclick.self="resetTool">
       <div class="numbers">
         <div
           :class="['number', lastMark === mark ? 'active' : '']"
@@ -72,16 +71,16 @@
       </div>
       <canvas
         id="canvas"
-        width="1000px"
-        height="700px"
+        width="1100px"
+        height="800px"
         ref="canvas"
       ></canvas>
     </div>
 
     <!-- 预览 -->
-    <div class="img-preview">
+    <!-- <div class="img-preview">
       <img :src="imgPreviewData" ref="img-preview">
-    </div>
+    </div> -->
 
   </div>
 </template>
@@ -166,6 +165,12 @@ export default {
           name: '橙',
           type: 'pen'
         },
+        penBrown: {
+          color: 'rgb(117, 70, 47)',
+          width: 2,
+          name: '棕',
+          type: 'pen'
+        },
         penRed: {
           color: 'rgb(255, 93, 82)',
           width: 2,
@@ -230,6 +235,12 @@ export default {
           color: 'rgba(255, 178, 64, 0.6)',
           width: 20,
           name: '透橙',
+          type: 'pen'
+        },
+        penOpacityBrown: {
+          color: 'rgba(117, 70, 47, 0.6)',
+          width: 20,
+          name: '透棕',
           type: 'pen'
         },
         penOpacityPink: {
@@ -313,6 +324,13 @@ export default {
           type: 'pen',
           brush: 'fill'
         },
+        penFillBrown: {
+          color: 'rgb(117, 70, 47)',
+          width: 2,
+          name: '填棕',
+          type: 'pen',
+          brush: 'fill'
+        },
         penFillRed: {
           color: 'rgb(255, 153, 153)',
           width: 2,
@@ -391,6 +409,11 @@ export default {
       // 添加mark
       this.canvas.on('mouse:down', (e) => {
         if (this.curMark) {
+          try {
+            this.inkCommon.plugins['status-bar'].restartTime();
+          } catch (error) {
+            console.warn('重设状态栏时间失败', error);
+          }
           // 添加①②③...
           const markTextObj = new fabric.Textbox(this.curMark, {
             left: e.pointer.x - 10,
@@ -511,6 +534,7 @@ export default {
 
     // 设置工具
     setTool(toolName, toolObj) {
+      this.curMark = null;
       this.activeToolName = toolName;
       // 设置笔
       if (toolObj.type === 'pen') {
@@ -535,6 +559,11 @@ export default {
 
         this.canvas.isDrawingMode = true;
       }
+    },
+
+    resetTool() {
+      this.setTool('penBlack', this.tools.penBlack);
+      this.editor.messager.success('重置为黑色画笔');
     },
 
     // 设置背景颜色
@@ -683,6 +712,12 @@ export default {
       cursor: pointer;
       background: rgba(255, 255, 255, 0.8);
       transition: all 0.2s;
+      &.delete {
+        background: rgb(246, 159, 159);
+        i, div{
+         color: #fff
+        }
+      }
       &.active {
         box-shadow: 0px 0px 10px 0px #ccc;
         transition: all 0.2s;
