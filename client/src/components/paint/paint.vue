@@ -58,13 +58,13 @@
     </div>
 
     <!-- 画板 -->
-    <div class="canvas-container" @dblclick.self="resetTool">
+    <div class="canvas-container" @dblclick.self="gotoNextMark">
       <div class="numbers">
         <div
           :class="['number', lastMark === mark ? 'active' : '']"
           v-for="(mark, index) of indexMark"
           :key="index"
-          @click="onClickMark(mark)"
+          @click="changeMark(mark)"
         >
           {{mark}}
         </div>
@@ -391,7 +391,7 @@ export default {
       this.canvas.freeDrawingBrush.color = 'black';
 
 
-      // 画布上添加图形或使用橡皮擦会触发 after:render 事件，我们在此时保存当前画布状态
+      // 画布上添加图形或使用橡皮擦时, 会触发 after:render 事件，我们在此时保存当前画布状态
       this.canvas.on('after:render', () => {
         if (this.isPreventRecordHistory) {
           this.isPreventRecordHistory = false;
@@ -402,8 +402,9 @@ export default {
         if (this.historyArr.length > 50) this.historyArr.shift(); // 最多保留50步
       });
 
-      // fill画笔, 起笔自动填充
-      this.canvas.on('mouse:up', () => {
+
+      this.canvas.on('mouse:up', (e) => {
+        // fill画笔, 起笔自动填充
         const curTool = this.tools[this.activeToolName];
         if (curTool && curTool.type === 'pen' && curTool.brush === 'fill') {
           const objects = this.canvas.getObjects();
@@ -414,75 +415,12 @@ export default {
       // 添加mark
       this.canvas.on('mouse:down', (e) => {
         // 双击自动添加
-        const curPaintMouseDownTime = Date.now();
-        const curPointer = e.pointer;
+        this.lastPaintMouseDownTime = Date.now();
+        this.lastPaintMouseDownPos = e.pointer;
 
-        const interval = curPaintMouseDownTime - this.lastPaintMouseDownTime;
-        const distanceX = Math.abs(curPointer.x - this.lastPaintMouseDownPos.x);
-        const distanceY = Math.abs(curPointer.y - this.lastPaintMouseDownPos.y);
-
-        this.lastPaintMouseDownTime = curPaintMouseDownTime;
-        this.lastPaintMouseDownPos = curPointer;
-
-        if (interval < 200 && distanceX < 1 && distanceY < 1) {
-          console.log('添加mark', interval, distanceX, distanceY);
-          if (!this.lastMark) {
-            // eslint-disable-next-line prefer-destructuring
-            this.lastMark = this.indexMark[1];
-            // eslint-disable-next-line prefer-destructuring
-            this.curMark = this.indexMark[1];
-          } else if (this.lastMark) {
-            const key = this.markIndex[this.lastMark];
-            if (key) {
-              // eslint-disable-next-line prefer-destructuring
-              this.lastMark = this.indexMark[key + 1];
-              // eslint-disable-next-line prefer-destructuring
-              this.curMark = this.indexMark[key + 1];
-            }
-          }
-        }
-
+        // 添加mark
         if (this.curMark) {
-          try {
-            const curAddMarkTime = this.inkCommon.plugins['status-bar'].getCurTime();
-            this.addMarkTime.push(curAddMarkTime);
-            this.editor.messager.success(`本次耗时: ${this.inkCommon.plugins['status-bar'].getCurTime()}s, 平均耗时: ${(this.addMarkTime.reduce((a, b) => a + b) / this.addMarkTime.length).toFixed(1)}s`);
-            this.inkCommon.plugins['status-bar'].restartTime();
-          } catch (error) {
-            console.warn('重设状态栏时间失败', error);
-          }
-          // 添加①②③...
-          const markTextObj = new fabric.Textbox(this.curMark, {
-            left: e.pointer.x - 10,
-            top: e.pointer.y - 10,
-            fontSize: 14,
-            fill: 'red',
-            paintFirst: 'stroke',
-            stroke: '#fff',
-            strokeWidth: 1.5
-          });
-          this.canvas.add(markTextObj);
-
-          // 添加内容
-          const lineTextObj = new fabric.Textbox(this.markTextPair[this.curMark] || '', {
-            left: e.pointer.x + 10,
-            top: e.pointer.y - 10,
-            width: 70,
-            fontSize: 10,
-            fill: '#333',
-            paintFirst: 'stroke',
-            stroke: '#fff',
-            strokeWidth: 1.5
-          });
-          this.canvas.add(lineTextObj);
-
-          this.curMark = '';
-          // 恢复画笔
-          setTimeout(() => {
-            const toolObj = this.tools[this.activeToolName];
-            this.canvas.freeDrawingBrush.width = toolObj.width;
-            this.canvas.freeDrawingBrush.color = toolObj.color;
-          }, 0);
+          this.addMark(e);
         }
       });
 
@@ -510,6 +448,62 @@ export default {
       }
     },
 
+    // 添加mark
+    addMark(e) {
+      try {
+        // 统计时间
+        const curAddMarkTime = this.inkCommon.plugins['status-bar'].getCurTime();
+        this.addMarkTime.push(curAddMarkTime);
+        this.editor.messager.success(`本次耗时: ${this.inkCommon.plugins['status-bar'].getCurTime()}s, 平均耗时: ${(this.addMarkTime.reduce((a, b) => a + b) / this.addMarkTime.length).toFixed(1)}s`);
+        this.inkCommon.plugins['status-bar'].restartTime();
+      } catch (error) {
+        console.warn('重设状态栏时间失败', error);
+      }
+
+      // 添加①②③...
+      const markTextObj = new fabric.Textbox(this.curMark, {
+        left: e.pointer.x - 10,
+        top: e.pointer.y - 10,
+        fontSize: 14,
+        fill: 'red',
+        paintFirst: 'stroke',
+        stroke: '#fff',
+        strokeWidth: 1.5
+      });
+      this.canvas.add(markTextObj);
+
+      // 添加内容
+      const lineTextObj = new fabric.Textbox(this.markTextPair[this.curMark] || '', {
+        left: e.pointer.x + 10,
+        top: e.pointer.y - 10,
+        width: 70,
+        fontSize: 10,
+        fill: '#333',
+        paintFirst: 'stroke',
+        stroke: '#fff',
+        strokeWidth: 1.5
+      });
+      this.canvas.add(lineTextObj);
+
+      // 恢复画笔
+      this.curMark = '';
+      setTimeout(() => {
+        this.resetTool();
+      }, 300);
+    },
+
+    // 前往下一个mark
+    gotoNextMark() {
+      if (!this.lastMark) {
+        this.changeMark(this.indexMark[1]);
+      } else if (this.lastMark) {
+        const key = this.markIndex[this.lastMark];
+        if (key) {
+          this.changeMark(this.indexMark[key + 1]);
+        }
+      }
+    },
+
     // 获取光标所在行
     getCursorLine() {
       // 获取光标所在行
@@ -524,7 +518,7 @@ export default {
       const headerContentArr = headerContent.split('\n');
       headerContentArr.forEach((line) => {
         const mark = line[line.length - 1];
-        this.markTextPair[mark] = line.slice(0, -1).replace(/^#+ /, '');
+        this.markTextPair[mark] = line.slice(0, -1).replace(/^#+ /, '').replace(/^[\d]+\. /, '');
       });
     },
 
@@ -602,11 +596,6 @@ export default {
     // 重设为黑色笔
     resetTool() {
       this.setTool('penBlack', this.tools.penBlack);
-      this.editor.messager.success('重置为黑色画笔');
-    },
-
-    autoAddMark(e) {
-      console.log(123, e.target);
     },
 
     // 设置背景颜色
@@ -683,7 +672,7 @@ export default {
     },
 
     // 点击mark
-    onClickMark(mark) {
+    changeMark(mark) {
       this.curMark = mark;
       this.lastMark = mark;
       this.canvas.freeDrawingBrush.width = 0;
@@ -696,6 +685,7 @@ export default {
     this.buildCanvas(); // 创建画布
     // this.startPreviewImg(); // 定期显示预览
     this.getCursorLine(); // 获取光标所在行
+    this.inkCommon.plugins['status-bar'].restartTime();
   },
 
   beforeDestroy() {
@@ -796,7 +786,7 @@ export default {
     height: 400px;
     overflow: auto;
     background: #f6f6f6;
-    padding: 40px;
+    padding: 40px 60px;
     position: relative;
     /* 数字 */
     .numbers {
