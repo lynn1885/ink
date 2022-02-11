@@ -58,7 +58,7 @@
     </div>
 
     <!-- 画板 -->
-    <div class="canvas-container" @dblclick.self="gotoNextMark">
+    <div class="canvas-container" @dblclick.self="gotoNextMark" touch-action="none">
       <div class="numbers">
         <div
           :class="['number', lastMark === mark ? 'active' : '']"
@@ -116,6 +116,7 @@ export default {
       lastPaintMouseDownTime: 0, // 上次落笔时间戳
       lastPaintMouseDownPos: { x: 0, y: 0 }, // 上次落笔位置
       addMarkTime: [], // 添加mark的耗时
+      needPaintLines: {}, // 需要配图的起始行
       tools: {
         eraser: {
           width: 20,
@@ -371,6 +372,8 @@ export default {
             this.editor = value;
             setTimeout(() => {
               this.getOldImg();
+              this.getAllNeedPaint();
+              this.getCursorLine(); // 获取光标所在行
             }, 0);
           } else {
             this.$message.warning('暂不支持切换编辑器, 请重新打开画图组件');
@@ -502,9 +505,10 @@ export default {
           this.changeMark(this.indexMark[key + 1]);
         }
       }
+      this.editor.messager.warning('请点击画板, 添加mark');
     },
 
-    // 获取光标所在行
+    // 获取光标所在行的信息
     getCursorLine() {
       // 获取光标所在行
       const doc = this.editor.cm.getDoc();
@@ -513,13 +517,19 @@ export default {
       this.curLineText = doc.getLine(this.curLineNum);
       doc.setCursor({ line: this.curLineNum, ch: this.curLineText.length });
 
+      // eslint-disable-next-line prefer-destructuring
+      const headerLineNum = this.editor.getHeaderSiblings(cursor).data[0].headerLineNum;
+
       // 获取当前标题内容
-      const headerContent = this.editor.getHeaderContent(this.curLineNum);
+      const headerContent = this.editor.getHeaderContent(headerLineNum);
       const headerContentArr = headerContent.split('\n');
       headerContentArr.forEach((line) => {
         const mark = line[line.length - 1];
         this.markTextPair[mark] = line.slice(0, -1).replace(/^#+ /, '').replace(/^[\d]+\. /, '');
       });
+      if (this.markTextPair['①']) {
+        this.editor.messager.success(`漫画总共 ${this.needPaintLines.__allLines}张, 当前第${this.needPaintLines[headerLineNum]}张, 剩余${this.needPaintLines.__allLines - this.needPaintLines[headerLineNum]}张`);
+      }
     },
 
     // 获取旧的图片
@@ -562,6 +572,21 @@ export default {
       } else {
         this.isThisImgAPaintImg = true;
       }
+    },
+
+    // 获取所有需要画的段落
+    getAllNeedPaint() {
+      const needPaintLines = {};
+      let i = 1;
+      this.editor.cm.getDoc().getValue().split('\n').forEach((line, index) => {
+        if (line.endsWith('①')) {
+          needPaintLines[index] = i;
+          needPaintLines.__allLines = i;
+          i += 1;
+        }
+      });
+
+      this.needPaintLines = needPaintLines;
     },
 
     // 设置工具
@@ -684,7 +709,6 @@ export default {
   mounted() {
     this.buildCanvas(); // 创建画布
     // this.startPreviewImg(); // 定期显示预览
-    this.getCursorLine(); // 获取光标所在行
     this.inkCommon.plugins['status-bar'].restartTime();
   },
 

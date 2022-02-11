@@ -27,6 +27,7 @@ const opeartionKeys = {
   TRUNCATED_FROM_FIRST_COLON: 'TRUNCATED_FROM_FIRST_COLON',
   TRUNCATED_FROM_FRIST_SEMICOLON: 'TRUNCATED_FROM_FRIST_SEMICOLON',
   TRUNCATED_FROM_SEMICOLON: 'TRUNCATED_FROM_SEMICOLON',
+  TRUNCATED_FROM_COMMA: 'TRUNCATED_FROM_COMMA',
   TRUNCATED_FROM_FIRST_PUNCTUATION: 'TRUNCATED_FROM_FIRST_PUNCTUATION',
   TRUNCATED_FROM_FIRST_PERIOD: 'TRUNCATED_FROM_FIRST_PERIOD',
   TRUNCATED_FROM_PERIOD: 'TRUNCATED_FROM_PERIOD',
@@ -62,9 +63,10 @@ export default {
         separator2: { title: 'separator' },
         [opeartionKeys.TRUNCATED_FROM_FIRST_COLON]: { title: '从第一个：处换行(不保留冒号)', isNeedSelection: true },
         [opeartionKeys.TRUNCATED_FROM_FRIST_SEMICOLON]: { title: '从第一个；处换行(不保留分号)', isNeedSelection: true },
-        [opeartionKeys.TRUNCATED_FROM_SEMICOLON]: { title: '从所有；处换行(不保留分号)', isNeedSelection: true },
-        [opeartionKeys.TRUNCATED_FROM_FIRST_PUNCTUATION]: { title: '从第一个标点处处换行(不保留标点)', isNeedSelection: true },
         [opeartionKeys.TRUNCATED_FROM_FIRST_PERIOD]: { title: '从第一个。处换行(不保留标点)', isNeedSelection: true },
+        [opeartionKeys.TRUNCATED_FROM_FIRST_PUNCTUATION]: { title: '从第一个标点处处换行(不保留标点)', isNeedSelection: true },
+        [opeartionKeys.TRUNCATED_FROM_COMMA]: { title: '从所有，处换行(不保留逗号)', isNeedSelection: true },
+        [opeartionKeys.TRUNCATED_FROM_SEMICOLON]: { title: '从所有；处换行(不保留分号)', isNeedSelection: true },
         [opeartionKeys.TRUNCATED_FROM_PERIOD]: { title: '从所有。处换行(不保留句号)', isNeedSelection: true },
         [opeartionKeys.TRUNCATED_FROM_LIST_MARK_1]: { title: '从（1）处换行', isNeedSelection: true },
         [opeartionKeys.TRUNCATED_FROM_LIST_MARK_2]: { title: '从(1)处换行', isNeedSelection: true },
@@ -257,6 +259,15 @@ export default {
         case opeartionKeys.TRUNCATED_FROM_PERIOD: {
           const newText = selectionLines
             .map(line => line.replace(/。/g, '\n'))
+            .join('\n');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
+        // 从所有，处换行(不保留标点)
+        case opeartionKeys.TRUNCATED_FROM_COMMA: {
+          const newText = selectionLines
+            .map(line => line.replace(/，/g, '\n'))
             .join('\n');
           doc.replaceSelection(newText, 'around');
           break;

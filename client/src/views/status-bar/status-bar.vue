@@ -1,14 +1,16 @@
 <template>
   <div id="status-bar">
-    <div class="cur-note-path items" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
-    <div class="url items" :title="url" @click="copyUrl">Url</div>
-    <!-- <div class="note-properties items" title="Set Current Note Properties">Prop</div> -->
-    <div class="Time items" :title="'Time, click to restart'" @click="restartTime">Time: {{ timeStr }}</div>
-    <div class="progress items" :title="`Current Progress: ${progress}%`">Progress: {{ progress }}%</div>
-    <div class="note-count items" :title="`Note Count: ${noteCount}`">Notes: {{ noteCount }}</div>
-    <div class="line-count items" :title="`Line Count: ${lineCount}`">Lines: {{ lineCount }}</div>
+    <div class="cur-note-path item" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
+    <div class="fold item" v-for="index of [1,2,3,4,5,6]" :key="index" :title="`Click to fold headers to level ${index}`" @click="changeFold(index)">{{index}}</div>
+    <div class="fold unfold item" title="Click to unfold all headers" @click="changeFold(0)">Unfold</div>
+    <div class="url item" :title="url" @click="copyUrl">Url</div>
+    <!-- <div class="note-properties item" title="Set Current Note Properties">Prop</div> -->
+    <div class="time item" :title="'Time, click to restart'" @click="restartTime">Time: {{ timeStr }}</div>
+    <div class="progress item" :title="`Current Progress: ${progress}%`">Progress: {{ progress }}%</div>
+    <div class="line-count item" :title="`Line Count: ${lineCount}`">Lines: {{curLineNum}}/{{ lineCount }}</div>
+    <div class="note-count item" :title="`Note Count: ${noteCount}`">Notes: {{ noteCount }}</div>
     <div
-      :class="{ 'word-count': true, items: true, warning: wordCount >= recommendedMaxNumOfWords }"
+      :class="{ 'word-count': true, item: true, warning: wordCount >= recommendedMaxNumOfWords }"
       :title="`Word Count: ${wordCount}${wordCount >= recommendedMaxNumOfWords ? '\nThe number of words in this note exceeds ' + recommendedMaxNumOfWords + ', which may cause performance problems. It is recommended to split this note into several notes.' : ''}`"
     >Words: {{ wordCount }}</div>
   </div>
@@ -79,6 +81,7 @@ export default {
       this.restartTime();
       this.getWordAndLineCount();
     },
+
     // on change
     changesHandler() {
       clearTimeout(this.updateTime);
@@ -92,6 +95,8 @@ export default {
       const curLineNum = e.doc.getCursor().line || 1;
       const lineCount = e.doc.lineCount() || 1;
       this.progress = ((curLineNum / lineCount) * 100).toFixed(2);
+      this.curLineNum = curLineNum;
+      this.lineCount = lineCount;
     },
 
     // restartTime
@@ -154,6 +159,15 @@ export default {
       tools.copyText(text);
     },
 
+    // 展开或折叠
+    changeFold(lv) {
+      if (lv === 0) {
+        this.editor.unfoldAll();
+      } else {
+        this.editor.foldHeaderTo(lv);
+      }
+    },
+
     clear() {
       if (this.editor) {
         this.editor.off('changes', this.changesHandler);
@@ -197,11 +211,21 @@ export default {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-.items {
+.item {
   display: inline-block;
   padding: 0 10px;
   &:hover {
     background-color: darken($tool-page-bg, 3%);
+  }
+  &.time {
+    cursor: pointer;
+  }
+  &.fold {
+    padding: 0 4px;
+    cursor: pointer;
+  }
+  &.unfold {
+    padding-right: 10px;
   }
 }
 .warning {

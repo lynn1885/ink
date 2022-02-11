@@ -305,6 +305,11 @@ export default class {
     }
   }
 
+  // 全部展开
+  unfoldAll() {
+    this.cm.execCommand('unfoldAll');
+  }
+
   /**
    * foldHeaderTo: 折叠代码至headerLv
    * @param {number} targetHeaderLv
