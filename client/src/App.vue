@@ -4,7 +4,7 @@
     <div id="main">
       <side-bar id="side-bar" :class="{'hide': !isShowSideBar}" @changeRightSideBarStatus = changeRightSideBarStatus></side-bar>
       <div id="all-note-content" :class="[splitScreenClass]">
-        <note-content class="note-content note-content-1"></note-content>
+        <note-content :isDefaultEditor="true" class="note-content note-content-1"></note-content>
         <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="true"></note-content>
       </div>
       <div v-show="isShowRightSideBar" id="right-side-bar"></div>
@@ -121,6 +121,8 @@ export default {
           case 0:
             this.splitScreenClass = 'no-split-screen';
             this.isSplitScreen = false;
+            this.$store.commit('updateEditor', this.$store.state.defaultEditor);
+            console.log('切换为默认编辑器: ', this.$store.state.defaultEditor);
             break;
           case 1:
             this.splitScreenClass = 'up-down-split-screen';

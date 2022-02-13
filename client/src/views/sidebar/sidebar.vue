@@ -146,9 +146,10 @@ import {
 } from './svg';
 
 const isEnableConsole = false;
+const name = 'side-bar';
 
 export default {
-  name: 'side-bar',
+  name,
   components: {
     Catalog,
     Search,
@@ -165,6 +166,7 @@ export default {
   },
   data() {
     return {
+      name,
       editor: null,
       activePage: 'Catalog', // current active page
       activeButtons: {}, // current active buttons
@@ -200,11 +202,10 @@ export default {
           onclick: Readonly.handler,
         },
         {
-          name: 'Split Screen',
-          icon: SplitScreen.icon,
-          type: 'button',
-          isCannotActive: true,
-          onclick: SplitScreen.handler
+          name: 'Search',
+          icon: searchSvg,
+          type: 'page',
+          keyMap: ['Ctrl', 'F'],
         },
         {
           name: 'Outline',
@@ -213,10 +214,11 @@ export default {
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
         {
-          name: 'Search',
-          icon: searchSvg,
-          type: 'page',
-          keyMap: ['Ctrl', 'F'],
+          name: 'Split Screen',
+          icon: SplitScreen.icon,
+          type: 'button',
+          isCannotActive: true,
+          onclick: SplitScreen.handler
         },
         {
           name: 'Sticky Note',
@@ -287,7 +289,7 @@ export default {
           type: 'button',
           onclick: () => {
             if (!this.activeButtons.Paint) { // 展开侧边栏, 防止paint界面无法显示
-              this.isSideBarSmallMode = false;
+              // this.isSideBarSmallMode = false;
             }
           },
           keyMap: ['Ctrl', 'Shift', 'P'],
@@ -435,6 +437,19 @@ export default {
     }
   },
 
+  mounted() {
+    this.inkCommon.addPluginObject(this.name, {
+      changeTool: (toolName) => {
+        const toolObj = this.tools.find(item => item.name === toolName);
+        if (toolObj) this.changeTool(toolObj);
+      }
+    });
+  },
+
+  beforeDestroy() {
+    this.inkCommon.removePluginObject(this.name);
+  }
+
 };
 </script>
 
@@ -447,8 +462,12 @@ export default {
   position: relative;
   transition: width 0.2s;
   &.side-bar-small-mode {
+    resize: none;
     width: $icon-bar-width!important;
     #tool-page {
+      width: 0px;
+    }
+    #float {
       display: none;
     }
   }
@@ -478,6 +497,9 @@ export default {
       height: 54%;
       vertical-align: middle;
       fill: $icon-color;
+    }
+    &:last-child {
+      margin-bottom: 100px;
     }
     &.active {
       svg {

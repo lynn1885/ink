@@ -18,6 +18,7 @@ export default function (editor, config) {
       await _upload(formData, editor, config.upload, config.messager);
     }
   });
+
   editor.cm.on('paste', async (cm, e) => {
     const formData = new FormData();
     const item = e.clipboardData.items[0];
@@ -62,7 +63,9 @@ export default function (editor, config) {
           }
           const img = $('<img style="visibility:hidden"></img>');
           const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
+          const lineNum = cm.getDoc().getLineNumber(line);
           imgWidget.append(img);
+          imgWidget.on('dblclick', () => editImg(editor, cm, line, el, lineNum));
           // 解析贴纸
           const imgName = imgMatchRes[1];
           const imgCss = {
@@ -163,4 +166,13 @@ function convertBase64ToImgFile(base64Str, fileName, fileType) {
   blob.lastModifiedDate = new Date();
   blob.name = fileName;
   return blob;
+}
+
+// 双击编辑图片
+function editImg(editor, cm, line, el, lineNum) {
+  cm.getDoc().setCursor({
+    line: lineNum,
+    ch: 0,
+  });
+  editor.inkCommon.plugins['side-bar'].changeTool('Paint');
 }

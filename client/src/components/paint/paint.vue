@@ -728,12 +728,12 @@ export default {
   position: fixed;
   left: $icon-bar-width;
   right: 0;
-  bottom: 0;
+  bottom: $status-bar-height;
   height: 440px;
   border-radius: 4px;
   overflow: hidden;
   z-index: 1000;
-  box-shadow: 0px 0px 10px 0px #ddd;
+  box-shadow: 0px 0px 4px 0px #ddd;
   /* 工具栏 */
   .tools-container {
     display: flex;

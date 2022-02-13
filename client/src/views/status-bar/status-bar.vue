@@ -45,6 +45,7 @@ export default {
       seasonTimeTypes: ['season', 'time', 'icon'],
       seasonTimeIcons: ['___spring1___', '___summer1___', '___autumn1___', '___winter___'],
       seasonTimeIcon: '',
+      curLineNum: 0,
     };
   },
   watch: {

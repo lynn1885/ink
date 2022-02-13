@@ -12,7 +12,7 @@ import inkImage from '@/libs/editor/ink-image'; // 插件
 import inkMath from '@/libs/editor/ink-math';
 import inkFold from '@/libs/editor/ink-fold';
 import inkKeyMap from '@/libs/editor/ink-key-map';
-// import inkFlexibleCursor from '@/libs/editor/ink-flexible-cursor';
+import inkFlexibleCursor from '@/libs/editor/ink-flexible-cursor';
 // import inkFlexibleCursorLineChar from '@/libs/editor/ink-flexible-cursor-line-char';
 import inkHeaderManager from '@/libs/editor/ink-header-manager';
 import inkLineReplace from '@/libs/editor/ink-line-replace';
@@ -58,10 +58,12 @@ export default {
       this.editor = new Editor(this.$refs.editor, {
         messager: this.$message,
       });
+      // 添加公共工具
+      this.editor.inkCommon = this.inkCommon;
       // 给editor添加插件
       this.editor.use(inkKeyMap);
       this.editor.use(inkFold);
-      // this.editor.use(inkFlexibleCursor);
+      this.editor.use(inkFlexibleCursor);
       // this.editor.use(inkFlexibleCursorLineChar);
       this.editor.use(inkHeaderManager);
       this.editor.use(inkLineReplace, inkLineReplaceConfig);

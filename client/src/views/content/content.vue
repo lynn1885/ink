@@ -32,6 +32,7 @@ export default {
     QuickOpenBar,
   },
   props: {
+    isDefaultEditor: false,
     isAutoOpenCurFilePath: false
   },
   data() {
@@ -48,6 +49,7 @@ export default {
     '$store.state.editor': function (value) {
       if (value) {
         this.curActiveEditor = value;
+        if (this.isDefaultEditor) this.$store.commit('updateDefaultEditor', this.thisEditor);
       }
     },
   },
