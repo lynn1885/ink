@@ -43,74 +43,85 @@ export default function (editor, config) {
 
   // render image
   editor.cm.on('renderLine', (cm, line, el) => {
-    if (line.text !== line.lastTimeText_image) {
-      line.lastTimeText_image = line.text;
-      const imgMatchRes = line.text.match(/^!\[(.*?)\]\((.*?)\)/);
-      if (imgMatchRes) {
-        let baseUrl = '';
-        baseUrl = `${editor.fileServer.staticImagesUrl}`;
-        el.classList.add('line-cm-image');
-        let isSmallImage = false;
-        if (line && line.text.endsWith(';')) { // 以';结尾的图片, 缩小显示
-          el.classList.add('line-cm-image-small');
-          isSmallImage = true;
-        }
-        setTimeout(() => {
-          if (line.widgets) {
-            line.widgets.forEach((w) => {
-              w.clear();
-            });
-          }
-          const img = $('<img style="visibility:hidden"></img>');
-          const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
-          const lineNum = cm.getDoc().getLineNumber(line);
-          imgWidget.append(img);
-          imgWidget.on('dblclick', () => editImg(editor, cm, line, el, lineNum));
-          // 解析贴纸
-          const imgName = imgMatchRes[1];
-          const imgCss = {
-            transform: ''
-          };
-          const imgWidgetCss = {};
-          if (imgName) {
-            const attrs = imgName.split(';');
-            if (attrs.includes('贴纸')) {
-              imgWidgetCss.position = 'absolute';
-              if (attrs[1]) {
-                const scale = Number.parseFloat(attrs[1]);
-                imgCss.transform = `scale(${scale})`;
-              }
-              if (attrs[2]) {
-                imgWidgetCss.left = `${attrs[2]}px`;
-              }
-              if (attrs[3]) {
-                imgWidgetCss.top = `${attrs[3]}px`;
-              }
-              if (attrs[4] === '-') {
-                imgCss.transform += ' rotateY(180deg)';
-                imgCss.transform = imgCss.transform.trim();
-              }
-            }
-          }
-          imgWidget.css({
-            width: 'fit-content',
-            cursor: 'pointer',
-            ...imgWidgetCss
-          });
-          // don't know why the picture is bigger than the real size
-          // scale it to 81% here
-          img.on('load', () => {
-            img.css({
-              width: `${img[0].naturalWidth * 0.81}px`,
-              visibility: 'visible',
-              ...imgCss
-            });
-          });
-          img.attr('src', baseUrl + imgMatchRes[2]);
-          editor.cm.getDoc().addLineWidget(line, imgWidget[0]);
-        }, 0);
-      }
+    // 如果不是图片行直接退出
+    const imgMatchRes = line.text.match(/^!\[(.*?)\]\((.*?)\)/);
+    if (!imgMatchRes) return;
+
+    // 设置图片行样式
+    let baseUrl = '';
+    baseUrl = `${editor.fileServer.staticImagesUrl}`;
+    el.classList.add('line-cm-image');
+
+    let isSmallImage = false;
+    if (line && line.text.endsWith(';')) { // 以';结尾的图片, 缩小显示
+      el.classList.add('line-cm-image-small');
+      isSmallImage = true;
     }
+    if (line.text === line.previousText) return; // 如果当前图片行的文本没有发生任何变化，则不再重新加载图片widget, 只有文本发生了变化，才加载widget
+    line.previousText = line.text;
+
+    setTimeout(() => {
+      // 清除旧的
+      if (line.widgets) {
+        line.widgets.forEach((w) => {
+          w.clear();
+        });
+      }
+
+      // 创建widget
+      const img = $('<img style="visibility:hidden"></img>');
+      const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
+      imgWidget.append(img);
+
+      // 双击编辑
+      imgWidget.on('dblclick', () => editImg(editor, cm, line));
+
+      // 解析贴纸
+      const imgName = imgMatchRes[1];
+      const imgCss = {
+        transform: ''
+      };
+      const imgWidgetCss = {};
+      if (imgName) {
+        const attrs = imgName.split(';');
+        if (attrs.includes('贴纸')) {
+          imgWidgetCss.position = 'absolute';
+          if (attrs[1]) {
+            const scale = Number.parseFloat(attrs[1]);
+            imgCss.transform = `scale(${scale})`;
+          }
+          if (attrs[2]) {
+            imgWidgetCss.left = `${attrs[2]}px`;
+          }
+          if (attrs[3]) {
+            imgWidgetCss.top = `${attrs[3]}px`;
+          }
+          if (attrs[4] === '-') {
+            imgCss.transform += ' rotateY(180deg)';
+            imgCss.transform = imgCss.transform.trim();
+          }
+        }
+      }
+      imgWidget.css({
+        width: 'fit-content',
+        cursor: 'pointer',
+        ...imgWidgetCss
+      });
+
+      // don't know why the picture is bigger than the real size
+      // scale it to 81% here
+      img.on('load', () => {
+        img.css({
+          width: `${img[0].naturalWidth * 0.81}px`,
+          visibility: 'visible',
+          ...imgCss
+        });
+      });
+      img.attr('src', baseUrl + imgMatchRes[2]);
+
+      // 添加widget
+      editor.cm.getDoc().addLineWidget(line, imgWidget[0]);
+    }, 0);
   });
 }
 
@@ -129,6 +140,7 @@ async function _upload(formData, editor, upload, messager, fileName) {
   const cursor = doc.getCursor();
   const lineNum = cursor.line;
   const lineText = doc.getLine(lineNum);
+  const nextLineText = doc.getLine(lineNum + 1);
   let beforeText = '';
   let endText = '';
   let addLineNum;
@@ -148,7 +160,11 @@ async function _upload(formData, editor, upload, messager, fileName) {
     startChar = 0;
     addLineNum = 2;
   }
-  doc.replaceRange(`${beforeText}![${fileName || ''}](${imgInfo.dir}/${imgInfo.fileName})\n${endText}`, { line: lineNum, ch: startChar }, { line: lineNum, ch: lineText.length });
+  doc.replaceRange(
+    `${beforeText}![${fileName || ''}](${imgInfo.dir}/${imgInfo.fileName})${nextLineText ? '\n' : ''}${endText}`,
+    { line: lineNum, ch: startChar },
+    { line: lineNum, ch: lineText.length }
+  );
   doc.setCursor({ line: lineNum + addLineNum, ch: 0 });
 }
 
@@ -169,9 +185,9 @@ function convertBase64ToImgFile(base64Str, fileName, fileType) {
 }
 
 // 双击编辑图片
-function editImg(editor, cm, line, el, lineNum) {
+function editImg(editor, cm, line) {
   cm.getDoc().setCursor({
-    line: lineNum,
+    line: cm.getDoc().getLineNumber(line),
     ch: 0,
   });
   editor.inkCommon.plugins['side-bar'].changeTool('Paint');

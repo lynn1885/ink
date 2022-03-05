@@ -887,4 +887,17 @@ export default class {
     res.wordCount = text.length + englishWordCount;
     return res;
   }
+
+  /**
+   * 清空某一行的小组件
+   * @param {object} line 行对象
+   */
+  // eslint-disable-next-line class-methods-use-this
+  removeLineWidgets(line) {
+    if (line && line.widgets) {
+      line.widgets.forEach((w) => {
+        w.clear();
+      });
+    }
+  }
 }

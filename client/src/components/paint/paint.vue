@@ -538,6 +538,7 @@ export default {
       const cursor = doc.getCursor();
       const lineText = doc.getLine(cursor.line);
       if (lineText.startsWith('![')) {
+        console.log('导入原来的画');
         this.isThisAImgLine = true;
         const matchRes = lineText.match(/!\[(.*?)\]\((.+?)\)/);
         if (matchRes && matchRes.length) {
@@ -681,6 +682,7 @@ export default {
         const doc = this.editor.cm.getDoc();
         // 如果这一行是图片行, 则清空当前行
         if (this.isThisAImgLine) {
+          this.editor.removeLineWidgets(doc.getLineHandle(this.curLineNum));
           doc.replaceRange(
             '',
             { line: this.curLineNum, ch: 0 },
