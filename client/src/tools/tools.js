@@ -138,6 +138,7 @@ const tools = {
     29: '㉙',
     30: '㉚',
   },
+
   markIndex: {
     '①': 1,
     '②': 2,
@@ -170,6 +171,7 @@ const tools = {
     '㉙': 29,
     '㉚': 30
   },
+
   markEmpty: {
     '①': null,
     '②': null,
@@ -201,6 +203,15 @@ const tools = {
     '㉘': null,
     '㉙': null,
     '㉚': null
+  },
+
+  // sleep
+  async sleep(ms) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, ms);
+    });
   }
 
 };

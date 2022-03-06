@@ -84,6 +84,11 @@
         @close="activeButtons.Paint = false"
         :class="{tool: true}"
       ></paint>
+      <gallery
+        v-if="activePage === 'Gallery' && !commonTools.Gallery"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></gallery>
     </div>
 
     <!-- other components -->
@@ -126,6 +131,7 @@ import SplitScreen from '@/components/split-screen/split-screen';
 import Review from '@/components/review/review';
 import Batch from '@/components/batch/batch';
 import Paint from '@/components/paint/paint';
+import Gallery from '@/components/gallery/gallery';
 
 // eslint-disable-next-line no-unused-vars
 import {
@@ -142,7 +148,8 @@ import {
   nightModeSvg,
   fluorescentPenSvg,
   batchSvg,
-  paintSvg
+  paintSvg,
+  gallerySvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -162,7 +169,8 @@ export default {
     Statistics,
     FluorescentPen,
     Batch,
-    Paint
+    Paint,
+    Gallery
   },
   data() {
     return {
@@ -277,6 +285,12 @@ export default {
             this.$store.commit('updateIsNightModeOn', !lastStatus);
           },
           type: 'button',
+        },
+        {
+          name: 'Gallery',
+          icon: gallerySvg,
+          type: 'page',
+          sideBarWidth: '50%',
         },
         {
           name: 'Fluorescent Pen',

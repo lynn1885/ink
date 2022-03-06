@@ -16,7 +16,7 @@
       @editor="getThisEditor"
     ></editor>
     <div class="editor-placeholder" v-show="!isShowEditor">
-      请打开笔记
+      I n k
     </div>
   </div>
 </template>
@@ -116,6 +116,7 @@ export default {
     left: 0;
     right: 0;
     bottom: 0;
+    font-size: 30px;
   }
   .editor-placeholder {
     display: flex;

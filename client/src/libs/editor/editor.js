@@ -900,4 +900,22 @@ export default class {
       });
     }
   }
+
+  /**
+   * 这是个图片行吗, 是的话获取图片信息
+   * @param {string} lineText 图片文本
+   * @returns {Object}
+   */
+  // eslint-disable-next-line class-methods-use-this
+  getLineImgInfo(lineText) {
+    const matchRes = lineText.match(/^!\[(.*?)\]\((.*?)\)/);
+    if (matchRes && matchRes.length) {
+      return {
+        lineText,
+        imgName: matchRes[1],
+        imgSrc: matchRes[2],
+      };
+    }
+    return null;
+  }
 }
