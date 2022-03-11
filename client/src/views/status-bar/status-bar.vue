@@ -3,7 +3,8 @@
     <div class="cur-note-path item" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
     <div class="fold item" v-for="index of [1,2,3,4,5,6]" :key="index" :title="`Click to fold headers to level ${index}`" @click="changeFold(index)">{{index}}</div>
     <div class="fold unfold item" title="Click to unfold all headers" @click="changeFold(0)">Unfold</div>
-    <div class="url item" :title="url" @click="copyUrl">Url</div>
+    <!-- <div class="url item" :title="url" @click="copyUrl">Url</div> -->
+    <div class="url item" title="Change images visibility" @click="changeImgVisibility">{{isShowImg ? 'Img' : 'No Img'}}</div>
     <!-- <div class="note-properties item" title="Set Current Note Properties">Prop</div> -->
     <div class="time item" :title="'Time, click to restart'" @click="restartTime">Time: {{ timeStr }}</div>
     <div class="progress item" :title="`Current Progress: ${progress}%`">Progress: {{ progress }}%</div>
@@ -46,6 +47,7 @@ export default {
       seasonTimeIcons: ['___spring1___', '___summer1___', '___autumn1___', '___winter___'],
       seasonTimeIcon: '',
       curLineNum: 0,
+      isShowImg: true,
     };
   },
   watch: {
@@ -103,6 +105,7 @@ export default {
     // restartTime
     restartTime() {
       clearInterval(this.timeCounter);
+      this.$message.success('重置计时');
       this.time = 0;
       this.timeStr = '0s';
       this.startTime();
@@ -158,14 +161,28 @@ export default {
     copyUrl() {
       const text = this.url;
       tools.copyText(text);
+      this.$message.success('网址已复制, 可在别的设备打开: ', text);
+    },
+
+    // 改变图片可见性
+    changeImgVisibility() {
+      this.isShowImg = !this.isShowImg;
+      this.editor.changeImgWidgetsVisibility(this.isShowImg);
+      if (this.isShowImg) {
+        this.$message.success('显示图片');
+      } else {
+        this.$message.success('不显示图片');
+      }
     },
 
     // 展开或折叠
     changeFold(lv) {
       if (lv === 0) {
         this.editor.unfoldAll();
+        this.$message.success('展开文档');
       } else {
         this.editor.foldHeaderTo(lv);
+        this.$message.success(`折叠到 ${lv} 级标题`);
       }
     },
 

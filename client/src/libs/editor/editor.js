@@ -904,7 +904,7 @@ export default class {
   /**
    * 这是个图片行吗, 是的话获取图片信息
    * @param {string} lineText 图片文本
-   * @returns {Object}
+   * @returns {Object} 图片信息, 没有的话返回null
    */
   // eslint-disable-next-line class-methods-use-this
   getLineImgInfo(lineText) {

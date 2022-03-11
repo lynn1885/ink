@@ -16,7 +16,6 @@
       @editor="getThisEditor"
     ></editor>
     <div class="editor-placeholder" v-show="!isShowEditor">
-      I n k
     </div>
   </div>
 </template>

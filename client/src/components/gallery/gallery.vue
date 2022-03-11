@@ -11,7 +11,15 @@
           <div class="text">{{line.lineText}}</div>
           <div class="num">{{line.includeImgNum}}</div>
         </div>
-        <div class="img" v-if="line.type ==='img'" @click="gotoLine(line)" @dblclick="editImg(line.lineHandle)">
+        <div class="img-container"
+          v-if="line.type ==='img'"
+          :ref="line.lineText"
+          @click="gotoLine(line)"
+          @dblclick="editImg(line.lineHandle)"
+          :class="{
+            active: line.lineText === activeLineText
+          }"
+        >
           <div class="prev">{{line.curHeader1ImgIndex}}. {{line.headers[line.headers.length - 1].headerLineText}} 总排序: {{line.imgIndex}} 本章排序: {{line.curHeader1ImgIndex}}/{{line.header1.includeImgNum}}</div>
           <img v-show="isShowImg" :src="line.imgSrc">
         </div>
@@ -32,6 +40,7 @@ export default {
       allImgNum: 0,
       isShowImg: true,
       isContinueLoadImg: true,
+      activeLineText: '',
     };
   },
 
@@ -51,7 +60,26 @@ export default {
       handler() {
         this.refresh();
       },
-    }
+    },
+
+    '$store.state.editor.curCursorLineNum': {
+      handler(value) {
+        const doc = this.editor.cm.getDoc();
+        const lineText = doc.getLine(value);
+        if (this.editor.getLineImgInfo(lineText)) {
+          this.activeLineText = lineText;
+          try {
+            this.$refs[lineText][0].scrollIntoView({
+              behavior: 'smooth',
+              block: 'center',
+              inline: 'center',
+            });
+          } catch (error) {
+            console.warn('[gallery] 无法将指定图片滚动到视口: ', this.$refs[lineText], error);
+          }
+        }
+      },
+    },
 
   },
 
@@ -93,6 +121,7 @@ export default {
           this.lines.push({
             type: 'img',
             lineNum: i,
+            lineText,
             lineHandle: doc.getLineHandle(i),
             ...imgInfo,
             previousLineText: doc.getLine(i - 1),
@@ -114,6 +143,8 @@ export default {
 
     // 跳转到指定行
     gotoLine(line) {
+      this.activeLineText = line.lineText;
+
       const doc = this.editor.cm.getDoc();
       const lineNum = doc.getLineNumber(line.lineHandle);
       this.editor.scrollNoteToThisLine(
@@ -196,8 +227,13 @@ export default {
       }
     }
 
-    .img {
+    .img-container {
       padding-top: 10px;
+      box-sizing: border-box;
+      border-radius: 2px;
+      &.active {
+        border: 2px dashed $sidebar-item-active-border-color
+      }
       img {
         max-width: 100%;
         border-radius: 2px;

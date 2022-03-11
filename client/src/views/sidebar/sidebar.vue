@@ -427,6 +427,10 @@ export default {
         if (toolObj) this.changeTool(toolObj);
       }
     });
+
+    // setTimeout(() => {
+    //   this.editor.changeImgWidgetsVisibility(false);
+    // }, 3000);
   },
 
   beforeDestroy() {

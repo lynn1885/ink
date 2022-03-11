@@ -36,7 +36,8 @@ const opeartionKeys = {
   TRUNCATED_FROM_LIST_MARK_3: 'TRUNCATED_FROM_LIST_MARK_3',
   REMOVE_TRAILING_PUNCTUATION: 'REMOVE_TRAILING_PUNCTUATION',
   TRIM: 'TRIM',
-  REMOVE_EMPTY_LINE: '清除空行',
+  REMOVE_EMPTY_LINE: ' REMOVE_EMPTY_LINE',
+  REMOVE_LINE_BREAK: ' REMOVE_LINE_BREAK',
   REMOVE_CURLEVEL_END_PUNCTUATION: 'REMOVE_CURLEVEL_END_PUNCTUATION',
   COPY_SUBLEVEL_HEADER_1: 'COPY_SUBLEVEL_HEADER_1',
 };
@@ -74,6 +75,7 @@ export default {
         separator3: { title: 'separator' },
         [opeartionKeys.TRIM]: { title: '清理首尾空格', isNeedSelection: true },
         [opeartionKeys.REMOVE_EMPTY_LINE]: { title: '清除空行', isNeedSelection: true },
+        [opeartionKeys.REMOVE_LINE_BREAK]: { title: '清除换行, 变为一行', isNeedSelection: true },
         separator4: { title: 'separator' },
         [opeartionKeys.COPY_SUBLEVEL_HEADER_1]: {
           title: '提取当前等级标题 + 下一级标题',
@@ -317,11 +319,20 @@ export default {
           break;
         }
 
-        // 清理首尾空格
+        // 清理空格
         case opeartionKeys.REMOVE_EMPTY_LINE: {
           const newText = selectionLines
             .filter(line => line)
             .join('\n');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
+        // 清理换行, 变成一行
+        case opeartionKeys.REMOVE_LINE_BREAK: {
+          const newText = selectionLines
+            .filter(line => line)
+            .join('');
           doc.replaceSelection(newText, 'around');
           break;
         }

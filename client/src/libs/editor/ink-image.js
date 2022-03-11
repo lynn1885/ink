@@ -1,5 +1,10 @@
 import $ from 'jquery';
 
+// 准备让图片不可见的dom元素
+const noImgStyle = document.createElement('style');
+noImgStyle.appendChild(document.createTextNode('.inserted-widget-image {display: none}'));
+const head = document.getElementsByTagName('head')[0];
+
 /**
  * 插件函数
  * @param {object} editor 编辑器对象
@@ -44,6 +49,15 @@ export default function (editor, config) {
     }
   };
 
+  // 可见/不可见 图片widgets
+  editor.changeImgWidgetsVisibility = (status) => {
+    if (status) {
+      head.removeChild(noImgStyle);
+    } else {
+      head.appendChild(noImgStyle);
+    }
+  };
+
   // render image
   editor.cm.on('renderLine', (cm, line, el) => {
     // 如果不是图片行直接退出
@@ -79,7 +93,8 @@ export default function (editor, config) {
       const imgWidget = $(`<div class="inserted-widget-image ${isSmallImage ? 'inserted-widget-image-small' : ''}"></div>`);
       imgWidget.append(img);
 
-      // 双击编辑
+      // 单击设置光标, 双击编辑
+      imgWidget.on('click', () => setCursorToImgLine(editor, cm, line));
       imgWidget.on('dblclick', () => editImg(editor, cm, line));
 
       // 解析贴纸
@@ -191,11 +206,16 @@ function convertBase64ToImgFile(base64Str, fileName, fileType) {
   return blob;
 }
 
-// 双击编辑图片
-function editImg(editor, cm, line) {
+// 光标放在图片行
+function setCursorToImgLine(editor, cm, line) {
   cm.getDoc().setCursor({
     line: cm.getDoc().getLineNumber(line),
     ch: 0,
   });
+}
+
+// 双击编辑图片
+function editImg(editor, cm, line) {
+  setCursorToImgLine(editor, cm, line);
   editor.inkCommon.plugins['side-bar'].changeTool('Paint');
 }

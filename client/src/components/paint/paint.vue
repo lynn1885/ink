@@ -115,8 +115,10 @@ export default {
       markTextPair: JSON.parse(JSON.stringify(tools.markEmpty)),
       lastPaintMouseDownTime: 0, // 上次落笔时间戳
       lastPaintMouseDownPos: { x: 0, y: 0 }, // 上次落笔位置
+      marksPos: {}, // mark的坐标们
       addMarkTime: [], // 添加mark的耗时
       needPaintLines: {}, // 需要配图的起始行
+
       tools: {
         eraser: {
           width: 20,
@@ -388,6 +390,9 @@ export default {
     buildCanvas() {
       // 创建画布
       this.canvas = new fabric.Canvas('canvas'); // 可以通过鼠标方法缩小,旋转
+
+      this.canvas.backgroundColor = '#fff';
+
       this.canvas.isDrawingMode = true;
       this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
       this.canvas.freeDrawingBrush.width = 2;
@@ -429,16 +434,16 @@ export default {
 
 
       // 添加白底
-      const backgroundRect = new fabric.Rect({
-        width: this.canvas.width,
-        height: this.canvas.height,
-        left: 0,
-        top: 0,
-        fill: '#fff',
-        strokeWidth: 0,
-        strokeColor: '#fff'
-      });
-      this.canvas.add(backgroundRect);
+      // const backgroundRect = new fabric.Rect({
+      //   width: this.canvas.width,
+      //   height: this.canvas.height,
+      //   left: 0,
+      //   top: 0,
+      //   fill: '#fff',
+      //   strokeWidth: 0,
+      //   strokeColor: '#fff'
+      // });
+      // this.canvas.add(backgroundRect);
 
       // 记录初始状态
       this.emptyCanvas = JSON.stringify(this.canvas);
@@ -464,11 +469,13 @@ export default {
       }
 
       // 添加①②③...
+      const curMarkIndex = this.markIndex[this.curMark];
+      const isFirstMark = (curMarkIndex === 1);
       const markTextObj = new fabric.Textbox(this.curMark, {
         left: e.pointer.x - 10,
         top: e.pointer.y - 10,
-        fontSize: 14,
-        fill: 'red',
+        fontSize: isFirstMark ? 18 : 14,
+        fill: isFirstMark ? 'green' : 'red',
         paintFirst: 'stroke',
         stroke: '#fff',
         strokeWidth: 1.5
@@ -480,13 +487,37 @@ export default {
         left: e.pointer.x + 10,
         top: e.pointer.y - 10,
         width: 70,
-        fontSize: 10,
-        fill: '#333',
+        fontSize: isFirstMark ? 14 : 10,
+        fill: isFirstMark ? 'green' : '#333',
         paintFirst: 'stroke',
         stroke: '#fff',
         strokeWidth: 1.5
       });
       this.canvas.add(lineTextObj);
+
+      // 添加箭头
+      if (isFirstMark) {
+        this.marksPos[1] = {
+          x: e.pointer.x, y: e.pointer.y
+        };
+      } else {
+        const pos = this.marksPos[curMarkIndex - 1] || this.marksPos.last;
+        const arrow = new fabric.Line([pos.x, pos.y, e.pointer.x, e.pointer.y], {
+          stroke: '#ccc',
+          strokeDashArray: [5, 5],
+        });
+        this.canvas.add(arrow);
+        this.marksPos[curMarkIndex] = {
+          x: e.pointer.x, y: e.pointer.y
+        };
+      }
+
+      // 始终记录上一次添加的mark的坐标
+      console.log(123, e.pointer.x, e.pointer.y);
+      this.marksPos.last = {
+        x: e.pointer.x,
+        y: e.pointer.y
+      };
 
       // 恢复画笔
       this.curMark = '';
@@ -528,7 +559,7 @@ export default {
         this.markTextPair[mark] = line.slice(0, -1).replace(/^#+ /, '').replace(/^[\d]+\. /, '');
       });
       if (this.markTextPair['①']) {
-        this.editor.messager.success(`漫画总共 ${this.needPaintLines.__allLines}张, 当前第${this.needPaintLines[headerLineNum]}张, 剩余${this.needPaintLines.__allLines - this.needPaintLines[headerLineNum]}张`);
+        this.editor.messager.success(`插画总共 ${this.needPaintLines.__allLines}张, 当前第${this.needPaintLines[headerLineNum]}张, 剩余${this.needPaintLines.__allLines - this.needPaintLines[headerLineNum]}张`);
       }
     },
 
