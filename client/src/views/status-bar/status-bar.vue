@@ -105,7 +105,6 @@ export default {
     // restartTime
     restartTime() {
       clearInterval(this.timeCounter);
-      this.$message.success('重置计时');
       this.time = 0;
       this.timeStr = '0s';
       this.startTime();
