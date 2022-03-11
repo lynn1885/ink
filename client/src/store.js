@@ -18,6 +18,15 @@ export default new Vuex.Store({
     curNoteTheme: null, // 当前笔记主题
     isNightModeOn: false, // 是否启用了夜间模式
     splitScreenMode: 0, // 0: 不分屏, 1: 上下分屏, 2: 左右分屏
+
+    commonTools: {
+      Outline: false,
+      Search: false,
+      Todo: false,
+      Statistics: false,
+      Batch: false,
+      Gallery: false,
+    }, // 常用工具
   },
   mutations: {
     // 更新编辑器对象
@@ -90,6 +99,11 @@ export default new Vuex.Store({
     // 更新夜间模式状态
     updateIsNightModeOn(state, data) {
       state.isNightModeOn = data;
+    },
+
+    // 更新激活的常用工具
+    updateCommonTools(state, data) {
+      state.commonTools = data;
     },
   },
   actions: {

@@ -12,19 +12,30 @@ exports.create = async (req, res) => {
     throw new Error(`create(), cannot find req.file: ${req.file}`);
   }
 
+
   const dateMs = new Date().valueOf();
-  const { fileDir } = req.body;
+  const { fileDir, imgPath } = req.body;
   const { file } = req;
   const imageDir = config.user.dirs.noteImages;
 
-  // images will be placed in different directories
-  // create new directories base on time
-  // averagely, create a new directory each month
-  // 30 * 24 * 3600 * 1000 = 2592000000
-  const middleDirNum = Math.floor(dateMs / 2592000000);
-  const middleDir = String(middleDirNum);
-  const name = (dateMs - middleDirNum * 2592000000).toString();
-  const ext = `.${file.mimetype.split('/')[1]}`;
+  let middleDir;
+  let name;
+  let ext;
+
+  if (imgPath) {
+    // 用户传过来了指定路径
+    ({ dir: middleDir, name, ext } = path.parse(imgPath));
+  } else {
+    // 自动计算路径
+    // images will be placed in different directories
+    // create new directories base on time
+    // averagely, create a new directory each month
+    // 30 * 24 * 3600 * 1000 = 2592000000
+    const middleDirNum = Math.floor(dateMs / 2592000000);
+    middleDir = String(middleDirNum);
+    name = (dateMs - middleDirNum * 2592000000).toString();
+    ext = `.${file.mimetype.split('/')[1]}`;
+  }
 
   // create a image file
   // or create a new directory, then create a new image file

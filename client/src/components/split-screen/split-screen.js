@@ -3,7 +3,7 @@ export default {
   handler(editor, isActive, vueComp) {
     const newSplitScreenMode = (vueComp.$store.state.splitScreenMode + 1) % 3;
     if (newSplitScreenMode) {
-      editor.messager.success(`分屏模式 ${newSplitScreenMode}`);
+      editor.messager.success(`分屏模式 ${newSplitScreenMode}, 再次点击切换布局`);
     } else {
       editor.messager.success('关闭分屏 ');
     }

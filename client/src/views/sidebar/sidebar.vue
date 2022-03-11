@@ -95,27 +95,10 @@
     <sticky-note v-if="activeButtons['Sticky Note']"></sticky-note>
     <fluorescent-pen v-if="activeButtons['Fluorescent Pen']"></fluorescent-pen>
     <search-note-bar v-if="activeButtons['Search Note Bar']" @close="activeButtons['Search Note Bar'] = false"></search-note-bar>
-
-    <!-- common tools -->
-    <div v-show="isShowCommonTools" class="common-tools tool-page">
-      <div class="common-tool-container" v-for="toolName of activeCommonTools" :key="toolName">
-        <div class="title">
-          {{toolName}}
-          <i class="el-icon-close" title="关闭当前工具" @click="changeCommonTool(toolName)"></i>
-        </div>
-        <div class="tool-container">
-          <component
-          :is="toolName"
-          :timestamp="changeToolTimestamp"
-          :class="{tool: true}"
-          ></component>
-        </div>
-
-      </div>
-    </div>
   </div>
 </template>
 <script>
+import _ from 'lodash';
 import Catalog from '@/components/catalog/catalog.vue';
 import Search from '@/components/search/search.vue';
 import Outline from '@/components/outline/outline.vue';
@@ -187,14 +170,7 @@ export default {
       sideBarWidth: '380px',
       defaultSideBarWidth: '380px',
       changeToolTimestamp: Date.now(), // 切换工具的时间戳
-      isShowCommonTools: false, // 是否显示常用工具栏
-      commonTools: {
-        Outline: false,
-        Search: false,
-        Todo: false,
-        Statistics: false,
-        Batch: false,
-      }, // 悬浮工具
+
       // tool name must be unique
       tools: [
         {
@@ -351,8 +327,8 @@ export default {
   },
 
   computed: {
-    activeCommonTools() {
-      return Object.keys(this.commonTools).filter(tool => this.commonTools[tool]);
+    commonTools() {
+      return _.cloneDeep(this.$store.state.commonTools);
     }
   },
 
@@ -430,9 +406,8 @@ export default {
     changeCommonTool(toolName) {
       if (this.commonTools[toolName] === undefined) {
         this.editor.messager.warning('当前工具不支持置于常用工具区');
-        return;
       } else if (this.commonTools[toolName] === false) {
-        if (this.activeCommonTools.length >= 3) {
+        if (Object.values(this.commonTools).filter(item => item).length >= 3) {
           this.editor.messager.warning('最多支持放置 3 个常用工具');
         } else {
           this.commonTools[toolName] = true;
@@ -441,13 +416,7 @@ export default {
         this.commonTools[toolName] = false;
       }
 
-      if (Object.values(this.commonTools).filter(tool => tool).length) {
-        this.$emit('changeRightSideBarStatus', true);
-        this.isShowCommonTools = true;
-      } else {
-        this.$emit('changeRightSideBarStatus', false);
-        this.isShowCommonTools = false;
-      }
+      this.$store.commit('updateCommonTools', _.cloneDeep(this.commonTools));
     }
   },
 
@@ -579,57 +548,8 @@ export default {
 .tool-page {
   overflow: auto;
   background-color: $tool-page-bg;
-  /* backdrop-filter: blur(10px); */
   color: $tool-page-color;
   font-size: $font-size-sidebar;
-}
-
-/* 常用工具 */
-.common-tools {
-  display: flex;
-  flex-direction: column;
-  position: fixed;
-  width: $right-sidebar-width;
-  right: 0;
-  top: 0;
-  bottom: $status-bar-height;
-  overflow: hidden;
-  z-index: $float-window-index;
-  box-sizing: border-box;
-  /* 每个工具的容器 */
-  .common-tool-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    flex-shrink: 0;
-    flex-basis: 33%;
-    box-sizing: border-box;
-    border-bottom: 2px dashed #eee;
-    overflow: hidden;
-    .title {
-      padding: 0 4px;
-      display: flex;
-      flex-shrink: 0;
-      flex-grow: 0;
-      align-items: center;
-      justify-content: space-between;
-      color: #999;
-      flex-basis: 20px;
-      font-weight: bold;
-      padding-left: 4px;
-      i {
-        background: $tool-page-bg;
-        margin-right: 4px;
-        font-size: 16px;
-        border-radius: 10px;
-        cursor: pointer;
-      }
-    }
-    .tool-container {
-      flex-grow: 1;
-      overflow: auto;
-    }
-  }
 }
 
 // other components

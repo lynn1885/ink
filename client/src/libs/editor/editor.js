@@ -793,7 +793,7 @@ export default class {
         doc.setCursor({ line: lineNum, ch: 0 });
       }, 0);
     }
-    this.cm.scrollIntoView({ line: lineNum, ch: 0 }, 300);
+    this.cm.scrollIntoView({ line: lineNum, ch: 0 }, 900);
     doc.addLineClass(lineNum, 'background', highlightLineClass);
     // Try to scroll to this line many times.
     // Because expanding widgets may cause the note page to scroll

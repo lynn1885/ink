@@ -399,7 +399,7 @@ export default {
       text-overflow: ellipsis;
       line-height: 1.4;
       overflow: hidden;
-      border-bottom: 1px dashed darken($color: $tool-page-bg, $amount: 6);
+      border-bottom: $cutting-border-light;
       cursor: pointer;
       &:hover {
         background: $sidebar-item-hover-bg;

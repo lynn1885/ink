@@ -2,12 +2,21 @@
   <div id="app" :class="{'zen-mode-app': isZenMode }">
     <!-- main body -->
     <div id="main">
-      <side-bar id="side-bar" :class="{'hide': !isShowSideBar}" @changeRightSideBarStatus = changeRightSideBarStatus></side-bar>
+      <!-- 侧边栏 -->
+      <side-bar
+        id="side-bar"
+        :class="{'hide': !isShowSideBar}"
+        @changeActiveCommonTools = changeActiveCommonTools
+      ></side-bar>
+
+      <!-- 笔记本 -->
       <div id="all-note-content" :class="[splitScreenClass]">
         <note-content :isDefaultEditor="true" class="note-content note-content-1"></note-content>
         <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="true"></note-content>
       </div>
-      <div v-show="isShowRightSideBar" id="right-side-bar"></div>
+
+      <!-- 常用工具栏 -->
+      <common-tools id="common-tools"></common-tools>
     </div>
 
     <!-- status-bar-->
@@ -35,18 +44,20 @@ import $ from 'jquery';
 import SideBar from '@/views/sidebar/sidebar.vue';
 import NoteContent from '@/views/content/content.vue';
 import StatusBar from '@/views/status-bar/status-bar.vue';
+import CommonTools from '@/views/common-tools/common-tools.vue';
 import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
 import Files from '@/models/files';
 
 export default {
-  name: 'note',
+  name: 'app',
   store,
   components: {
     SideBar,
     NoteContent,
     StatusBar,
+    CommonTools
   },
   data() {
     return {
@@ -64,7 +75,7 @@ export default {
       defaultTheme: null,
       defaultThemeStyleEl: $('<link rel="stylesheet"></link>'),
       noteThemeStyleEl: $('<link rel="stylesheet"></link>'),
-      isShowRightSideBar: false, // 是否展示右侧边栏
+      activeCommonTools: null, // 激活的常用工具
       isSplitScreen: false, // 是否分屏
       splitScreenClass: '', // 分屏模式class
     };
@@ -115,6 +126,7 @@ export default {
         this.calculateCurBgImg(value);
       }
     },
+
     '$store.state.splitScreenMode': {
       handler(value) {
         switch (value) {
@@ -218,9 +230,9 @@ export default {
         });
     },
 
-    // 改变右侧边栏状态
-    changeRightSideBarStatus(status) {
-      this.isShowRightSideBar = status;
+    // 改变常用工具栏
+    changeActiveCommonTools(activeCommonTools) {
+      this.activeCommonTools = activeCommonTools;
     }
   },
   async mounted() {
@@ -327,10 +339,7 @@ textarea {
       display: block;
     }
   }
-
-  #right-side-bar {
-    width: $right-sidebar-width;
-    height: 100%;
+  #common-tools {
     flex-shrink: 0;
   }
 }

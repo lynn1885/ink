@@ -90,6 +90,8 @@ $cursor: #333;
 
 // gap
 $line-cutting-bg: rgb(252, 247, 243);
+$cutting-border: 1.5px dashed darken($color: $tool-page-bg, $amount: 8);
+$cutting-border-light: 1px dashed darken($color: $tool-page-bg, $amount: 6);
 
 // code, link, quote, em, searched
 // $code-bg: rgba(243, 237, 230, 0.9);

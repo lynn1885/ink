@@ -680,8 +680,11 @@ export default {
     replaceThisLine() {
       if (this.editor && this.editor.uploadImg) {
         const doc = this.editor.cm.getDoc();
+        let filePath = '';
         // 如果这一行是图片行, 则清空当前行
         if (this.isThisAImgLine) {
+          const imgInfo = this.editor.getLineImgInfo(this.curLineText);
+          if (imgInfo && imgInfo.imgSrc) filePath = imgInfo.imgSrc;
           this.editor.removeLineWidgets(doc.getLineHandle(this.curLineNum));
           doc.replaceRange(
             '',
@@ -692,7 +695,7 @@ export default {
 
         const imgData = this.getImgBase64();
         this.imgPreviewData = imgData;
-        this.editor.uploadImg(imgData, this.isThisImgAPaintImg ? this.paintImgName : '');
+        this.editor.uploadImg(imgData, this.isThisImgAPaintImg ? this.paintImgName : '', filePath, doc.getLineHandle(this.curLineNum));
 
         this.$emit('close');
       }

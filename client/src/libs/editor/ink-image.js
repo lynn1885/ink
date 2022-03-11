@@ -30,14 +30,17 @@ export default function (editor, config) {
   });
 
   // 手动上传图片函数
-  editor.uploadImg = async function uploadImg(base64Str, fileName) {
+  editor.uploadImg = async function uploadImg(base64Str, fileName, imgPath, lineHandle) {
     const matchRes = base64Str.match(/data:(.+?);/);
     if (matchRes && matchRes.length) {
       const fileType = matchRes[1];
       const imgFile = convertBase64ToImgFile(base64Str, 'paint', fileType);
       const formData = new FormData();
       formData.append('file', imgFile);
-      await _upload(formData, editor, config.upload, config.messager, fileName);
+      if (lineHandle) {
+        lineHandle.isRefreshAfterUpload = true; // 如果上传了行对象, 则强制刷新改行
+      }
+      await _upload(formData, editor, config.upload, config.messager, fileName, imgPath);
     }
   };
 
@@ -57,7 +60,10 @@ export default function (editor, config) {
       el.classList.add('line-cm-image-small');
       isSmallImage = true;
     }
-    if (line.text === line.previousText) return; // 如果当前图片行的文本没有发生任何变化，则不再重新加载图片widget, 只有文本发生了变化，才加载widget
+    if (line.text === line.previousText && !line.isRefreshAfterUpload) {
+      delete line.isRefreshAfterUpload;
+      return; // 如果当前图片行的文本没有发生任何变化，则不再重新加载图片widget, 只有文本发生了变化，才加载widget
+    }
     line.previousText = line.text;
 
     setTimeout(() => {
@@ -133,8 +139,9 @@ export default function (editor, config) {
  * @param {function} messager 通知器
  * @param {string} fileName 文件名, 仅用于笔记中显示
  */
-async function _upload(formData, editor, upload, messager, fileName) {
+async function _upload(formData, editor, upload, messager, fileName, imgPath) {
   formData.set('fileDir', editor.fileServer.curFileDir);
+  formData.set('imgPath', imgPath || '');
   const imgInfo = await upload(formData, messager);
   const doc = editor.cm.getDoc();
   const cursor = doc.getCursor();
