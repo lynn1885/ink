@@ -40,6 +40,7 @@ const opeartionKeys = {
   REMOVE_LINE_BREAK: ' REMOVE_LINE_BREAK',
   REMOVE_CURLEVEL_END_PUNCTUATION: 'REMOVE_CURLEVEL_END_PUNCTUATION',
   COPY_SUBLEVEL_HEADER_1: 'COPY_SUBLEVEL_HEADER_1',
+  COPY_HEADERS_3_FLAT: 'COPY_HEADERS_3_FLAT',
 };
 
 export default {
@@ -86,6 +87,11 @@ export default {
           title: '移除当前等级标题末尾的标点',
           isNeedSelection: false,
           isNeedCursorInAHeaderLine: true
+        },
+        [opeartionKeys.COPY_HEADERS_3_FLAT]: {
+          title: '提取前 3 级标题, 并压平层级',
+          isNeedSelection: false,
+          isNeedCursorInAHeaderLine: false
         },
       }
     };
@@ -340,6 +346,20 @@ export default {
         case opeartionKeys.COPY_SUBLEVEL_HEADER_1: {
           const content = this.editor.getHeaderContent(cursor.line, 2);
           tools.copyText(content);
+          this.editor.messager.warning('拷贝完成, 请自行粘贴');
+          break;
+        }
+
+        // 提取所有标题, 并压平
+        case opeartionKeys.COPY_HEADERS_3_FLAT: {
+          const res = [];
+          this.editor.getHeadersArray().forEach((header) => {
+            res.push(header.parentHeadersText
+              .slice(0, 3)
+              .map(text => text.replace(/^#+\s/g, ''))
+              .join(' > '));
+          });
+          tools.copyText(Array.from(new Set(res)).join('\n'));
           this.editor.messager.warning('拷贝完成, 请自行粘贴');
           break;
         }

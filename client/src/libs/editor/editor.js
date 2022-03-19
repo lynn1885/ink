@@ -671,13 +671,18 @@ export default class {
     const headers = [];
     headers.lines = {};
 
+    const parentHeadersText = [];
+
     for (let i = 0; i < lines.length; i += 1) {
       const headerLv = this.getHeaderLvByStr(lines[i]);
       if (headerLv && headerLv > 0) {
+        parentHeadersText[headerLv - 1] = lines[i];
+
         const headerObj = {
           lineNum: i,
           lv: headerLv,
           text: lines[i],
+          parentHeadersText: parentHeadersText.slice(0, headerLv),
           index: headers.length,
         };
 
