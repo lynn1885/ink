@@ -39,7 +39,7 @@
 
     <!-- search info -->
     <div id="search-info">
-      {{curFilePath}}
+      <!-- {{curFilePath}} -->
       <div v-show="isSearchDone">
         <div
           v-if="searchedItemsNum < maxSearchResLength"

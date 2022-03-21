@@ -106,6 +106,10 @@ export default {
         }
       });
 
+      this.editor.cm.on('focus', () => {
+        this.$emit('onEditorFocus', true);
+      });
+
       // 给editor添加id
       let editorId = Number(sessionStorage.getItem('editorId') || 0);
       editorId += 1;

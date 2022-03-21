@@ -1,19 +1,21 @@
 <template>
   <div
     :class="['note-content', ($store.state.splitScreenMode && thisEditor && thisEditor.isActive) ? 'active' : '']"
-    @mouseenter="activeThisEditor"
+    @click="activeThisEditor"
   >
     <quick-open-bar
       v-if="thisEditor"
       class="quick-open-bar"
       :editor="thisEditor"
       :curFilePath="thisEditorCurrentFilePatch"
+
     ></quick-open-bar>
     <editor
-       class="editor"
+      class="editor"
       @curEditFilePath="fp => thisEditorCurrentFilePatch = fp"
       @editorShowState="checkIsShowEditor"
       @editor="getThisEditor"
+      @onEditorFocus="activeThisEditor"
     ></editor>
     <div class="editor-placeholder" v-show="!isShowEditor">
     </div>
