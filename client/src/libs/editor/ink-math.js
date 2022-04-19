@@ -4,14 +4,16 @@ import katex from 'katex';
 import 'katex/dist/katex.css';
 import 'katex/dist/fonts/KaTeX_AMS-Regular.ttf';
 
-export default function (editor, config) { // eslint-disable-line no-unused-vars
+export default function (editor, config) {
+  // eslint-disable-line no-unused-vars
   editor.cm.on('renderLine', (cm, line) => {
     if (line.text !== line.lastTimeTextMath) {
       line.lastTimeTextMath = line.text;
-      // const r = /\$([^\s][^$]*?[^\s])\$/g;
-      const r = /\$([^\s][A-Za-z0-9=+\-_*%`~!#^<>,./\\||()[\]{}?\s→←↑↓±≠∞ΑαΒβΓγΔδΕεΖζΗηΘθΙι℩ΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω]*?[^\s])\$/g;
+      const r = /\$([^\s][^$]*?[^\s])\$/g;
+      // const r = /\$([^\s][A-Za-z0-9=+\-_*%`~!#^<>,./\\|()[\]{}?\s→←↑↓±≠∞ΑαΒβΓγΔδΕεΖζΗηΘθΙι℩ΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω]*?[^\s])\$/g;
       const matchRes = r.exec(line.text);
       if (matchRes) {
+        console.log('是公式, ', matchRes);
         let isClearedOldWidgets = false;
         const doc = editor.cm.getDoc();
         const cursor = doc.getCursor();
@@ -38,7 +40,8 @@ export default function (editor, config) { // eslint-disable-line no-unused-vars
         const cursorOffset = cursor.ch - 1;
         mathFragments.forEach((item) => {
           if (cursorOffset > item.from && cursorOffset < item.to) {
-            setTimeout(() => { // add widgets after DOM rendered to avoid triggering re-renderLine
+            setTimeout(() => {
+              // add widgets after DOM rendered to avoid triggering re-renderLine
               if (line.widgets) {
                 line.widgets.forEach((w) => {
                   w.clear();
@@ -75,7 +78,7 @@ export default function (editor, config) { // eslint-disable-line no-unused-vars
                   // inclusiveRight: true,
                   // inclusiveLeft: true,
                   replacedWith: $mathEl[0],
-                },
+                }
               );
               // const newCursor = doc.getCursor();
               // if (newCursor.line !== oldCursor.line) {
