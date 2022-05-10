@@ -18,6 +18,7 @@ const map = {
   // others
   cursorToLastLine: 'Alt-E',
   cursorScrollIntoView: 'Alt-V',
+  cursorGotoCurHeaderLastLine: 'Alt-C',
 };
 
 // export
@@ -130,5 +131,12 @@ export default function (editor) {
       cm.scrollTo(0, (cm.getScrollInfo().top + cm.cursorCoords().top) - 100);
     },
 
+    [map.cursorGotoCurHeaderLastLine]: (cm) => {
+      const headerArr = editor.getHeadersArray();
+      const lastLineNum = editor.getHeaderEndAtLineNumByHeaderArray(headerArr, headerArr.lines[editor.getHeaderByCursor().headerLineNum]);
+      cm.getDoc().setCursor({ line: lastLineNum, ch: 0 });
+      // 插入新行
+      editor.keyMapFns.insertNewLineDown();
+    }
   });
 }

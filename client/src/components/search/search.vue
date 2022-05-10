@@ -463,6 +463,12 @@ export default {
 
     // search bar key down handler
     searchBarKeyDownHandler(e) {
+      if (!this.isGlobal) {
+        setTimeout(() => {
+          this.search();
+        }, 0);
+      }
+
       // press Enter key
       if (e.keyCode === 13) {
         if (isEnableConsole) {

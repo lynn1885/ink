@@ -42,6 +42,7 @@ export default class {
     this._initAudioAbility();
     this.curCursorLineNum = undefined; // 当前光标所处的行
     this.shortcutKeyMap = {};
+    this.keyMapFns = {};
     this.messager = config.messager || {
       success() { }, info() { }, warning() { }, error() { },
     };
@@ -432,7 +433,7 @@ export default class {
    * @param {boolean} isGetNext 是否获取当前标题之后的同级标题, 默认为true. 如果前后都检索, 则优先检索前面的. 检索范围不会越过父级范围.
    * @param {num} tagertGetNum 要检索的header个数. 可选, 如果不填, 则检索所有符合要求的header
    * @returns {obj} 检索结果对象. 包含如下属性: firstNextHeaderIndex: [num] 第一个nextHeader在结果数组中的下标, data: 结果数组
-   * 结果数组[0]始终是当前光标位于的header的信息. [1]-[firstNextHeaderIndex-1]是prevHeader的信息, 之后是nextHeader的信息
+   * 结果数组[0]始终是当前光标位于的header的信息. [1]~[firstNextHeaderIndex-1]是prevHeader的信息, 之后是nextHeader的信息
    * 还有一个dataSorted属性, 值为数字, 里面是按顺序排列好的headers, 从上至下排列
    * 数组元素结构: {headerLv: num, 标题等级, headerLineNum: 标题所在行号, headerLineText: 标题内容}
    * 如果当前cursor所在行也是一个header, 则数组的第一项会多出一个属性: isCursorInThisLine: true
@@ -524,6 +525,34 @@ export default class {
     };
     return res;
   }
+
+  /**
+   * 获取当前header的最后一行和第一行
+   * @param {pos} cursor 光标. 可选, 如果没有传入则使用当前鼠标位置. 需要是一个cm中的{line: num, ch: num}对象
+   * @return {obj} {firstLineNum: num, lastLineNum: num}分别是首行,尾行num. 默认值均为0
+   */
+  // getHeaderFirstAndLastLineNum(cursor) {
+  //   const curHeaderSiblings = this.getHeaderSiblings(cursor, false, true);
+  //   let curHeaderLineNum = 0;
+  //   let nextHeaderLineNum = 0;
+
+  //   // 首行
+  //   if (curHeaderSiblings.data[0]) {
+  //     curHeaderLineNum = curHeaderSiblings.data[0].headerLineNum;
+  //   }
+
+  //   // 尾行
+  //   if (curHeaderSiblings.data[curHeaderSiblings.firstNextHeaderIndex]) {
+  //     nextHeaderLineNum = curHeaderSiblings.data[curHeaderSiblings.firstNextHeaderIndex].headerLineNum;
+  //   } else {
+  //     nextHeaderLineNum = this.cm.getDoc().lineCount();
+  //   }
+
+  //   return {
+  //     firstLineNum: curHeaderLineNum,
+  //     lastLineNum: nextHeaderLineNum - 1
+  //   };
+  // }
 
   /**
    * isThisLineAHeader: 传入的行是header吗, 该函数尚未测试

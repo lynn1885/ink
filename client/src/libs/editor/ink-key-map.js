@@ -19,7 +19,7 @@ export default function (editor, keyMap) {
     code: 'Ctrl-;',
     em: 'Ctrl-E',
     em2: 'Alt-E',
-    colon: 'Alt-C',
+    // colon: 'Alt-C',
     toUpperCase: 'Ctrl-Alt-U',
     toLowerCase: 'Ctrl-Alt-L',
     addStar: 'Alt-S',
@@ -43,8 +43,8 @@ export default function (editor, keyMap) {
 
   const mergedKeyMap = Object.assign(defaultKeyMap, keyMap);
 
-  // 快捷键
-  editor.cm.addKeyMap({
+  // 函数
+  const keyMapFns = {
     // header
     [mergedKeyMap.removeHeader]: (cm) => {
       const doc = cm.getDoc();
@@ -197,17 +197,17 @@ export default function (editor, keyMap) {
       }
     },
 
-    [mergedKeyMap.colon]: (cm) => {
-      editor.playAudio('addColon');
-      const doc = cm.getDoc();
-      const cursor = doc.getCursor();
-      const sel = doc.getSelection();
-      if (sel) {
-        doc.replaceSelection(': ');
-      } else {
-        doc.replaceRange(': ', cursor);
-      }
-    },
+    // [mergedKeyMap.colon]: (cm) => {
+    //   editor.playAudio('addColon');
+    //   const doc = cm.getDoc();
+    //   const cursor = doc.getCursor();
+    //   const sel = doc.getSelection();
+    //   if (sel) {
+    //     doc.replaceSelection(': ');
+    //   } else {
+    //     doc.replaceRange(': ', cursor);
+    //   }
+    // },
 
     [mergedKeyMap.toUpperCase]: (cm) => {
       const doc = cm.getDoc();
@@ -388,6 +388,16 @@ export default function (editor, keyMap) {
     // other
     [mergedKeyMap.alt]: () => {
     },
+  };
+
+  // 快捷键调用
+  editor.cm.addKeyMap({
+    ...keyMapFns
+  });
+
+  // 添加函数调用
+  Object.keys(defaultKeyMap).forEach((key) => {
+    editor.keyMapFns[key] = () => keyMapFns[defaultKeyMap[key]](editor.cm);
   });
 
   // 事件
