@@ -13,7 +13,6 @@ export default function (editor, config) {
       // const r = /\$([^\s][A-Za-z0-9=+\-_*%`~!#^<>,./\\|()[\]{}?\s→←↑↓±≠∞ΑαΒβΓγΔδΕεΖζΗηΘθΙι℩ΚκΛλΜμΝνΞξΟοΠπΡρΣσςΤτΥυΦφΧχΨψΩω]*?[^\s])\$/g;
       const matchRes = r.exec(line.text);
       if (matchRes) {
-        console.log('是公式, ', matchRes);
         let isClearedOldWidgets = false;
         const doc = editor.cm.getDoc();
         const cursor = doc.getCursor();

@@ -126,7 +126,8 @@ export default function (editor) {
     },
 
     [map.cursorScrollIntoView]: (cm) => {
-      cm.scrollIntoView(null, 350);
+      cm.scrollIntoView(cm.cursorCoords(cm.getCursor(), 'local'), -300);
+      cm.scrollTo(0, (cm.getScrollInfo().top + cm.cursorCoords().top) - 100);
     },
 
   });
