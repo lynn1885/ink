@@ -57,8 +57,8 @@ export default {
     return {
       editor: null,
       todos: [],
-      todoMark: localStorage.getItem('todoMark') || 'Todo ',
-      preparedMarkers: ['Todo', 'Review', '⚠️', '⭐', '👑'],
+      todoMark: localStorage.getItem('todoMark') || 'TODO ',
+      preparedMarkers: ['TODO', 'Review', '⚠️', '⭐', '👑'],
       maxTodoMarkLength: 30,
       maxTodoNum: 200,
       highlightLineClass: classNames.highlightLineClass,

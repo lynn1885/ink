@@ -36,11 +36,15 @@ const opeartionKeys = {
   TRUNCATED_FROM_LIST_MARK_3: 'TRUNCATED_FROM_LIST_MARK_3',
   REMOVE_TRAILING_PUNCTUATION: 'REMOVE_TRAILING_PUNCTUATION',
   TRIM: 'TRIM',
-  REMOVE_EMPTY_LINE: ' REMOVE_EMPTY_LINE',
-  REMOVE_LINE_BREAK: ' REMOVE_LINE_BREAK',
+  REMOVE_EMPTY_LINE: 'REMOVE_EMPTY_LINE',
+  MULTI_EMPTY_LINE_2_ONE_EMPTY_LINE: 'MULTI_EMPTY_LINE_2_ONE_EMPTY_LINE',
+  REMOVE_LINE_BREAK: 'REMOVE_LINE_BREAK',
   REMOVE_CURLEVEL_END_PUNCTUATION: 'REMOVE_CURLEVEL_END_PUNCTUATION',
+  REMOVE_CHINESE_EMPTY: 'REMOVE_CHINESE_EMPTY',
   COPY_SUBLEVEL_HEADER_1: 'COPY_SUBLEVEL_HEADER_1',
   COPY_HEADERS_3_FLAT: 'COPY_HEADERS_3_FLAT',
+  ADD_TODO: 'ADD_TODO',
+  ADD_IMPORTANT: 'ADD_IMPORTANT',
 };
 
 export default {
@@ -77,7 +81,12 @@ export default {
         [opeartionKeys.TRIM]: { title: '清理首尾空格', isNeedSelection: true },
         [opeartionKeys.REMOVE_EMPTY_LINE]: { title: '清除空行', isNeedSelection: true },
         [opeartionKeys.REMOVE_LINE_BREAK]: { title: '清除换行, 变为一行', isNeedSelection: true },
+        [opeartionKeys.MULTI_EMPTY_LINE_2_ONE_EMPTY_LINE]: { title: '多行空行变一行空行', isNeedSelection: true },
+        [opeartionKeys.REMOVE_CHINESE_EMPTY]: { title: '移除中文之间的空格', isNeedSelection: true },
         separator4: { title: 'separator' },
+        [opeartionKeys.ADD_TODO]: { title: '添加待办TODO', isNeedSelection: true },
+        [opeartionKeys.ADD_IMPORTANT]: { title: '添加重点⭐', isNeedSelection: true },
+        separator5: { title: 'separator' },
         [opeartionKeys.COPY_SUBLEVEL_HEADER_1]: {
           title: '提取当前等级标题 + 下一级标题',
           isNeedSelection: false,
@@ -339,6 +348,40 @@ export default {
           const newText = selectionLines
             .filter(line => line)
             .join('');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
+        // 多行空行变一行空行
+        case opeartionKeys.MULTI_EMPTY_LINE_2_ONE_EMPTY_LINE: {
+          doc.replaceSelection(selectionLines.join('\n').replace(/\n{3,}/g, '\n\n'), 'around');
+          break;
+        }
+
+        // 移除中文空格
+        case opeartionKeys.REMOVE_CHINESE_EMPTY: {
+          const newText = selectionLines
+            .map(line => line.replace(/(?<=[\u4e00-\u9fa5])(\s+)(?=[\u4e00-\u9fa5])/g, ''))
+            .join('\n');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
+        // 添加todo
+        case opeartionKeys.ADD_TODO: {
+          const newText = selectionLines
+            .map(line => `TODO ${line}`)
+            .join('\n');
+          doc.replaceSelection(newText, 'around');
+          break;
+        }
+
+
+        // 添加重点
+        case opeartionKeys.ADD_IMPORTANT: {
+          const newText = selectionLines
+            .map(line => `⭐ ${line}`)
+            .join('\n');
           doc.replaceSelection(newText, 'around');
           break;
         }

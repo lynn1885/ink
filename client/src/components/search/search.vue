@@ -466,7 +466,7 @@ export default {
       if (!this.isGlobal) {
         setTimeout(() => {
           this.search();
-        }, 0);
+        }, 100);
       }
 
       // press Enter key

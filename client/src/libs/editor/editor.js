@@ -165,6 +165,16 @@ export default class {
       el.classList.add('line-cutting');
     }
 
+    // Todo
+    if (el.innerText.startsWith('TODO')) {
+      el.classList.add('line-todo');
+    }
+
+    // important
+    if (el.innerText.trim().startsWith('⭐') || el.innerText.trim().endsWith('⭐')) {
+      el.classList.add('line-important');
+    }
+
     // count render time
     const t2 = new Date() - t1;
     if (t2 >= 3) {

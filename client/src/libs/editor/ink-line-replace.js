@@ -15,8 +15,8 @@ export default function (editor, config) {
     textReplaceMapKeys = Object.keys(textReplaceMap);
   }
 
-  // 按下快捷键时
-  editor.cm.addKeyMap({
+  // 函数
+  const keyMapFns = {
     [map.replaceLine]: (cm) => {
       // 读取配置文件中的配置
       const tMap = {};
@@ -78,5 +78,15 @@ export default function (editor, config) {
         );
       }
     },
+  };
+
+  // 按下快捷键时
+  editor.cm.addKeyMap({
+    ...keyMapFns
+  });
+
+  // 添加函数调用
+  Object.keys(map).forEach((key) => {
+    editor.keyMapFns[key] = () => keyMapFns[map[key]](editor.cm);
   });
 }

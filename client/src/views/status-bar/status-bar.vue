@@ -1,6 +1,9 @@
 <template>
   <div id="status-bar">
     <div class="cur-note-path item" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
+
+    <div class="auto-replace item" title="Automatic replacement when text is entered" @click="changeAutoReplace">{{isAutoReplace ? 'Replace' : 'No Replace'}}</div>
+
     <div class="fold item" v-for="index of [1,2,3,4,5,6]" :key="index" :title="`Click to fold headers to level ${index}`" @click="changeFold(index)">{{index}}</div>
     <div class="fold unfold item" title="Click to unfold all headers" @click="changeFold(0)">Unfold</div>
     <!-- <div class="url item" :title="url" @click="copyUrl">Url</div> -->
@@ -48,6 +51,8 @@ export default {
       seasonTimeIcon: '',
       curLineNum: 0,
       isShowImg: true,
+      isAutoReplace: true,
+      autoReplaceTimer: null,
     };
   },
   watch: {
@@ -81,6 +86,7 @@ export default {
       this.clear();
       this.editor.on('changes', this.changesHandler);
       this.editor.on('cursorActivity', this.cursorActivityHandler);
+      if (this.isAutoReplace) this.editor.on('changes', this.autoReplaceFn);
       this.restartTime();
       this.getWordAndLineCount();
     },
@@ -174,6 +180,33 @@ export default {
       }
     },
 
+    // 改变是否自动替换
+    changeAutoReplace() {
+      this.isAutoReplace = !this.isAutoReplace;
+
+      if (this.isAutoReplace) {
+        this.$message.success('开启自动替换');
+        this.editor.on('changes', this.autoReplaceFn);
+      } else {
+        this.$message.success('关闭自动替换');
+        this.editor.off('changes', this.autoReplaceFn);
+      }
+    },
+
+    // 自动替换函数
+    autoReplaceFn(cm, info) {
+      if (info && info[0] && info[0].origin === '+input') {
+        clearTimeout(this.autoReplaceTimer);
+        this.autoReplaceTimer = setTimeout(() => {
+          try {
+            this.editor.keyMapFns.replaceLine();
+          } catch (error) {
+            console.warn('无法执行行替换: ', error);
+          }
+        }, 500);
+      }
+    },
+
     // 展开或折叠
     changeFold(lv) {
       if (lv === 0) {
@@ -189,6 +222,7 @@ export default {
       if (this.editor) {
         this.editor.off('changes', this.changesHandler);
         this.editor.off('cursorActivity', this.cursorActivityHandler);
+        this.editor.off('changes', this.autoReplaceFn);
       }
       clearInterval(this.timeCounter);
     },
