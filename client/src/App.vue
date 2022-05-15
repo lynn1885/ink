@@ -345,6 +345,7 @@ textarea {
 }
 // side-bar
 #side-bar {
+  backdrop-filter: blur(20px);
   &.hide {
     width: 0px!important;
     height: 0px!important;

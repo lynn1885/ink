@@ -102,8 +102,8 @@ export default {
 .note-content {
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
-  border: 1px solid transparent;
+  /* box-sizing: border-box; */
+  /* border: 1px solid $editor-bg; */
   &.active {
     border: 1px solid $sidebar-item-active-border-color;
   }
