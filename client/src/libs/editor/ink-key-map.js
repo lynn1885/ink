@@ -211,11 +211,11 @@ export default function (editor, keyMap) {
 
     [mergedKeyMap.toUpperCase]: (cm) => {
       const doc = cm.getDoc();
+      const cursor = cm.getCursor();
       const sel = doc.getSelection();
       if (sel) {
         doc.replaceSelection(sel.toUpperCase());
       } else {
-        const cursor = doc.getCursor();
         const lineText = cm.lineInfo(cursor.line).text;
         doc.replaceRange(
           lineText.toUpperCase(),
@@ -223,15 +223,16 @@ export default function (editor, keyMap) {
           { line: cursor.line, ch: lineText.length },
         );
       }
+      cm.setCursor(cursor);
     },
 
     [mergedKeyMap.toLowerCase]: (cm) => {
       const doc = cm.getDoc();
+      const cursor = cm.getCursor();
       const sel = doc.getSelection();
       if (sel) {
         doc.replaceSelection(sel.toLowerCase());
       } else {
-        const cursor = doc.getCursor();
         const lineText = cm.lineInfo(cursor.line).text;
         doc.replaceRange(
           lineText.toLowerCase(),
@@ -239,6 +240,7 @@ export default function (editor, keyMap) {
           { line: cursor.line, ch: lineText.length },
         );
       }
+      cm.setCursor(cursor);
     },
 
     [mergedKeyMap.addStar]: (cm) => {

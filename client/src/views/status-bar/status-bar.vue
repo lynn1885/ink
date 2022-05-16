@@ -2,7 +2,8 @@
   <div id="status-bar">
     <div class="cur-note-path item" :title="notePath" @click="copyNotePath">{{ notePath }}</div>
 
-    <div class="auto-replace item" title="Automatic replacement when text is entered" @click="changeAutoReplace">{{isAutoReplace ? 'Replace' : 'No Replace'}}</div>
+    <div class="auto-case item" title="Automatic replacement when text is entered" @click="changeAutoReplace">{{isAutoReplace ? 'Replace' : 'No Replace'}}</div>
+    <div class="auto-replace item" title="Automatic uppercase/lowercase when text is entered" @click="changeAutoCase">{{autoCaseStatusArr[autoCaseStatus]}}</div>
 
     <div class="fold item" v-for="index of [1,2,3,4,5,6]" :key="index" :title="`Click to fold headers to level ${index}`" @click="changeFold(index)">{{index}}</div>
     <div class="fold unfold item" title="Click to unfold all headers" @click="changeFold(0)">Unfold</div>
@@ -51,8 +52,10 @@ export default {
       seasonTimeIcon: '',
       curLineNum: 0,
       isShowImg: true,
-      isAutoReplace: true,
+      isAutoReplace: false,
       autoReplaceTimer: null,
+      autoCaseStatusArr: ['Normal case', 'Uppercase', 'Lowercase'],
+      autoCaseStatus: 0,
     };
   },
   watch: {
@@ -180,6 +183,24 @@ export default {
       }
     },
 
+    // 自动大小写
+    changeAutoCase() {
+      this.autoCaseStatus = (this.autoCaseStatus + 1) % this.autoCaseStatusArr.length;
+      switch (this.autoCaseStatus) {
+        case 0:
+          this.$message.success('关闭字母自动大小写');
+          break;
+        case 1:
+          this.$message.success('开启字母自动大写');
+          break;
+        case 2:
+          this.$message.success('开启字母自动小写');
+          break;
+        default:
+          break;
+      }
+    },
+
     // 改变是否自动替换
     changeAutoReplace() {
       this.isAutoReplace = !this.isAutoReplace;
@@ -189,7 +210,6 @@ export default {
         this.editor.on('changes', this.autoReplaceFn);
       } else {
         this.$message.success('关闭自动替换');
-        this.editor.off('changes', this.autoReplaceFn);
       }
     },
 
@@ -197,11 +217,21 @@ export default {
     autoReplaceFn(cm, info) {
       if (info && info[0] && info[0].origin === '+input') {
         clearTimeout(this.autoReplaceTimer);
+
         this.autoReplaceTimer = setTimeout(() => {
-          try {
-            this.editor.keyMapFns.replaceLine();
-          } catch (error) {
-            console.warn('无法执行行替换: ', error);
+          if (this.autoCaseStatus === 1) {
+            this.editor.keyMapFns.toUpperCase();
+          } else if (this.autoCaseStatus === 2) {
+            this.editor.keyMapFns.toLowerCase();
+          }
+
+          // alt + n 替换
+          if (this.isAutoReplace) {
+            try {
+              this.editor.keyMapFns.replaceLine();
+            } catch (error) {
+              console.warn('无法执行行替换: ', error);
+            }
           }
         }, 500);
       }

@@ -57,6 +57,7 @@ export default function (editor, config) {
       if (tMap) {
         editor.playAudio('replace');
         const cursor = cm.getCursor();
+        const oldCursorCh = cursor.ch;
         const doc = cm.getDoc();
         let lineText = cm.lineInfo(cursor.line).text;
         const oldLineTextLen = lineText.length;
@@ -70,6 +71,7 @@ export default function (editor, config) {
         const headerStr = headerMatch[0];
         lineText = lineText.replace(/智能\\n/g, `\n${headerStr}`);
         lineText = lineText.replace(/\\n/g, '\n');
+        const lineTextArr = lineText.split('\n');
 
         doc.replaceRange(
           lineText,
@@ -77,7 +79,8 @@ export default function (editor, config) {
           { line: cursor.line, ch: Math.max(oldLineTextLen, lineText.length) },
         );
 
-        cm.setCursor(cursor);
+        // 设置光标位置
+        cm.setCursor({ line: cursor.line + (lineTextArr.length - 1), ch: oldCursorCh === oldLineTextLen ? Math.max(oldLineTextLen, lineText.length) : oldCursorCh });
       }
     },
   };
