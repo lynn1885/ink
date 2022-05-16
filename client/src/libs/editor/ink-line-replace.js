@@ -76,6 +76,8 @@ export default function (editor, config) {
           { line: cursor.line, ch: 0 },
           { line: cursor.line, ch: Math.max(oldLineTextLen, lineText.length) },
         );
+
+        cm.setCursor(cursor);
       }
     },
   };
