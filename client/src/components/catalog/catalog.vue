@@ -121,6 +121,7 @@
 <script>
 import _ from 'lodash';
 import Directories from '@/models/directories';
+import Files from '@/models/files';
 import ContentMenu from '@/components/content-menu/content-menu.vue';
 import NoteIcon from '@/components/note-icon/note-icon.vue';
 import tools from '@/tools/tools';
@@ -134,6 +135,7 @@ export default {
   },
   data() {
     return {
+      editor: null,
       // 基础
       isCatalogLoaded: false, // 目录是否加载完毕
       curCatLv1: '', // 当前路径
@@ -996,6 +998,25 @@ export default {
       }
     },
 
+    // async getAllNotesHeaders() {
+    //   const files = [];
+    //   for (const lv1 in this.catalog) {
+    //     if (lv1) {
+    //       for (const lv2 in this.catalog[lv1]) {
+    //         if (lv2) {
+    //           for (const lv3 in this.catalog[lv1][lv2]) {
+    //             const fileText = await Files.get(`${lv1}/${lv2}/${lv3}/${lv3}.md`);
+    //             if (fileText) {
+    //               const fileArr = fileText.split('\n').filter(line => line.startsWith('#'));
+    //               files.push(fileArr);
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   }
+    // },
+
     // 拖动: 阻止默认事件
     preventDefault(e) {
       e.preventDefault();
@@ -1031,7 +1052,11 @@ export default {
         this.$store.state.editor.catalogPlugin = { // mount method
           getNoteCount: this._getNoteCount,
         };
+        this.editor = editor;
         await this.getCatalog(); // 获取目录结构
+
+        // 缓存所有笔记
+        // await this.getAllNotesHeaders();
       }
     }, { immediate: true });
   },

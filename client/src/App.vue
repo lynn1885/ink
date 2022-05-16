@@ -255,11 +255,11 @@ export default {
     await this.getDefaultTheme();
 
     // After opening the software for 3 seconds, get all files for caching these notes in memory
-    setTimeout(async () => {
-      const startTime = Date.now();
-      await Files.getAllFilesInfo();
-      console.log(`It tooks ${((Date.now() - startTime) / 1000).toFixed(2)}s to cache all notes into memory`);
-    }, 3000);
+    // setTimeout(async () => {
+    // const startTime = Date.now();
+    // await Files.getAllFilesInfo();
+    // console.log(`It tooks ${((Date.now() - startTime) / 1000).toFixed(2)}s to cache all notes into memory`);
+    // }, 3000);
   },
 };
 </script>
@@ -345,7 +345,7 @@ textarea {
 }
 // side-bar
 #side-bar {
-  backdrop-filter: blur(20px);
+  /* backdrop-filter: blur(20px); */
   &.hide {
     width: 0px!important;
     height: 0px!important;
