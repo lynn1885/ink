@@ -219,6 +219,7 @@ export default {
         clearTimeout(this.autoReplaceTimer);
 
         this.autoReplaceTimer = setTimeout(() => {
+          // 大小写
           if (this.autoCaseStatus === 1) {
             this.editor.keyMapFns.toUpperCase();
           } else if (this.autoCaseStatus === 2) {
@@ -227,13 +228,14 @@ export default {
 
           // alt + n 替换
           if (this.isAutoReplace) {
+            console.log(123);
             try {
               this.editor.keyMapFns.replaceLine();
             } catch (error) {
               console.warn('无法执行行替换: ', error);
             }
           }
-        }, 500);
+        }, 5);
       }
     },
 

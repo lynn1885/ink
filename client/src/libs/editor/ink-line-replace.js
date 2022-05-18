@@ -55,7 +55,6 @@ export default function (editor, config) {
 
       // 执行替换
       if (tMap) {
-        editor.playAudio('replace');
         const cursor = cm.getCursor();
         const oldCursorCh = cursor.ch;
         const doc = cm.getDoc();
@@ -73,6 +72,7 @@ export default function (editor, config) {
         lineText = lineText.replace(/\\n/g, '\n');
         const lineTextArr = lineText.split('\n');
 
+        editor.playAudio('replace');
         doc.replaceRange(
           lineText,
           { line: cursor.line, ch: 0 },
