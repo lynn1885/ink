@@ -1102,6 +1102,15 @@ export default {
     border: 0.5px solid transparent; // 给拖动预留的border
     cursor: pointer;
   }
+  li[title^=--] {
+    color: #bbb;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    img {
+      display: none;
+    }
+  }
   li:hover {
     background: $sidebar-item-hover-bg;
   }
