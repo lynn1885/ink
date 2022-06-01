@@ -35,6 +35,8 @@ import Statistics from '@/components/statistics/statistics.vue';
 import Batch from '@/components/batch/batch';
 import Paint from '@/components/paint/paint';
 import Gallery from '@/components/gallery/gallery';
+import Tags from '@/components/tags/tags';
+import Web from '@/components/web/web';
 
 export default {
   name: 'common-tools',
@@ -51,7 +53,9 @@ export default {
     FluorescentPen,
     Batch,
     Paint,
-    Gallery
+    Gallery,
+    Tags,
+    Web
   },
   data() {
     return {

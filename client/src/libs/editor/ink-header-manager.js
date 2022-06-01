@@ -6,6 +6,7 @@ const map = {
   insertHeaderChild: 'Ctrl-L',
   insertHeaderNextParent: 'Ctrl-H',
   insertNextLiUnderHeader: 'Ctrl-O',
+  insertHeaderAsLastChild: 'Ctrl-U',
   reorder: 'Ctrl-Alt-L',
   assignHeader: 'Ctrl-Alt-K',
   upgradeHeaders: 'Shift-Ctrl-[',
@@ -152,6 +153,24 @@ export default function (editor) {
             doc.setCursor({ line: cursor.line, ch: 3 });
           }
         }
+      }
+    },
+
+    [map.insertHeaderAsLastChild]: (cm) => {
+      editor.playAudio('addHeader2');
+      const header = editor.getHeaderAncestors(null, 1)[0];
+      if (header) {
+        const newHeaderStr = `${'#'.repeat(header.headerLv + 1)}`;
+        const endLineNum = editor.getHeaderEndAtLineNum(header.headerLineNum);
+
+        const doc = cm.getDoc();
+        doc.setSelection(
+          { line: endLineNum + 1, ch: 0 },
+          { line: endLineNum + 1, ch: 0, }
+        );
+
+        doc.replaceSelection(`${newHeaderStr} \n`);
+        doc.setCursor({ line: endLineNum + 1, ch: 9 });
       }
     },
 

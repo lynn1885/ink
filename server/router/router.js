@@ -8,6 +8,7 @@ const files = require('../app/controllers/files');
 const images = require('../app/controllers/images');
 const userConfig = require('../app/controllers/user-config');
 const config = require('../config');
+const web = require('../app/controllers/web');
 
 const upload = multer();
 
@@ -34,5 +35,9 @@ router.get('/images', images.get);
 
 // user-config
 router.get('/user-config', userConfig.get);
+
+// web
+router.get('/web', web.get);
+
 
 module.exports = router;

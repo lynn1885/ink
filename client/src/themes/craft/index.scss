@@ -268,7 +268,7 @@
 }
 
 .cursor-in-this-line {
-
+  background: rgb(248, 245, 244);
   .cm-formatting-header,
   .cm-formatting-em,
   .cm-formatting-code,
@@ -421,6 +421,36 @@
   background: rgb(255, 251, 235)!important;
   color: rgb(248, 193, 126)!important;
   transition: all 0.2s;
+}
+
+// component
+.ink-input-bar {
+  width: 100%;
+  flex-grow: 1;
+  padding: 2px 4px;
+  color: $tool-page-color;
+  font-size: $sidebar-input-font-size;
+  border: 1px solid $sidebar-input-border-color;
+  background: $sidebar-input-bg;
+  box-sizing: border-box;
+}
+
+.ink-button {
+  flex-grow: 0;
+  flex-shrink: 0;
+  font-size: 13px;
+  padding: 4px;
+  box-sizing: border-box;
+  background: $sidebar-button-bg;
+  border: 1px solid $sidebar-button-border-color;
+  color: $tool-page-color;
+  cursor: pointer;
+  &:hover {
+    background: darken($color: $sidebar-item-hover-bg, $amount: 2);
+  }
+  &.active {
+    background: darken($color: $sidebar-item-active-bg, $amount: 2);
+  }
 }
 
 

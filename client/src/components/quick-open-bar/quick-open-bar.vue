@@ -39,6 +39,7 @@ export default {
   data() {
     return {
       curFileDir: '',
+      curFilePathArr: [],
       fixedNoteDirs: [],
       tempNoteDir: '',
       maxFixedNum: 7,
@@ -66,6 +67,7 @@ export default {
             console.log('curFilePath changed:', value);
           }
           const curFilePathArr = this.curFilePath.split('/');
+          this.curFilePathArr = curFilePathArr;
           this.curFileDir = `${curFilePathArr[0]}/${curFilePathArr[1]}/${curFilePathArr[2]}/`;
           if (!this.fixedNoteDirs.includes(this.curFileDir)) {
             this.tempNoteDir = this.curFileDir;

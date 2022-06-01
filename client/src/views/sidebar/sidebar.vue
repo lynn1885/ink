@@ -89,6 +89,16 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></gallery>
+      <tags
+        v-if="activePage === 'Tags' && !commonTools.Tags"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></tags>
+       <web
+        v-if="activePage === 'Web' && !commonTools.Web"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></web>
     </div>
 
     <!-- other components -->
@@ -115,6 +125,8 @@ import Review from '@/components/review/review';
 import Batch from '@/components/batch/batch';
 import Paint from '@/components/paint/paint';
 import Gallery from '@/components/gallery/gallery';
+import Tags from '@/components/tags/tags';
+import Web from '@/components/web/web';
 
 // eslint-disable-next-line no-unused-vars
 import {
@@ -132,7 +144,9 @@ import {
   fluorescentPenSvg,
   batchSvg,
   paintSvg,
-  gallerySvg
+  gallerySvg,
+  tagsSvg,
+  webSvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -153,7 +167,9 @@ export default {
     FluorescentPen,
     Batch,
     Paint,
-    Gallery
+    Gallery,
+    Tags,
+    Web
   },
   data() {
     return {
@@ -263,6 +279,17 @@ export default {
           type: 'button',
         },
         {
+          name: 'Tags',
+          icon: tagsSvg,
+          type: 'page',
+        },
+        {
+          name: 'Web',
+          icon: webSvg,
+          type: 'page',
+          sideBarWidth: '38%',
+        },
+        {
           name: 'Gallery',
           icon: gallerySvg,
           type: 'page',
@@ -284,6 +311,7 @@ export default {
           },
           keyMap: ['Ctrl', 'Shift', 'P'],
         },
+
         // {
         //   name: 'Game',
         //   icon: gameSvg,

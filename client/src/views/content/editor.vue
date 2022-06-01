@@ -249,6 +249,7 @@ export default {
         let lastLineText = this.editor.cm.lineInfo(lastLineNum).text;
         const oldLastLineText = lastLineText;
         const cmd = `%auto-expand-line-${cursor.line}%`;
+
         if (this.editor.isThisLineCmdLine(lastLineNum, lastLineText)) {
           // 最后一行是指令行: 添加指令或更新指令
           const matchRes = lastLineText.match(/%auto-expand-line-(\w+)%/);
@@ -302,7 +303,7 @@ export default {
         path: filePath,
         data,
       };
-      console.log('保存文件', this.editor.id, content.path);
+      console.log('保存文件', this.editor.id, content.path, triggerType);
       await Files.update(content, this.$message, isShowSuccessInfo);
     },
 

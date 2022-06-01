@@ -171,7 +171,7 @@ export default class {
     }
 
     // important
-    if (el.innerText.trim().startsWith('⭐') || el.innerText.trim().endsWith('⭐')) {
+    if (el.innerText.trim().includes('⭐')) {
       el.classList.add('line-important');
     }
 
@@ -301,7 +301,7 @@ export default class {
             handler();
           }
         }
-      });
+      }, true);
     }
   }
 
@@ -810,6 +810,88 @@ export default class {
     }
 
     return res.join('\n');
+  }
+
+  /**
+   * 获取标签
+   * @param {string} returnType 返回数据的类型 LINENUM2TAG, TAG2LINENUM. 前者是{行号: [标签, 标签]}, 后者是{标签: 行号}
+   * @returns {object} 标签对象
+   */
+  // eslint-disable-next-line consistent-return
+  getTags(returnType = 'LINENUM2TAG') {
+    const doc = this.cm.getDoc();
+    const text = doc.getValue();
+    const lines = text.split('\n');
+
+    const lineNum2Tag = {};
+    const tag2LineNum = {};
+    lines.forEach((lineText, lineNum) => {
+      let matchRes = lineText.match(/`[^`]+`/g);
+      const lineTextWithoutTag = lineText.replace(/`[^`]+`/g, '');
+      if (matchRes && matchRes.length) {
+        matchRes = matchRes.map((tag) => {
+          const newTag = tag.replace(/`/g, '');
+          tag2LineNum[`${newTag}__${lineNum}`] = {
+            tagName: newTag,
+            lineNum,
+            lineText,
+            lineTextWithoutTag
+          };
+          return newTag;
+        });
+
+        lineNum2Tag[lineNum] = {
+          tags: matchRes,
+          lineNum,
+          lineText,
+          lineTextWithoutTag
+        };
+      }
+    });
+
+    if (returnType === 'LINENUM2TAG') return lineNum2Tag;
+    else if (returnType === 'TAG2LINENUM') return tag2LineNum;
+  }
+
+  /**
+   * 添加标签
+   * @param {number} lineNum 要添加标签的行
+   * @param {string} tagContent 标签内容
+   */
+  addTag(lineNum, tagContent) {
+    if (!lineNum) lineNum = this.cm.getCursor();
+    const doc = this.cm.getDoc();
+    const lineText = doc.getLine(lineNum);
+    doc.setSelection(
+      { line: lineNum, ch: lineText.length },
+      { line: lineNum, ch: lineText.length },
+    );
+
+    doc.replaceSelection(` \`${tagContent}\` `, 'around');
+  }
+
+  /**
+   * 删除标签
+   * @param {number} lineNum 要删除标签的行
+   * @param {string} tagContent 标签内容
+   */
+  removeTag(lineNum, tagContent) {
+    if (!lineNum) lineNum = this.cm.getCursor();
+
+    const doc = this.cm.getDoc();
+    const lineText = doc.getLine(lineNum);
+
+    doc.setSelection(
+      { line: lineNum, ch: 0 },
+      { line: lineNum, ch: lineText.length },
+    );
+    const newLine = lineText.replace(new RegExp(`\`${tagContent}\``), '');
+    doc.replaceSelection(newLine, 'around');
+
+    doc.setCursor({
+      line: lineNum,
+      ch: newLine.length
+    });
   }
 
   /**

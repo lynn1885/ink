@@ -26,6 +26,8 @@ export default new Vuex.Store({
       Statistics: false,
       Batch: false,
       Gallery: false,
+      Tags: false,
+      Web: false,
     }, // 常用工具
   },
   mutations: {

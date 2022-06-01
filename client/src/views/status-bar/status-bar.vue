@@ -228,7 +228,6 @@ export default {
 
           // alt + n 替换
           if (this.isAutoReplace) {
-            console.log(123);
             try {
               this.editor.keyMapFns.replaceLine();
             } catch (error) {

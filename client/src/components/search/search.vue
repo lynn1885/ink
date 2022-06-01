@@ -3,16 +3,16 @@
     <!-- search bar -->
     <div id="search-bar">
       <input
-        class="input-bar"
+        class="ink-input-bar"
         type="text"
         v-model="searchText"
         :maxlength="maxSearchTextLength"
         @keydown="searchBarKeyDownHandler"
         ref="search-bar"
       />
-      <button :class="{'active': isGlobal}" @click="isGlobal = !isGlobal" title="golbal search">g</button>
+      <button :class="{'ink-button': true, 'active': isGlobal}" @click="isGlobal = !isGlobal" title="golbal search">g</button>
       <button
-        :class="{'active': isSensitiveToCase}"
+        :class="{'ink-button': true, 'active': isSensitiveToCase}"
         title="sensitive to English case"
         @click="isSensitiveToCase = !isSensitiveToCase"
       >Aa</button>
@@ -598,35 +598,12 @@ export default {
   height: 34px;
   padding: 4px;
   box-sizing: border-box;
-  .input-bar {
-    flex-grow: 1;
-    margin-right: $sidebar-input-margin-left;
-    padding: 0px 4px;
-    color: $tool-page-color;
-    font-size: $sidebar-input-font-size;
-    border: 1px solid $sidebar-input-border-color;
-    background: $sidebar-input-bg;
-  }
   .input-bar[disabled] {
     background: $sidebar-input-disabled-bg;
   }
   button {
     flex-basis: 26px;
-    flex-grow: 0;
-    flex-shrink: 0;
-    font-size: 13px;
     margin: 0px 2px;
-    box-sizing: border-box;
-    background: $sidebar-button-bg;
-    border: 1px solid $sidebar-button-border-color;
-    color: $tool-page-color;
-    cursor: pointer;
-    &:hover {
-      background: darken($color: $sidebar-item-hover-bg, $amount: 2);
-    }
-    &.active {
-      background: darken($color: $sidebar-item-active-bg, $amount: 2);
-    }
   }
   button[disabled] {
     background: $sidebar-button-disabled-bg;
