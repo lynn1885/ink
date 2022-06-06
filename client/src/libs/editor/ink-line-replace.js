@@ -36,13 +36,17 @@ export default function (editor, config) {
         // eslint-disable-next-line no-restricted-syntax
         for (const line of lineArr) {
           if (isReplaceLine && line !== '<===') {
-            const arr = line.split(/,|:/);
-            if (arr.length === 2) {
+            const arr = line.split(/:/);
+            if (arr && arr.length) {
+              arr[1] = arr.slice(1).join(':');
               [, replaceLineObj[arr[0]]] = arr;
-            } else if (arr.length === 3) {
-              [, , replaceLineObj[arr[0]]] = arr;
-              [, , replaceLineObj[arr[1]]] = arr;
             }
+            // if (arr.length === 2) {
+            // [, replaceLineObj[arr[0]]] = arr;
+            // } else if (arr.length === 3) {
+            //   [, , replaceLineObj[arr[0]]] = arr;
+            //   [, , replaceLineObj[arr[1]]] = arr;
+            // }
           }
           if (line === '===>') {
             isReplaceLine = true;
@@ -62,7 +66,11 @@ export default function (editor, config) {
         const oldLineTextLen = lineText.length;
         const tMapKeys = Object.keys(tMap);
         for (let i = 0; i < tMapKeys.length; i += 1) {
-          lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
+          if (tMapKeys[i].startsWith('[忽略大小写]')) {
+            lineText = lineText.replace(new RegExp(tMapKeys[i].replace(/^\[忽略大小写\]/, ''), 'ig'), tMap[tMapKeys[i]]);
+          } else {
+            lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
+          }
         }
 
         // 换行替换, 把\n替换成换行, 并添加## 标题 或1. 2. 3.标号
