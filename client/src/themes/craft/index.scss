@@ -454,6 +454,82 @@
 }
 
 
+// ink-mark
+@keyframes B00 {
+  0% {
+    background: rgb(233, 249, 229);
+  }
+  100% {
+    background: rgb(211, 238, 223);
+  }
+}
+
+@keyframes C00 {
+  0% {
+    color: rgb(138, 197, 122);
+  }
+  100% {
+    color: rgb(130, 148, 172);
+  }
+}
+
+@keyframes C01 {
+  0% {
+    color: rgb(183, 122, 197);
+  }
+  100% {
+    color: rgb(172, 130, 141);
+  }
+}
+
+@keyframes C02 {
+  0% {
+    color: rgb(183, 122, 197);
+  }
+  100% {
+    color: rgb(209, 103, 103);
+  }
+}
+
+[ink-mark^='('] {
+  &[ink-mark*='B8']{
+    background: -webkit-linear-gradient(left, rgb(230, 220, 246)  0%, rgb(245, 204, 218) 100%)!important;
+  }
+  &[ink-mark*='B9']{
+    background: -webkit-linear-gradient(left, rgb(245, 241, 205)  0%, rgb(194, 233, 227) 100%)!important;
+  }
+  &[ink-mark*='B00']{
+    animation: B00 2s ease-in-out alternate infinite;
+  }
+
+  &[ink-mark*='C9']{
+    background:-webkit-linear-gradient(270deg,#7f8ddd,#79ebd6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  &[ink-mark*='C8']{
+    background:-webkit-linear-gradient(270deg,#f1e77b,#f18b6f);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  &[ink-mark*='C00']{
+    animation: C00 2s ease-in-out alternate infinite;
+  }
+
+  &[ink-mark*='C01']{
+    animation: C01 2s ease-in-out alternate infinite;
+  }
+}
+
+[ink-mark^='注意'], [ink-mark^='要注意'] {
+  color: rgb(242, 164, 173)!important;
+}
+
+
 // other, 耦合, 将来需要移除
 jmnode {
   font-family: '.PingFang SC' !important;

@@ -180,6 +180,8 @@ export default class {
     if (t2 >= 3) {
       console.warn('render line timer: ', t2, el);
     }
+
+    el.setAttribute('ink-mark', el.innerText.slice(0, 10));
   }
 
   // 初始化音频播放能力

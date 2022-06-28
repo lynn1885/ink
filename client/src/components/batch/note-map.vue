@@ -57,7 +57,6 @@ export default {
       }
       const imgs = await Images.getIllustrations(searchText);
       this.$set(this.imgsTemp, searchText, imgs);
-      console.log(Object.keys(this.imgsTemp).length);
       if (Object.keys(this.imgsTemp).length > this.maxTempLen) {
         this.imgsTemp = {};
         console.log('清空缓存');

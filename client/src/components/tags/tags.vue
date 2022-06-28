@@ -9,14 +9,16 @@
         @click="gotoThisLine(info.lineNum)"
       >
         <div class="tag-item-text">
-          <div class="tag-name">
-            {{tagName}}
+          <div class="tag-title">
+             <div class="tag-name">
+              {{tagName.replace('__', ' ')}}
+            </div>
+            <div class="delete">
+              <i class="el-icon-delete" @click="deleteTag(info)"></i>
+            </div>
           </div>
           <div class="line-text">
             {{info.lineTextWithoutTag}}
-          </div>
-          <div class="delete">
-            <i class="el-icon-delete" @click="deleteTag(info)"></i>
           </div>
         </div>
 
@@ -35,14 +37,16 @@
         @click="gotoThisLine(info.lineNum)"
       >
         <div class="tag-item-text">
-          <div class="tag-name">
-            {{tagName}}
+          <div class="tag-title">
+            <div class="tag-name">
+              {{tagName.replace('__', ' ')}}
+            </div>
+            <div class="delete">
+              <i class="el-icon-delete" @click="deleteTag(info)"></i>
+            </div>
           </div>
           <div class="line-text">
             {{info.lineTextWithoutTag}}
-          </div>
-          <div class="delete">
-            <i class="el-icon-delete" @click="deleteTag(info)"></i>
           </div>
         </div>
         <div class="tag-line-img" v-if="info.img">
@@ -115,7 +119,6 @@ export default {
 
     // 获取标签
     getTags() {
-      console.log(123);
       const tags = this.editor.getTags('TAG2LINENUM');
 
       const importantTags = {};
@@ -174,6 +177,8 @@ export default {
 @import '@/themes/craft/var.scss';
 #tags {
   height: 100%;
+  padding: 4px;
+  box-sizing: border-box;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -182,6 +187,7 @@ export default {
     height: 70%;
     overflow: auto;
     border-bottom: 2px dashed $sidebar-item-border-color;
+    margin-bottom: 4px;
   }
 
   /* 临时标签 */
@@ -189,6 +195,9 @@ export default {
     border-bottom: 2px dashed $sidebar-item-border-color;
     flex-grow: 1;
     flex-shrink: 0;
+    & .tag-item {
+      background: $sidebar-item-warning-bg!important;
+    }
   }
 
   /* 工具 */
@@ -208,35 +217,38 @@ export default {
 
   /* 每个条目 */
   .tag-item {
-    padding: 4px;
+    background: $sidebar-item-normal-bg;
     cursor: pointer;
-    border-bottom: 1px solid $sidebar-item-border-color;
+    margin-bottom: 4px;
+    padding: 4px;
+    border-radius: 2px;
     &:hover {
       background: $sidebar-item-hover-bg;
     }
 
     /* 文本 */
     .tag-item-text {
-      display: flex;
-      align-items: center;
-      .line-num {
-        color: #aaa;
-        padding-left: 4px;
+      .tag-title {
+        display: flex;
+        align-items: center;
+        .tag-name {
+          flex-shrink: 0;
+          flex-grow: 1;
+          padding: 4px;
+          margin-right: 4px;
+          border-radius: 2px;
+          text-align: center;
+          color: $code-color;
+        }
+        .delete:hover {
+          color: red
+        }
       }
-      .tag-name {
-        flex-shrink: 0;
-        padding: 4px;
-        margin-right: 4px;
-        border-radius: 2px;
-        background: $code-bg;
-        color: $code-color;
-      }
+
       .line-text {
         flex: 1;
       }
-      .delete:hover {
-        color: red
-      }
+
     }
 
     /* 图像 */
@@ -247,5 +259,6 @@ export default {
       }
     }
   }
+
 }
 </style>
