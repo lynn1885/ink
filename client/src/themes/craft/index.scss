@@ -526,9 +526,13 @@
 }
 
 [ink-mark^='注意'], [ink-mark^='要注意'] {
-  color: rgb(242, 164, 173)!important;
+  color: rgb(223, 113, 126)!important;
 }
 
+[ink-mark^='举例'], [ink-mark^='例子'], [ink-mark^='例如'], [ink-mark^='比如'] {
+  background: url(/imgs/举例.png) 110px 8px / 12px 12px no-repeat!important;
+  color:rgb(158, 89, 42)!important
+}
 
 // other, 耦合, 将来需要移除
 jmnode {
