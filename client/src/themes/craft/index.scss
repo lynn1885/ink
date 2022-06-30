@@ -525,13 +525,28 @@
   }
 }
 
-[ink-mark^='注意'], [ink-mark^='要注意'] {
+[ink-mark^='注意'], [ink-mark^='要注意'], [ink-mark^='但注意'] {
+  background: url(/imgs/注意.png) 110px 8px / 13px 13px no-repeat!important;
   color: rgb(223, 113, 126)!important;
 }
 
-[ink-mark^='举例'], [ink-mark^='例子'], [ink-mark^='例如'], [ink-mark^='比如'] {
-  background: url(/imgs/举例.png) 110px 8px / 12px 12px no-repeat!important;
+[ink-mark*='本质'] {
+  background: url(/imgs/本质.png) 110px 8px / 13px 13px no-repeat!important;
+  color:rgb(255, 182, 47)!important
+}
+
+[ink-mark^='举例'], [ink-mark^='例子'], [ink-mark^='例如'], [ink-mark^='比如'], [ink-mark^='举个'] {
+  background: url(/imgs/举例.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(158, 89, 42)!important
+}
+
+[ink-mark^='个人理解'] {
+  background: url(/imgs/个人理解.png) 110px 8px / 13px 13px no-repeat!important;
+  color:rgb(222, 158, 40)!important
+}
+
+[ink-mark^='首先'], [ink-mark^='其次'], [ink-mark^='第']{
+  background: url(/imgs/圆点.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
 // other, 耦合, 将来需要移除
