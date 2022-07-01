@@ -545,6 +545,12 @@
   color:rgb(222, 158, 40)!important
 }
 
+
+[ink-mark^='问题'], [ink-mark*='问题是'], [ink-mark*='有一个问题'] {
+  background: url(/imgs/问题.png) 110px 8px / 13px 13px no-repeat!important;
+  color:rgb(222, 158, 40)!important
+}
+
 [ink-mark^='首先'], [ink-mark^='其次'], [ink-mark^='第']{
   background: url(/imgs/圆点.png) 110px 8px / 13px 13px no-repeat!important;
 }
