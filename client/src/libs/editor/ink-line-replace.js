@@ -68,24 +68,24 @@ export default function (editor, config) {
         const oldLineTextLen = lineText.length;
         const tMapKeys = Object.keys(tMap);
 
-        // 获取拼音
-        const linePinyinArr = []; // 拼音数组
-        const lineOriTextArr = []; // 对应文字数组
-
-        Array.from(lineText).forEach((letter) => {
-          lineOriTextArr.push(letter);
-          const p = pinyin(letter, {
-            style: pinyin.STYLE_NORMAL
-          })[0][0].toLowerCase();
-          linePinyinArr.push(p);
-        });
-
         for (let i = 0; i < tMapKeys.length; i += 1) {
           // 替换拼音
           if (tMapKeys[i].startsWith('[拼音]')) {
             try {
               const replacePinYin = tMapKeys[i].toLowerCase().replace('[拼音]', '').split('|');
               const replaceText = tMap[tMapKeys[i]];
+
+              // 获取拼音
+              const linePinyinArr = []; // 拼音数组
+              const lineOriTextArr = []; // 对应文字数组
+
+              Array.from(lineText).forEach((letter) => {
+                lineOriTextArr.push(letter);
+                const p = pinyin(letter, {
+                  style: pinyin.STYLE_NORMAL
+                })[0][0].toLowerCase();
+                linePinyinArr.push(p);
+              });
 
               const afterReplaceLine = [];
               for (let index = 0; index < lineOriTextArr.length; index += 1) {
@@ -114,11 +114,7 @@ export default function (editor, config) {
             } catch (error) {
               console.warn('拼音替换错误: ', error);
             }
-            continue;
-          }
-
-          // 普通替换
-          if (tMapKeys[i].startsWith('[忽略大小写]')) {
+          } else if (tMapKeys[i].startsWith('[忽略大小写]')) {
             lineText = lineText.replace(new RegExp(tMapKeys[i].replace(/^\[忽略大小写\]/, ''), 'ig'), tMap[tMapKeys[i]]);
           } else {
             lineText = lineText.replace(new RegExp(tMapKeys[i], 'g'), tMap[tMapKeys[i]]);
