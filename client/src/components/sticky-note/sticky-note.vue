@@ -89,8 +89,10 @@ export default {
       console.log('sticky note mounted');
     }
     const stickyNote = $(this.$refs['sticky-note']);
-    stickyNote.css('right', `${localStorage.getItem('offsetRight') || 10}px`);
-    stickyNote.css('top', `${localStorage.getItem('offsetTop') || 10}px`);
+    // stickyNote.css('right', `${localStorage.getItem('offsetRight') || 10}px`);
+    // stickyNote.css('top', `${localStorage.getItem('offsetTop') || 10}px`);
+    stickyNote.css('right', '10px');
+    stickyNote.css('top', '10px');
     this.getNoteContent();
     this.$refs.textarea.focus();
   },

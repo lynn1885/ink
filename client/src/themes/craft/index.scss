@@ -530,7 +530,7 @@
   color: rgb(223, 113, 126)!important;
 }
 
-[ink-mark*='本质'] {
+[ink-mark*='本质'], [ink-mark*='总而言之'] {
   background: url(/imgs/本质.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(255, 182, 47)!important
 }
@@ -551,9 +551,11 @@
   color:rgb(222, 158, 40)!important
 }
 
-[ink-mark^='首先'], [ink-mark^='其次'], [ink-mark^='第']{
+[ink-mark^='首先'], [ink-mark^='其次'], [ink-mark^='然后'], [ink-mark^='第'], [ink-mark^='其中第'], [ink-mark^='而第']{
   background: url(/imgs/圆点.png) 110px 8px / 13px 13px no-repeat!important;
 }
+
+// 类比
 
 // other, 耦合, 将来需要移除
 jmnode {

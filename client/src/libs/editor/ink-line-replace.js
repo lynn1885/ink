@@ -1,4 +1,5 @@
 // 用于对当前行中cursor之前的文本进行替换, 可以和讯飞语音输入法搭配使用
+import * as pinyin from 'pinyin';
 
 // 快捷键
 const map = {
@@ -57,6 +58,7 @@ export default function (editor, config) {
         Object.assign(tMap, replaceLineObj);
       }
 
+
       // 执行替换
       if (tMap) {
         const cursor = cm.getCursor();
@@ -65,7 +67,57 @@ export default function (editor, config) {
         let lineText = cm.lineInfo(cursor.line).text;
         const oldLineTextLen = lineText.length;
         const tMapKeys = Object.keys(tMap);
+
+        // 获取拼音
+        const linePinyinArr = []; // 拼音数组
+        const lineOriTextArr = []; // 对应文字数组
+
+        Array.from(lineText).forEach((letter) => {
+          lineOriTextArr.push(letter);
+          const p = pinyin(letter, {
+            style: pinyin.STYLE_NORMAL
+          })[0][0].toLowerCase();
+          linePinyinArr.push(p);
+        });
+
         for (let i = 0; i < tMapKeys.length; i += 1) {
+          // 替换拼音
+          if (tMapKeys[i].startsWith('[拼音]')) {
+            try {
+              const replacePinYin = tMapKeys[i].toLowerCase().replace('[拼音]', '').split('|');
+              const replaceText = tMap[tMapKeys[i]];
+
+              const afterReplaceLine = [];
+              for (let index = 0; index < lineOriTextArr.length; index += 1) {
+                // console.log(index);
+                // 对比拼音, 看是否能够替换
+                let canReplace = true;
+                for (let j = 0; j < replacePinYin.length; j += 1) {
+                  // console.log(replacePinYin[j], linePinyinArr[index + j]);
+                  if (replacePinYin[j] !== linePinyinArr[index + j]) {
+                    canReplace = false;
+                    break;
+                  }
+                }
+
+                // 能替换
+                if (canReplace) {
+                  afterReplaceLine.push(replaceText);
+                  index += (replacePinYin.length - 1); // 替换文字后跳过
+                  // console.log('替换');
+                } else {
+                  afterReplaceLine.push(lineOriTextArr[index]); // 不替换文字, 原样放回
+                }
+              }
+
+              lineText = afterReplaceLine.join('');
+            } catch (error) {
+              console.warn('拼音替换错误: ', error);
+            }
+            continue;
+          }
+
+          // 普通替换
           if (tMapKeys[i].startsWith('[忽略大小写]')) {
             lineText = lineText.replace(new RegExp(tMapKeys[i].replace(/^\[忽略大小写\]/, ''), 'ig'), tMap[tMapKeys[i]]);
           } else {
