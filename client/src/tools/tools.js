@@ -212,8 +212,32 @@ const tools = {
         resolve();
       }, ms);
     });
-  }
+  },
 
+  downloadArrayBuffer(buffer, fileName, fileType) {
+    let mimeType = '';
+
+    switch (fileType) {
+      case 'zip':
+        mimeType = 'application/zip';
+        break;
+      case 'docx':
+        mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        break;
+      default:
+        break;
+    }
+
+    console.log(buffer);
+    const blob = new Blob([buffer], { type: mimeType });
+
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = `${fileName}.${fileType}`;
+    a.click();
+    URL.revokeObjectURL(blobUrl);
+  }
 };
 
 export default tools;

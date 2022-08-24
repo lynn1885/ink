@@ -150,12 +150,13 @@ const Files = {
   /**
    * 导出文件
    * @param {[string]} path 要导出的文件路径
+   * @param {string} type 要导出的文件类型, 默认zip
    * @param {function} messager 通知器
    */
-  async exportNote(path, messager) {
+  async exportNote(path, type, messager) {
     let zipData;
     await axios.get(`${serverUrl}export-note`, {
-      params: { path },
+      params: { path, type },
       responseType: 'arraybuffer', // 一定要加上
     })
       .then((res) => {

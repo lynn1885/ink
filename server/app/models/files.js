@@ -1,6 +1,8 @@
 const fs = require('fs');
 const path = require('path');
 const JSZip = require('jszip');
+const docx = require('docx');
+const sizeOf = require('buffer-image-size');
 const config = require('../../config');
 const task = require('../../tools/tasks');
 const exportNoteManifest = require('../../res/export-note-manifest.json');
@@ -74,7 +76,7 @@ exports.delete = async filePath => new Promise((resolve, reject) => {
  * @param {string} fileName 最后一级文件名
  * @returns
  */
-exports.exportNote = async (filePath, oriFileFullNameArr, fileName) => {
+exports.exportNoteZip = async (filePath, oriFileFullNameArr, fileName) => {
   exportNoteManifest.oriFileFullNameArr = oriFileFullNameArr;
 
   try {
@@ -136,6 +138,127 @@ exports.exportNote = async (filePath, oriFileFullNameArr, fileName) => {
     return zipData;
   } catch (error) {
     console.log('[export note]导出文件失败: ', error);
+  }
+};
+
+/**
+ *
+ * @param {string} filePath 文件路径
+ * @param {string} oriFileFullNameArr 三级文件路径
+ * @param {string} fileName 最后一级文件名
+ * @returns
+ */
+exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
+  exportNoteManifest.oriFileFullNameArr = oriFileFullNameArr;
+
+  // const doc = new docx.Document({
+  //   sections: [{
+  //     properties: {},
+  //     children: txt.split('\n').map(t => new docx.Paragraph({
+  //       text: t,
+  //     }))
+  //   }],
+  // });
+
+  // docx.Packer.toBuffer(doc).then((buffer) => {
+  //   fs.writeFileSync(`./${psgName.replace('.txt', '')}.docx`, buffer);
+  // });
+
+  const docxContent = {
+    sections: [
+      {
+        children: [],
+      },
+    ],
+  };
+
+  const paragraphs = docxContent.sections[0].children;
+
+  try {
+    // 笔记相关文件
+    const noteContent = await exports.read(filePath);
+
+    // 读取图片
+    const noteContentArr = noteContent.split('\n');
+    noteContentArr.forEach((line) => {
+      const headerMatchRes = line.match(/^(#+)\s(.+)/);
+      const imgMatchRes = line.match(/!\[.*?\]\((.+?)\)/);
+
+      // 标题
+      if (headerMatchRes && headerMatchRes.length && headerMatchRes[1]) {
+        const headerLv = headerMatchRes[1].length;
+        paragraphs.push(
+          new docx.Paragraph({
+            heading: docx.HeadingLevel[`HEADING_${headerLv}`],
+            // alignment: headerLv < 2 ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT,
+            indent: {
+              left: headerLv * 10,
+            },
+            children: [
+              new docx.TextRun({
+                text: headerMatchRes[2],
+                bold: true,
+                font: '.PingFangSC',
+                // color: 'FF0000',
+
+              }),
+            ],
+          }),
+        );
+        // 图片
+      } else if (imgMatchRes && imgMatchRes.length && imgMatchRes[1]) {
+        const imgFullPath = path.join(config.user.dirs.noteImages, imgMatchRes[1]);
+
+        const imgBuffer = fs.readFileSync(imgFullPath);
+        const size = sizeOf(imgBuffer);
+        if (size.width > 600) {
+          size.width = 600;
+          size.height = Math.floor(size.height / (size.width / 600));
+        }
+        paragraphs.push(
+          new docx.Paragraph({
+            indent: {
+              left: 100,
+            },
+            children: [
+              new docx.ImageRun({
+                data: imgBuffer,
+                transformation: {
+                  width: size.width,
+                  height: size.height,
+                },
+              }),
+            ],
+          }),
+        );
+
+        // 普通文本
+      } else {
+        paragraphs.push(
+          new docx.Paragraph({
+            indent: {
+              left: 100,
+            },
+            children: [
+              new docx.TextRun({
+                text: ` ${line}`,
+                size: 14,
+                font: 'Microsoft YaHei',
+              }),
+            ],
+          }),
+        );
+      }
+    });
+
+    // 生成并导出
+    const doc = new docx.Document(docxContent);
+    const docxBuffer = await docx.Packer.toBuffer(doc);
+    return docxBuffer;
+    // fs.writeFileSync('./test.docx', docxBuffer);
+  } catch (error) {
+    console.log('[export note]导出文件失败 docx: ', error);
+    throw new Error(error.message);
   }
 };
 

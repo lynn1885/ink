@@ -272,25 +272,44 @@ exports.exportNote = async (req, res) => {
     return;
   }
 
-  req.query.path[3] = `${req.query.path[2]}.md`;
+  if (typeof req.query.type !== 'string') {
+    res.status(400).send('错误的type参数');
+    return;
+  }
 
-  try {
-    const notePath = path.join(config.user.dirs.notes, req.query.path.join('/'));
-    const zipData = await Files.exportNote(notePath, req.query.path.slice(0, 3), req.query.path[2]);
-    // 流式传输给前端
-    zipData.generateNodeStream({
-      type: 'nodebuffer',
-    })
-      .pipe(res)
-      // .pipe(fs.createWriteStream(`${__dirname}/out.zip`)) // 也可以流式保存在本地
-      .on('finish', () => {
-        // JSZip generates a readable stream with a "end" event,
-        // but is piped here in a writable stream which emits a "finish" event.
-        console.log('[export file] export success: ', notePath);
-      });
-  } catch (error) {
-    console.error(error);
-    res.status(500).send(`导出文件失败: ${req.query.path}`);
+  if (!req.query.type) req.query.type = 'zip'; // 默认导出zip格式
+
+
+  req.query.path[3] = `${req.query.path[2]}.md`;
+  const notePath = path.join(config.user.dirs.notes, req.query.path.join('/'));
+
+  if (req.query.type === 'zip') {
+    try {
+      const zipData = await Files.exportNoteZip(notePath, req.query.path.slice(0, 3), req.query.path[2]);
+      // 流式传输给前端
+      zipData.generateNodeStream({
+        type: 'nodebuffer',
+      })
+        .pipe(res)
+        // .pipe(fs.createWriteStream(`${__dirname}/out.zip`)) // 也可以流式保存在本地
+        .on('finish', () => {
+          // JSZip generates a readable stream with a "end" event,
+          // but is piped here in a writable stream which emits a "finish" event.
+          console.log('[export file] export success: ', notePath);
+        });
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(`导出文件失败: ${req.query.path}`);
+    }
+  } else if (req.query.type === 'docx') {
+    try {
+      const docxBuffer = await Files.exportNoteDocx(notePath, req.query.path.slice(0, 3), req.query.path[2]);
+      // 流式传输给前端
+      res.send(docxBuffer);
+    } catch (error) {
+      console.error(error);
+      res.status(500).send(`导出文件失败: ${req.query.path}`);
+    }
   }
 };
 

@@ -113,6 +113,7 @@
       <template slot="menu-list">
         <li
           v-for="menu of curContentMenu"
+          :style="menu ==='delete' ?'color: rgb(251, 117, 117)':'' "
           :key="menu"
           @click="handleContentMenu(menu)"
         >
@@ -159,7 +160,7 @@ export default {
       isShowContentMenu: false, // 是否显示右键菜单
       contentMenuLeft: '', // 右键菜单位置
       contentMenuTop: '',
-      contentMenuCat: ['create before', 'create after', 'rename', 'delete', 'export'], // 目录的右键菜单
+      contentMenuCat: ['create before', 'create after', 'rename', 'delete', 'export zip', 'export docx'], // 目录的右键菜单
       contentMenuContainer: ['create'], // 目录容器的右键菜单
       curContentMenu: [], // 当前右键菜单
       curContentMenuCatLv: null, // 当前右键菜单对应的目录等级
@@ -411,14 +412,26 @@ export default {
         await this.deleteCat();
       } else if (menu === 'rename') {
         await this.rename();
-      } else if (menu === 'export') {
-        console.log(this.curContentMenuCatLv);
+      } else if (menu === 'export zip') {
         if (this.curContentMenuCatLv === 3) {
           this.$message({
             type: 'success',
             message: '后台压缩中, 即将导出...',
           });
-          await this.exportNote();
+          await this.exportNote('zip');
+        } else {
+          this.$message({
+            type: 'warning',
+            message: '目前只有三级目录支持导出',
+          });
+        }
+      } else if (menu === 'export docx') {
+        if (this.curContentMenuCatLv === 3) {
+          this.$message({
+            type: 'success',
+            message: '后台生成中, 即将导出...',
+          });
+          await this.exportNote('docx');
         } else {
           this.$message({
             type: 'warning',
@@ -735,18 +748,16 @@ export default {
     },
 
     // 右键菜单: 导出笔记
-    async exportNote() {
+    async exportNote(type = 'zip') {
+      const fileName = this.curContentMenuCatName;
       try {
-        const zipName = this.curContentMenuCatName;
-        const zipBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName], this.$message);
-        const blob = new Blob([zipBuffer], { type: 'application/zip' });
-
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = blobUrl;
-        a.download = `${zipName}.zip`;
-        a.click();
-        URL.revokeObjectURL(blobUrl);
+        if (type === 'zip') {
+          const zipBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName], 'zip', this.$message);
+          tools.downloadArrayBuffer(zipBuffer, fileName, type);
+        } else if (type === 'docx') {
+          const docxBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName], 'docx', this.$message);
+          tools.downloadArrayBuffer(docxBuffer, fileName, type);
+        }
       } catch (error) {
         console.error('导出笔记失败: ', error);
       }
@@ -1035,10 +1046,18 @@ export default {
       }
     },
 
+    // 拖动: zip文件降落在三级容器中 ⭐ 导入zip笔记
     async containerDropLv3(e) {
       e.preventDefault();
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
         const zipFile = e.dataTransfer.files[0];
+        if (!zipFile.name.endsWith('.zip')) {
+          this.$message({
+            type: 'warning',
+            message: '只支持导入.zip格式的文件'
+          });
+          return;
+        }
         const zipFileName = zipFile.name.replace('.zip', '');
 
         if (this.catsLv3.includes(zipFileName)) {
