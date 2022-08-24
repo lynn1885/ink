@@ -1,0 +1,14 @@
+{
+  "theme": {
+    "default": null
+  },
+  "catalog": {
+    "order": {
+    }
+  },
+  "plugins": {
+    "inkLineReplace": {
+      "/": {}
+    }
+  }
+}

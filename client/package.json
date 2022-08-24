@@ -1,0 +1,41 @@
+{
+  "name": "ink",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "dev": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.0.0",
+    "@types/codemirror": "^5.60.5",
+    "axios": "^0.18.1",
+    "codemirror": "^5.40.2",
+    "codemirror-widgets": "^1.4.2",
+    "element-ui": "^2.4.8",
+    "fabric": "^4.6.0",
+    "jquery": "^3.4.1",
+    "jsmind": "^0.4.6",
+    "katex": "^0.10.0-rc.1",
+    "lodash": "^4.17.15",
+    "markdown-it": "^8.4.2",
+    "pinyin": "^2.11.2",
+    "tesseract.js": "^2.1.5",
+    "vue": "^2.5.17",
+    "vue-router": "^3.0.1",
+    "vuex": "^3.0.1"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.0.3",
+    "@vue/cli-plugin-eslint": "^3.0.3",
+    "@vue/cli-service": "^3.0.3",
+    "@vue/eslint-config-airbnb": "^3.0.3",
+    "browserslist": "^4.16.6",
+    "caniuse-lite": "^1.0.30001239",
+    "sass": "^1.49.0",
+    "sass-loader": "^7.0.1",
+    "vue-template-compiler": "^2.5.17"
+  }
+}

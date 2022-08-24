@@ -1,0 +1,149 @@
+// font
+// $font-family-main: 'Aa元气满满';
+// $font-size-main: 16px;
+// $font-size-sidebar: 13px;
+$font-family-main: '.PingFang SC';
+$font-size-main: 15px;
+$font-size-sidebar: 13px;
+
+$font-size-formatting: 8px;
+$icon-size: 22px;
+
+// common
+$selection: rgb(242, 230, 250);
+$comment-color: #a9a9a9;
+$warning-color: #e6a23c;
+$warning-bg: #fdf6ec;
+$active-color: rgb(164, 119, 222);
+
+// scrollbar
+$scrollbar-width: 8px;
+$scrollbar-height: 8px;
+$scrollbar-bg: #ddd;
+$scrollbar-bg-hover: #bbb;
+$scrollbar-radius: 1px;
+
+// z-index
+$float-window-index: 100;
+$above-float-window-index: 200;
+
+// app
+$app-bg: #f6f5f4;
+
+// sidebar: size
+$icon-bar-width: 42px;
+
+// sidebar: color
+$icon-bar-bg: rgba(233, 232, 231, 0.82);
+$tool-page-color: rgb(100, 97, 93);
+// $tool-page-bg: rgba(248, 247, 246, 0.87);
+$tool-page-bg: rgba(249, 248, 247, 0.87);
+$icon-color: rgb(168, 168, 167);
+$icon-color-active: #585654;
+$icon-color-hover: #64615f;
+
+// sidebar: element
+$sidebar-button-bg: lighten($color: $tool-page-bg, $amount: 10);
+$sidebar-button-border-color: darken($color: $tool-page-bg, $amount: 2);
+$sidebar-button-disabled-bg: lighten($color: $tool-page-bg, $amount: 2);
+$sidebar-button-disabled-color: #ccc;
+$sidebar-input-bg: $sidebar-button-bg;
+$sidebar-input-border-color: $sidebar-button-border-color;
+$sidebar-input-disabled-bg: $sidebar-button-disabled-bg;
+$sidebar-input-font-size: $font-size-sidebar+1px;
+$sidebar-input-margin-left: 10px;
+$sidebar-item-border-color: #eee;
+$sidebar-item-active-bg: rgba(239, 230, 248, 0.9);
+$sidebar-item-hover-bg: rgba(237, 229, 245, 0.6);
+$sidebar-item-active-border-color: rgba(164, 119, 222, 0.9);
+$sidebar-line-height: 1.8;
+
+$sidebar-item-normal-bg: rgba(237, 229, 245, 0.4);
+$sidebar-item-warning-bg: rgba(253, 247, 218, 0.4);
+$sidebar-item-error-bg: rgba(254, 225, 225, 0.4);
+
+
+$right-sidebar-width: 250px;
+
+// sidebar: catalog
+$catalog-modal-bg: transparent;
+$catalog-col-border: none;
+
+// editor
+$editor-bg: rgba(254, 253, 252, 0.90);
+$editor-color: rgb(73, 72, 70);
+
+// headers: color
+$header-1: #b17a46;
+$header-2: #46b17b;
+$header-3: rgb(160, 129, 91);
+$header-4: rgb(91, 160, 102);
+$header-5: #B2867B;
+$header-6: rgb(150, 142, 140);
+
+// header: size
+$header-1-indent: 5px;
+$header-2-indent: 5px;
+$header-3-indent: 16px;
+$header-4-indent: 34px;
+$header-5-indent: 52px;
+$header-6-indent: 72px;
+$not-header-indent: 130px;
+
+// cursor
+$fat-cursor: rgb(229, 203, 247);
+$cursor: #333;
+
+// gap
+$line-cutting-bg: rgb(252, 247, 243);
+$cutting-border: 1.5px dashed darken($color: $tool-page-bg, $amount: 8);
+$cutting-border-light: 1px dashed darken($color: $tool-page-bg, $amount: 6);
+
+// code, link, quote, em, searched
+// $code-bg: rgba(243, 237, 230, 0.9);
+// $code-color: rgb(133, 114, 90);
+$code-bg: rgb(227, 240, 222);
+$code-color: rgb(128, 170, 135);
+$code-block-bg: rgba(249, 247, 244, 0.9);
+$cm-em-bg: rgba(250, 242, 206, 0.6);
+// $cm-em-bg: rgba(250, 241, 217, 0.6);
+// $cm-em-color: rgb(206, 192, 153);
+$cm-em-color: inherit;
+$cm-strong-color: rgb(204, 104, 104);
+$cm-code-comment: #aaa;
+$cm-link-bg: transparent;
+$cm-link-color: rgb(106, 147, 250);
+$cm-quote-color: #999;
+$cm-quote-bg: rgba(245, 245, 245, 0.9);
+$cm-formatting-color: #d2d2d2;
+$cm-list-bg: rgba(248, 242, 234, 0.9);
+$cm-list-color: #bbb;
+$cm-foldmarker-bg: rgba(253, 241, 232, 0.9);
+$cm-foldmarker-color: rgb(241, 219, 199);
+$cm-image-font-bg: #f4f4f4;
+$cm-image-font-color: #ddd;
+$cm-line-char-bg: rgb(216, 234, 253);
+$cm-line-char-color: rgb(78, 54, 8);
+$cm-img-shadow: none;
+$cm-searched-text-bg: rgb(247, 248, 172);
+$cm-highlight-line-bg: $sidebar-item-active-bg;
+
+// content menu
+$content-menu-bg: rgb(250, 249, 248);
+$content-menu-color: #333;
+$content-menu-border-bottom: 0.5px solid #f4f4f4;
+$content-menu-shadow: 0px 0px 10px #ddd;
+$content-menu-active-bg: $sidebar-item-active-bg;
+$content-menu-active-color: $content-menu-color;
+
+// tool: sticky note
+$sticky-note-bg: rgba(251, 250, 249, 0.85);
+$sticky-note-color: $editor-color;
+
+// tool: float window
+$float-box-shadow: 0px 0px 4px 0px #ddd;
+$float-bg: rgb(251, 250, 249);
+$float-bg-alpha: rgba(251, 250, 249, 0.8);
+$float-bg-alpha-transparent: rgba(251, 250, 249, 0.5);
+
+$status-bar-height: 24px;

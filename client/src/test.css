@@ -1,0 +1,310 @@
+/* vars */
+:root {
+  --tool-icons-bg: #efeded;
+  --tool-pages-bg: #fbf9f9;
+  --editor-bg: #fffdfd;
+  --main-bg: #f6f6f6;
+  --accent-bg: rgb(241, 231, 231);
+  --accent-hover-bg: rgba(241, 231, 231, 0.7);
+  --selection-bg: rgb(241, 225, 225);
+
+  --editor-color: rgb(114, 107, 107);
+  --tool-pages-color: rgb(151, 132, 132);
+
+  --header-1-color: rgb(175, 120, 120);
+  --header-2-color: rgb(125, 172, 127);
+  --header-3-color: rgb(172, 148, 125);
+  --header-4-color: rgb(125, 172, 153);
+  --header-5-color: rgb(177, 137, 137);
+  --header-6-color: rgb(163, 146, 146);
+}
+
+/* font */
+* {
+  font-family: '苏新诗柳楷简';
+}
+
+/* selection & scroll bar */
+::selection {
+  background: var(--selection-bg)!important;
+}
+::-webkit-scrollbar-thumb, ::-webkit-scrollbar-thumb:hover {
+  background: var(--selection-bg)!important;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+/* main */
+#main {
+  background: var(--main-bg)!important;
+}
+
+/* tool icons */
+#tool-icons {
+  background: var(--tool-icons-bg)!important;
+}
+#tool-icons .tool-icon svg {
+  fill: rgb(187, 177, 177)!important;
+}
+#tool-icons .tool-icon.active > svg {
+  fill: rgb(146, 94, 94)!important;
+}
+#tool-icons .tool-icon:not(.active):hover > svg {
+  fill: rgba(146, 94, 94, 0.8)!important;
+}
+
+/* tool pages */
+#tool-pages {
+  background: var(--tool-pages-bg)!important;
+}
+#tool-pages li {
+  color: var(--tool-pages-color) !important;
+  font-size: 13.5px!important;
+}
+#tool-pages .cat-active {
+  background: var(--accent-bg)!important;
+}
+#tool-pages li:not(.cat-active):hover {
+  background: var(--accent-hover-bg)!important;
+}
+
+/* status-bar */
+#status-bar {
+  background: var(--tool-pages-bg)!important;
+}
+#status-bar .items {
+  color: var(--editor-color);
+}
+#status-bar .items:hover {
+  background: var(--accent-bg)!important;
+}
+
+/* content menu */
+#content-menu {
+  background: var(--editor-bg)!important;
+  color: var(--editor-color);
+  box-shadow: 0px 0px 2px 0px var(--accent-bg)!important;
+}
+#content-menu li {
+  border-bottom: none!important;
+}
+#content-menu li:hover {
+  color: var(--editor-color)!important;
+}
+
+/* editor */
+.CodeMirror {
+  background: var(--editor-bg)!important;
+  padding: 0px!important;
+  caret-color: rgb(172, 125, 125);
+}
+
+/* .CodeMirror-sizer {
+  background: url();
+  background-attachment: scroll!important;
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+} */
+
+.CodeMirror-line:not(.line-cm-header) {
+  color: var(--editor-color);
+  font-size: 16px;
+}
+.line-cm-header-1 {
+  text-align: center;
+}
+.cm-header-1:not(.cm-formatting){
+  color: var(--header-1-color)!important;
+  font-weight: bold!important;
+  font-size: 20px!important;
+}
+.cm-header-2:not(.cm-formatting) {
+  color: var(--header-2-color)!important;
+  font-size: 16px!important;
+  font-weight: bold!important;
+}
+.cm-header-3:not(.cm-formatting) {
+  color: var(--header-3-color)!important;
+  font-weight: bold!important;
+  font-size: 16px!important;
+}
+.cm-header-4:not(.cm-formatting) {
+  color: var(--header-4-color)!important;
+  font-weight: bold!important;
+  font-size: 16px!important;
+}
+.cm-header-5:not(.cm-formatting) {
+  color: var(--header-5-color)!important;
+  font-weight: bold!important;
+  font-size: 16px!important;
+}
+.cm-header-6:not(.cm-formatting) {
+  color: var(--header-6-color)!important;
+  font-weight: bold!important;
+  font-size: 16px!important;
+}
+
+/* fold */
+.CodeMirror-foldmarker {
+  background: rgb(245, 234, 234);
+  line-height: 16px;
+  font-size: 13px!important;
+  color: rgb(224, 207, 207);
+}
+
+/* code */
+.cm-comment {
+  background: rgb(238, 214, 214)!important;
+}
+.cm-comment:not(.cm-formatting) {
+  color: var(--editor-color)!important;
+}
+
+/* em */
+.cm-em {
+  background: rgb(227, 217, 236)!important;
+}
+.cm-em:not(.cm-formatting) {
+  color: var(--editor-color)!important;
+}
+/* strong */
+.cm-strong {
+  border-bottom: none;
+  color: rgb(179, 107, 107);
+}
+
+/* list */
+.cm-formatting-list {
+  background: rgb(245, 230, 230)!important;
+  color: var(--editor-color)!important;
+}
+
+/* image */
+.line-cm-image span, .line-cm-image .cm-url {
+  background: rgb(248, 245, 245)!important;
+}
+.line-cm-code-block, .line-cm-quote {
+  padding-left: 136px!important;
+  background: linear-gradient(to right, transparent 128px, var(--tool-pages-bg) 128px)!important;
+}
+.line-cm-code-block .cm-comment {
+  background: var(--tool-pages-bg)!important;
+  color: rgb(110, 108, 108)!important;
+}
+
+/* formatting */
+.cursor-in-this-line .cm-formatting-code,
+.cursor-in-this-line .cm-formatting-em,
+.cursor-in-this-line .cm-formatting-header,
+.cursor-in-this-line .cm-formatting-strong,
+.cursor-in-this-line .cm-formatting-strikethrough {
+  font-weight: 14px!important;
+  color: rgb(209, 202, 202)!important;
+}
+/* cmd line */
+.line-cm-cmd {
+  text-align: left;
+  padding-left: 20px!important;
+}
+.line-cm-cmd .cm-header-1 {
+  font-size: 13.5px!important;
+  color: #ccc!important
+}
+
+
+/* plugins */
+/* sticky-note  */
+#sticky-note {
+  background: var(--tool-pages-bg)!important;
+  box-shadow: 0px 0px 3px 0px var(--accent-bg)!important;
+  color: var(--editor-color)!important;
+  font-size: 15px!important;
+}
+
+/* outline */
+#outline .item {
+  font-size: 13.5px!important;
+}
+#outline .item.active {
+  background: var(--accent-bg)!important;
+}
+#outline .item:hover {
+  background: var(--accent-hover-bg)!important;
+}
+#outline .header1 {
+  color: var(--header-1-color)!important;
+}
+#outline .header2 {
+  color: var(--header-2-color)!important;
+}
+#outline .header3 {
+  color: var(--header-3-color)!important;
+}
+#outline .header4 {
+  color: var(--header-4-color)!important;
+}
+#outline .header5 {
+  color: var(--header-5-color)!important;
+}
+#outline .header6 {
+  color: var(--header-6-color)!important;
+}
+
+/* search-note-bar */
+#search-note-bar {
+  box-shadow: 0px 0px 2px 0px var(--accent-bg)!important;
+}
+#search-note-bar li, #search-note-bar .wrapper {
+  background: var(--tool-pages-bg)!important;
+  color: var(--tool-pages-color)!important;
+  font-size: 13.5px;
+}
+#search-note-bar li:hover, #search-note-bar li.selected-search-res {
+  background: var(--accent-bg)!important;
+}
+#search-note-bar .search-input, #search-note-bar .placeholder {
+  background: var(--editor-bg)!important;
+  color: var(--editor-color);
+}
+#search-note-bar .wrapper::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* quick-open-bar */
+#quick-open-bar .bar-placeholder {
+  background: var(--tool-pages-bg)!important;
+}
+
+#quick-open-bar .item, #quick-open-bar .item.fixed {
+  background:rgb(250, 246, 246)!important;
+  color: var(--editor-color);
+}
+#quick-open-bar .item.active {
+  background: var(--editor-bg)!important;
+}
+#todo #todo-results .item.active, 
+#todo #todo-results .item:hover {
+  background: var(--accent-bg)!important;
+}
+#todo #todo-results .item{
+  font-size: 13.5px!important;
+}
+#search #search-results div{
+  font-size: 13.5px!important;
+}
+#search #search-results .item.active, button.active, .item:hover{
+  background: var(--accent-bg)!important;
+}
+#statistics div,button {
+  font-size: 13.5px!important;
+}
+#statistics .item:hover {
+  background: var(--accent-bg)!important;
+}
+/* useful classes */
+.cm-highlight-line {
+  background: var(--accent-bg)!important;
+}
