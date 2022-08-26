@@ -37,4 +37,5 @@ module.exports = {
   maxBackupFilesNumber: 9,
   fileSizeLimit: 300, // KB
   maxSearchNum: 200, // when searching globally, how many results can you find at most
+  importNodeImgPrefix: '__import__', // 导入的笔记的图片文件夹前缀
 };

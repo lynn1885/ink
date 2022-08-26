@@ -251,6 +251,7 @@ export default {
           triggerType: 'SWITCH_TAB',
         });
       }
+
       this.$store.commit(
         'updateGotoThisCatalog',
         noteDir.split('/').slice(0, 3)

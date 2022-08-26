@@ -718,6 +718,7 @@ export default class {
    */
   getHeadersArray(text) {
     if (!text) {
+      console.log(123, this.cm.getDoc());
       text = this.cm.getDoc().getValue();
     }
     const lines = text.split('\n');
@@ -1049,13 +1050,39 @@ export default class {
   // eslint-disable-next-line class-methods-use-this
   getLineImgInfo(lineText) {
     const matchRes = lineText.match(/^!\[(.*?)\]\((.*?)\)/);
+
     if (matchRes && matchRes.length) {
+      const imgPathSeg = matchRes[2].split('/');
       return {
         lineText,
         imgName: matchRes[1],
         imgSrc: matchRes[2],
+        imgFolder: imgPathSeg.length >= 2 ? imgPathSeg[0] : ''
       };
     }
     return null;
+  }
+
+  /**
+   * 获取所有图片行
+   * @returns {string} 笔记文本, 默认获取当前打开的笔记
+   */
+  getAllImgLines(text) {
+    const imgLines = [];
+    (text || this.cm.getDoc().getValue()).split('\n').forEach((lineText) => {
+      const matchRes = lineText.match(/^!\[(.*?)\]\((.*?)\)/);
+
+      if (matchRes && matchRes.length) {
+        const imgPathSeg = matchRes[2].split('/');
+        imgLines.push({
+          lineText,
+          imgName: matchRes[1],
+          imgSrc: matchRes[2],
+          imgFolder: imgPathSeg.length >= 2 ? imgPathSeg[0] : ''
+        });
+      }
+    });
+
+    return imgLines.length ? imgLines : [];
   }
 }

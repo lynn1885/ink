@@ -111,6 +111,7 @@ exports.delete = async (req, res) => {
     console.error(`delete(), 参数错误: ${req.query}`);
   }
 
+
   // 删除
   // 删除方式1: 把要删除的文件放到_deleted目录下
   const backupPath = path.join(
@@ -118,6 +119,19 @@ exports.delete = async (req, res) => {
     path.relative(config.user.dirs.notes, config.user.dirs.noteDeleted),
     `${Date.now()}--${req.query.paths.join(', ')}`,
   );
+
+  // 删除笔记图片文件夹
+  try {
+    const needDeleteImgFolder = path.join(config.user.dirs.noteImages, req.query.imgFolder);
+    if (needDeleteImgFolder) { // 这个startsWith('__')是二道保险, 防止误删除图片目录
+      if (!req.query.imgFolder.startsWith('__')) throw new Error('delete(): 要删除的图片目录不以__开头, 无法删除: ', req.query.imgFolder);
+      await Directories.deleteRecursively(needDeleteImgFolder);
+    }
+  } catch (error) {
+    console.error('delete(): 删除图片目录失败: ', error);
+  }
+
+  // 删除文件
   await Directories.rename(catPath, backupPath)
     .then(() => {
       console.log(`${new Date().toLocaleString()}: [delete catalog] ${catPath}`);

@@ -13,6 +13,7 @@ const config = {
   },
   defaultIconName: '__default__.png',
   bgImgName: '__background__', // Do not write the file type
+  importNodeImgPrefix: '__import__' // 导入的笔记的图片文件夹前缀
 };
 
 // export

@@ -5,6 +5,7 @@ const docx = require('docx');
 const sizeOf = require('buffer-image-size');
 const config = require('../../config');
 const task = require('../../tools/tasks');
+const tools = require('../../tools/tools');
 const exportNoteManifest = require('../../res/export-note-manifest.json');
 
 /**
@@ -108,7 +109,8 @@ exports.exportNoteZip = async (filePath, oriFileFullNameArr, fileName) => {
             });
           } catch (error) {
             // 读取图片失败
-            throw new Error(`读取图片(images)失败: ${imgFullPath}`);
+            console.warn('[export file]: 这张图片无法导出或不存在: ', imgFullPath);
+            // throw new Error(`读取图片(images)失败: ${imgFullPath}`);
           }
         }
       }
@@ -138,6 +140,7 @@ exports.exportNoteZip = async (filePath, oriFileFullNameArr, fileName) => {
     return zipData;
   } catch (error) {
     console.log('[export note]导出文件失败: ', error);
+    throw new Error(error);
   }
 };
 
@@ -283,9 +286,13 @@ exports.importNote = async (file, notePath, catOrderAfterImport) => {
     throw new Error(`笔记已存在, 不能重复导入: ${noteFullPath}`);
   }
 
+  // 校验笔记名称
+  if (!tools.isFileNameValid(notePathArr[2])) {
+    throw new Error(`笔记名称不合法: ${notePathArr[2]}`);
+  }
 
   // 校验图片目录是否已经存在
-  const imgsFolder = Date.now().toString();
+  const imgsFolder = `${config.importNodeImgPrefix}${Date.now().toString()}`;
   const imgsPath = path.join(config.user.dirs.noteImages, imgsFolder);
 
   if (fs.existsSync(imgsPath)) {
@@ -297,7 +304,6 @@ exports.importNote = async (file, notePath, catOrderAfterImport) => {
   fs.mkdirSync(path.dirname(noteFullPath));
   fs.writeFileSync(noteFullPath, '', { encoding: 'utf8', flag: 'w' });
   await task.unifyCatalog();
-  // console.log(123, noteFullPath);
 
   // 创建图片目录
   fs.mkdirSync(imgsPath);
@@ -310,6 +316,7 @@ exports.importNote = async (file, notePath, catOrderAfterImport) => {
   let manifest = await zipFile.files['manifest.json'].async('string');
   manifest = JSON.parse(manifest);
 
+  // 解压文件
   for (const fileName of files) {
     // 笔记
     if (fileName === manifest.noteFileName) {
@@ -332,7 +339,6 @@ exports.importNote = async (file, notePath, catOrderAfterImport) => {
       // 图片
     } else if (fileName.startsWith(manifest.imagesFolder) && fileName.length > manifest.imagesFolder.length) {
       const newFileName = fileName.replace(manifest.imagesFolder, '');
-      // console.log('写入图片', path.join(imgsPath, newFileName));
       if (newFileName) {
         fs.writeFileSync(
           path.join(imgsPath, newFileName),
@@ -340,8 +346,10 @@ exports.importNote = async (file, notePath, catOrderAfterImport) => {
           await zipFile.files[fileName].async('nodebuffer'),
         );
       }
+      // icon
     } else if (fileName.startsWith(manifest.iconsFolder) && fileName.length > manifest.iconsFolder.length) {
-      const newIconName = fileName.replace(manifest.iconsFolder, '');
+      // const newIconName = fileName.replace(manifest.iconsFolder, '');
+      const newIconName = `${notePathArr[2]}.png`;
       if (newIconName) {
         // console.log('写入icon', path.join(config.user.dirs.noteIcons, newIconName));
         fs.writeFileSync(

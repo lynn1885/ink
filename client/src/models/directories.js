@@ -83,9 +83,10 @@ const Directories = {
   /**
    * delete: 删除目录
    * @param {array} paths 要删除的路径数组
+   * @param {string} imgFolder 要删除的图片目录
    * @param {function} messager 通知器
    */
-  async delete(paths, messager) {
+  async delete(paths, imgFolder, messager) {
     // 校验
     if (!paths ||
       !Array.isArray(paths) ||
@@ -97,11 +98,13 @@ const Directories = {
     await axios.delete(`${serverUrl}directories`, {
       params: {
         paths,
+        imgFolder
       },
     })
       .then((res) => {
         if (res.status === 200) {
           console.log(`[deleted catalog] ${paths}`);
+          // messager.success(`删除成功: ${paths}`);
         } else {
           if (messager) {
             messager.error('删除失败!');

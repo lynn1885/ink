@@ -228,7 +228,6 @@ const tools = {
         break;
     }
 
-    console.log(buffer);
     const blob = new Blob([buffer], { type: mimeType });
 
     const blobUrl = URL.createObjectURL(blob);
@@ -237,7 +236,21 @@ const tools = {
     a.download = `${fileName}.${fileType}`;
     a.click();
     URL.revokeObjectURL(blobUrl);
+  },
+
+  /**
+ * 文件数组转文件路径
+ * @param {string[]} fileArr 文件数组, 必须有三个元素 ['a', 'b', 'c']
+ * @returns {string} 拼接好的文件路径, 如'mine/basic/accumulation/accumulation.md'
+ */
+  fileArr2FilePath(fileArr) {
+    if (!fileArr || !Array.isArray(fileArr) || fileArr.length !== 3) {
+      return;
+    }
+    // eslint-disable-next-line consistent-return
+    return `${fileArr[0]}/${fileArr[1]}/${fileArr[2]}/${fileArr[2]}.md`;
   }
+
 };
 
 export default tools;

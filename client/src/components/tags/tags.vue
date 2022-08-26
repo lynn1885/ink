@@ -35,7 +35,7 @@
         v-for="(item, index) in headers"
         :key="index"
         @click="gotoThisLine(item.cursorLineNum)">
-        {{item.cursorLineNum}} {{item.bareHeaderLineText}}
+        {{item.cursorLineNum}} {{item.text}}
       </div>
     </div>
 
@@ -142,27 +142,42 @@ export default {
     getHeader(lineNum) {
       const headers = this.editor.getHeaderAncestors({
         line: lineNum, ch: 0
-      }, 1);
+      });
 
-      if (!headers[0]) return;
+      const cursorHeader = headers[0];
 
-      headers[0].cursorLineNum = lineNum;
+      if (!cursorHeader) return;
+
+      cursorHeader.cursorLineNum = lineNum;
 
       if (this.headers.length === 0) {
-        this.headers.push(headers[0]);
+        this.headers.push(cursorHeader);
+        cursorHeader.text = this._concatHeader(headers);
       } else {
         const lastHeader = this.headers[this.headers.length - 1];
-        if (lastHeader.headerLineNum !== headers[0].headerLineNum) {
-          this.headers.push(headers[0]);
+        if (lastHeader.headerLineNum !== cursorHeader.headerLineNum) {
+          cursorHeader.text = this._concatHeader(headers);
+          this.headers.push(cursorHeader);
         } else {
           lastHeader.cursorLineNum = lineNum;
-          lastHeader.headerLineText = headers[0].headerLineText;
+          lastHeader.text = this._concatHeader(headers);
         }
       }
 
       if (this.headers.length > 10) {
         this.headers.shift();
       }
+    },
+
+    _concatHeader(headers) {
+      let text = '';
+      headers.forEach((header, index) => {
+        // eslint-disable-next-line no-unused-expressions
+        index === 0 ? text += header.bareHeaderLineText : text += header.bareHeaderLineText.slice(0, 6);
+        text += '/';
+      });
+      text = text.slice(0, text.length - 1);
+      return text;
     },
 
     // 获取标签

@@ -131,6 +131,7 @@ import Files from '@/models/files';
 import ContentMenu from '@/components/content-menu/content-menu.vue';
 import NoteIcon from '@/components/note-icon/note-icon.vue';
 import tools from '@/tools/tools';
+import config from '@/config';
 
 
 export default {
@@ -246,7 +247,7 @@ export default {
     // 这个字段常由外部调用. 触发目录变更的两个入口, 一个是getCatalog()之后, 一个是这里
     '$store.state.gotoThisCatalog': function foo(value) {
       if (!Array.isArray(value)) {
-        console.error('要前往的路径不是数组: ', value);
+        console.log('要前往的路径不是数组: ', value);
         return;
       }
       if (
@@ -261,6 +262,12 @@ export default {
         this.$message.error('暂时不能操作目录'); // 重要
         return;
       }
+
+      // 前往之后, 置空
+      this.$store.commit(
+        'updateGotoThisCatalog',
+        null
+      );
       this.$store.commit('updateIsProhibitOperation', true);
       if (Array.isArray(value)) {
         // 因为设置各级目录时都会触发对应的监听事件, 所以把设置1, 2, 3级目录放在不同的事件循环中, 给监听事件留出时间
@@ -285,6 +292,12 @@ export default {
       this.$store.commit('updateCatalog', _.cloneDeep(this.catalog));
       // 标记目录加载完毕
       this.isCatalogLoaded = true;
+
+      // if (this.$store.state.gotoThisCatalog) {
+      //   console.log('设置了gotoThisCatalog, 此处不再跳转'); // gotoThisCatalog的优先级, 比waitOpenCatLv高
+      //   return;
+      // }
+      // console.log(456, '跳转');
 
       // 设置默认打开的1, 2, 3级目录
       // 因为设置this.catalog 和 设置各级目录时都会触发对应的监听事件, 所以把它们放在不同的事件循环中
@@ -566,6 +579,19 @@ export default {
       const { curContentMenuCatLv } = this;
       const { curContentMenuCatName } = this;
 
+      // 对于导入的笔记, 删除对应的图片目录
+      let needDeleteImgFolder = [];
+      let filePath = '';
+      try {
+        filePath = tools.fileArr2FilePath([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName]);
+        const fileContent = await Files.get(filePath, this.$message);
+        const imgLines = this.editor.getAllImgLines(fileContent);
+        needDeleteImgFolder = Array.from(new Set(imgLines.map(item => item.imgFolder))).filter(folder => folder.startsWith(config.importNodeImgPrefix));
+      } catch (error) {
+        this.$message.warning('无法读取要删除的笔记: ', filePath);
+      }
+
+
       // 获取要删除的目录
       let isDeleteCurOpenFile = false;
       const paths = [];
@@ -610,8 +636,11 @@ export default {
         await this.$store.state.editor.runCommand('SAVE', { triggerType: 'CATALOG' });
       }
 
+      if (needDeleteImgFolder[0]) this.$message.warning(`将会一同删除图片文件夹: ${needDeleteImgFolder[0]}`);
+      console.log(`将会一同删除图片文件夹: ${needDeleteImgFolder[0]}`);
+
       // 向后台发送信息, 真正删除文件
-      await Directories.delete(paths, this.$message);
+      await Directories.delete(paths, needDeleteImgFolder[0], this.$message);
 
       // 记录一会儿刷新后要打开的目录
       switch (curContentMenuCatLv) {
@@ -622,13 +651,13 @@ export default {
           break;
         case 2:
           this.waitOpenCatLv1 = this.curCatLv1;
-          this.waitOpenCatLv2 = this.curCatLv2 === curContentMenuCatName ? '' : this.curCatLv2;
+          this.waitOpenCatLv2 = this.curCatLv2 === curContentMenuCatName ? this.catsLv2[0] : this.curCatLv2;
           this.waitOpenCatLv3 = this.curCatLv2 === curContentMenuCatName ? '' : this.curCatLv3;
           break;
         case 3:
           this.waitOpenCatLv1 = this.curCatLv1;
           this.waitOpenCatLv2 = this.curCatLv2;
-          this.waitOpenCatLv3 = this.curCatLv3 === curContentMenuCatName ? '' : this.curCatLv3;
+          this.waitOpenCatLv3 = this.curCatLv3 === curContentMenuCatName ? this.catsLv3[0] : this.curCatLv3;
           break;
         default:
           break;
@@ -1050,6 +1079,7 @@ export default {
     async containerDropLv3(e) {
       e.preventDefault();
       if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        // 校验
         const zipFile = e.dataTransfer.files[0];
         if (!zipFile.name.endsWith('.zip')) {
           this.$message({
@@ -1059,6 +1089,14 @@ export default {
           return;
         }
         const zipFileName = zipFile.name.replace('.zip', '');
+
+        if (tools.isFileNameValid(zipFileName) !== true) {
+          this.$message({
+            type: 'warning',
+            message: '要导入的zip文件名不合法'
+          });
+          return;
+        }
 
         if (this.catsLv3.includes(zipFileName)) {
           this.$message({
@@ -1083,7 +1121,6 @@ export default {
           this.waitOpenCatLv1 = this.curCatLv1;
           this.waitOpenCatLv2 = this.curCatLv2;
           this.waitOpenCatLv3 = zipFileName;
-          console.log(123, this.waitOpenCatLv1, this.waitOpenCatLv2, this.waitOpenCatLv3);
           // 重新从后端获取目录, 触发前端更新
           await this.getCatalog();
         } catch (error) {

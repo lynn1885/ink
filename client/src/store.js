@@ -14,7 +14,7 @@ export default new Vuex.Store({
     curCatalogArr: [], // 当前打开的目录数组. 不管一级目录, 二级目录还是三级目录变更, 都会更新这个数组. 如果这一级目录不存在, 则标记为null, 数组始终长度是3
     userConfig: null, // 用户配置
     catalog: null, // 目录
-    gotoThisCatalog: [], // 要跳转到的目录, catalog组件会监听该目录
+    gotoThisCatalog: null, // 要跳转到的目录, catalog组件会监听该目录
     curNoteTheme: null, // 当前笔记主题
     isNightModeOn: false, // 是否启用了夜间模式
     splitScreenMode: 0, // 0: 不分屏, 1: 上下分屏, 2: 左右分屏

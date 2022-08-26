@@ -308,7 +308,7 @@ exports.exportNote = async (req, res) => {
       res.send(docxBuffer);
     } catch (error) {
       console.error(error);
-      res.status(500).send(`导出文件失败: ${req.query.path}`);
+      res.status(400).send(`导出文件失败: ${req.query.path}`);
     }
   }
 };
