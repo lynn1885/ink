@@ -193,17 +193,21 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
         paragraphs.push(
           new docx.Paragraph({
             heading: docx.HeadingLevel[`HEADING_${headerLv}`],
-            // alignment: headerLv < 2 ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT,
-            indent: {
-              left: headerLv * 10,
+            alignment: headerLv < 2 ? docx.AlignmentType.CENTER : docx.AlignmentType.LEFT,
+            // indent: {
+            //   left: headerLv * 10,
+            // },
+            spacing: {
+              before: headerLv <= 2 ? 1000 : 200,
             },
             children: [
               new docx.TextRun({
                 text: headerMatchRes[2],
-                bold: true,
-                font: '.PingFangSC',
-                // color: 'FF0000',
-
+                bold: headerLv <= 2,
+                size: [34, 30, 26, 22, 18, 14][headerLv],
+                font: '黑体',
+                color: '000000',
+                italics: false,
               }),
             ],
           }),
@@ -215,14 +219,16 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
         const imgBuffer = fs.readFileSync(imgFullPath);
         const size = sizeOf(imgBuffer);
         if (size.width > 600) {
+          const oriWithd = size.width;
           size.width = 600;
-          size.height = Math.floor(size.height / (size.width / 600));
+          size.height = Math.floor(size.height / (oriWithd / 600));
         }
+
         paragraphs.push(
           new docx.Paragraph({
-            indent: {
-              left: 100,
-            },
+            // indent: {
+            //   left: 100,
+            // },
             children: [
               new docx.ImageRun({
                 data: imgBuffer,
@@ -237,16 +243,27 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
 
         // 普通文本
       } else {
+        if (line === '') line = '\n';
+        const matchRes = line.match(/(.*?)\*\*(.+?)\*\*(.*?)/) || ['', line];
+
         paragraphs.push(
           new docx.Paragraph({
-            indent: {
-              left: 100,
-            },
             children: [
               new docx.TextRun({
-                text: ` ${line}`,
-                size: 14,
-                font: 'Microsoft YaHei',
+                text: ` ${matchRes[1] || ''}`,
+                size: 21,
+                font: '微软雅黑',
+              }),
+              new docx.TextRun({
+                text: ` ${matchRes[2] || ''}`,
+                size: 21,
+                font: '微软雅黑',
+                color: '#FF0000',
+              }),
+              new docx.TextRun({
+                text: ` ${matchRes[3] || ''}`,
+                size: 21,
+                font: '微软雅黑',
               }),
             ],
           }),
