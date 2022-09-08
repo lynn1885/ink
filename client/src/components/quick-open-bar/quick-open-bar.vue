@@ -290,6 +290,7 @@ export default {
     width: 100%;
     list-style: none;
     background: $tool-page-bg;
+    // backdrop-filter: blur(10px);
     flex-grow: 0;
     flex-shrink: 999;
   }

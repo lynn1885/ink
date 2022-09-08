@@ -229,7 +229,7 @@ export default {
   font-size: $font-size-sidebar;
   height: 20px;
   line-height: 20px;
-  background: $tool-page-bg;
+  // background: $tool-page-bg;
   color: $comment-color;
   .prepared-markers {
     display: flex;

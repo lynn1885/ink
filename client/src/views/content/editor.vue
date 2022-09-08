@@ -37,7 +37,8 @@ export default {
       autoSaveInterval: 40 * 1000, // 自动存储间隔: 单位ms
       autoFoldDelay: 100, // auto fold document after openning. unit: ms. no delay: -1
       autoFoldLv: 2, // 自动折叠到哪个等级
-      minAutoSaveInterval: 10 * 1000, // 最小自动存储间隔
+      minAutoSaveInterval: 10 * 1000, // 最小自动存储间隔,
+      lastPressAltTime: 0,
     };
   },
 
@@ -79,6 +80,29 @@ export default {
         'Ctrl-S': async () => {
           await this._saveFile('MANUAL', true);
         },
+
+      });
+
+      // double click alt to search the selection text
+      document.addEventListener('keydown', (e) => {
+        // ctrl + /: toggle zen mode
+        if (e.altKey) {
+          const thisPressAltTime = Date.now();
+          if (thisPressAltTime - this.lastPressAltTime < 300) {
+            const doc = this.editor.cm.getDoc();
+            const selection = doc.getSelection();
+
+            const searchText = selection.trim();
+            if (!searchText) return;
+            if (/[a-zA-Z?'\s\t:.'-@#$%&*()_+=/?]+/.test(searchText)) {
+              window.open(`https://www.google.com/search?q=${searchText}`, '_blank');
+            } else {
+              window.open(`https://www.baidu.com/s?wd=${searchText}`, '_blank');
+            }
+          }
+
+          this.lastPressAltTime = Date.now();
+        }
       });
 
       // 给editor添加事件, 属性, 方法

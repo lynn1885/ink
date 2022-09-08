@@ -2,7 +2,7 @@
   <div id="web">
     <div class="top-bar">
       <div class="input-container">
-        <input class="ink-input-bar" v-model="inputText" @keypress.enter="search"/>
+        <input class="ink-input-bar" v-model="inputText" @keypress.enter="search" placeholder="选中文本后, Alt-L 快捷搜索">
         <div class="ink-button" @click="clearSearchText">×</div>
       </div>
       <div class="websites">
@@ -85,7 +85,7 @@ export default {
   },
 
   mounted() {
-    this.editor.bindShortcutKeyMap(document, ['Ctrl', 'Q'], () => {
+    this.editor.bindShortcutKeyMap(document, ['Alt', 'L'], () => {
       const selection = this.editor.cm.getDoc().getSelection().trim();
       if (selection) {
         this.inputText = selection;

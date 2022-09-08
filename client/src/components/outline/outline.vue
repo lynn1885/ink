@@ -17,6 +17,7 @@
           cutting: header.text.startsWith('# - '),
           active: header.lineNum === activeHeaderLineNum
         }"
+        :ink-mark="header.text"
         :ref="`lineNum${header.lineNum}`"
         :key="header.lineNum + '-' + header.lv + '-' + header.text"
         v-for="header of displayHeaders"

@@ -41,6 +41,7 @@ const opeartionKeys = {
   REMOVE_LINE_BREAK: 'REMOVE_LINE_BREAK',
   REMOVE_CURLEVEL_END_PUNCTUATION: 'REMOVE_CURLEVEL_END_PUNCTUATION',
   REMOVE_CHINESE_EMPTY: 'REMOVE_CHINESE_EMPTY',
+  ADD_LINE_AFTER_IMG: 'ADD_LINE_AFTER_IMG',
   COPY_SUBLEVEL_HEADER_1: 'COPY_SUBLEVEL_HEADER_1',
   COPY_HEADERS_3_FLAT: 'COPY_HEADERS_3_FLAT',
   ADD_TODO: 'ADD_TODO',
@@ -83,6 +84,7 @@ export default {
         [opeartionKeys.REMOVE_LINE_BREAK]: { title: '清除换行, 变为一行', isNeedSelection: true },
         [opeartionKeys.MULTI_EMPTY_LINE_2_ONE_EMPTY_LINE]: { title: '多行空行变一行空行', isNeedSelection: true },
         [opeartionKeys.REMOVE_CHINESE_EMPTY]: { title: '移除中文之间的空格', isNeedSelection: true },
+        [opeartionKeys.ADD_LINE_AFTER_IMG]: { title: '🖼️在图片后添加空行', isNeedSelection: true },
         separator4: { title: 'separator' },
         [opeartionKeys.ADD_TODO]: { title: '添加待办TODO', isNeedSelection: true },
         [opeartionKeys.ADD_IMPORTANT]: { title: '添加重点⭐', isNeedSelection: true },
@@ -367,6 +369,27 @@ export default {
           break;
         }
 
+        // 在img后添加空行
+        case opeartionKeys.ADD_LINE_AFTER_IMG: {
+          let newText = '';
+          let i = 0;
+          selectionLines.forEach((line, index) => {
+            if (this.editor.getLineImgInfo(line) && this.editor.getHeaderLvByStr(selectionLines[index + 1])) {
+              // console.log(line, 123, selectionLines[index + 1]);
+              newText += line;
+              newText += '\n\n';
+              i += 1;
+            } else {
+              newText += line;
+              newText += '\n';
+            }
+          });
+
+          doc.replaceSelection(newText, 'around');
+          this.$message.success(`已添加 ${i} 行`);
+          break;
+        }
+
         // 添加todo
         case opeartionKeys.ADD_TODO: {
           const newText = selectionLines
@@ -428,7 +451,7 @@ export default {
     /* 操作符 */
     .operation {
       width: fit-content;
-      background: $sidebar-button-bg;
+      background: rgba($sidebar-button-bg, 0.6);
       padding: 4px;
       margin: 4px;
       border-radius: 4px;
@@ -440,7 +463,7 @@ export default {
       &.separator {
         width: 100%;
         height: 0px;
-        border-bottom: 2px dashed #ccc;
+        border-bottom: 2px dashed rgba(200, 200, 200, 0.6);
         margin: 0;
         padding: 0;
         background: transparent;
