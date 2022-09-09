@@ -18,6 +18,7 @@ export default new Vuex.Store({
     curNoteTheme: null, // 当前笔记主题
     isNightModeOn: false, // 是否启用了夜间模式
     splitScreenMode: 0, // 0: 不分屏, 1: 上下分屏, 2: 左右分屏
+    smallScreenMaxWith: 600, // 小于这个宽度, 就进入小屏模式
 
     commonTools: {
       Outline: false,

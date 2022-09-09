@@ -1,5 +1,5 @@
 <template>
-  <div id="app" :class="{'zen-mode-app': isZenMode }">
+  <div id="app" :class="{'zen-mode-app': isZenMode, 'small-screen': smallScreen }">
     <!-- main body -->
     <div id="main">
       <!-- 侧边栏 -->
@@ -48,7 +48,8 @@ import CommonTools from '@/views/common-tools/common-tools.vue';
 import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
-import Files from '@/models/files';
+// import Files from '@/models/files';
+const { clientWidth } = document.body;
 
 export default {
   name: 'app',
@@ -61,6 +62,7 @@ export default {
   },
   data() {
     return {
+      smallScreen: clientWidth < this.$store.state.smallScreenMaxWith,
       staticIconsUrl: config.server.staticIconsUrl, // 背景图服务器地址
       isShowBgImg: false, // 是否显示背景图
       bgImgName: config.bgImgName, // 背景图名字

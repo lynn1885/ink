@@ -151,6 +151,8 @@ import {
 
 const isEnableConsole = false;
 const name = 'side-bar';
+const { clientWidth } = document.body;
+
 
 export default {
   name,
@@ -177,7 +179,7 @@ export default {
       editor: null,
       activePage: 'Catalog', // current active page
       activeButtons: {}, // current active buttons
-      isSideBarSmallMode: false, // whether to display side bar in small mode
+      isSideBarSmallMode: clientWidth < this.$store.state.smallScreenMaxWith, // whether to display side bar in small mode
       isShowStickyNote: false,
       isUsingFluorescentPen: false,
       isShortcutKeyBinded: false,
@@ -342,6 +344,12 @@ export default {
           if (isEnableConsole) {
             console.log('get editor');
           }
+
+          // 小屏幕自动只读
+          if (clientWidth < this.$store.state.smallScreenMaxWith) {
+            this.changeTool(this.tools.filter(tool => tool.name === 'Read Only')[0]);
+          }
+
           if (!this.isShortcutKeyBinded) {
             this.bindShortcuKey();
             this.isShortcutKeyBinded = true;

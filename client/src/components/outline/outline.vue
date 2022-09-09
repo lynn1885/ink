@@ -17,7 +17,6 @@
           cutting: header.text.startsWith('# - '),
           active: header.lineNum === activeHeaderLineNum
         }"
-        :ink-mark="header.text"
         :ref="`lineNum${header.lineNum}`"
         :key="header.lineNum + '-' + header.lv + '-' + header.text"
         v-for="header of displayHeaders"
@@ -452,10 +451,10 @@ export default {
       padding-left: 80px;
     }
     .important {
-      background: rgb(252, 250, 241);
+      background: rgba(252, 250, 241, 0.6);
     }
     .danger {
-      background: rgb(252, 242, 241);
+      // background: rgba(252, 242, 241, 0.6);
     }
     .cutting {
       /* text-align: center; */

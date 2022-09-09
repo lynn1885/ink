@@ -102,6 +102,43 @@
   padding-left: $header-6-indent !important;
 }
 
+// 小屏模式
+.small-screen {
+  $not-header-indent: 30px;
+  .line-cm-header-1 {
+    padding-left: 5px !important; // 这个仅仅是为了让隐藏markdown标签后, 标题1和2在一条垂线上
+
+  }
+
+  .line-cm-header-3 {
+    padding-left: 10px !important;
+  }
+
+  .line-cm-header-4 {
+    padding-left: 15px !important;
+  }
+
+  .line-cm-header-5 {
+    padding-left: 20px !important;
+  }
+
+  .line-cm-header-6 {
+    padding-left: 25px !important;
+  }
+  .CodeMirror-line:not(.line-cm-header) {
+    padding-left:  $not-header-indent!important; // 修改这个也要修改图片插件的缩进
+  }
+
+  [ink-mark] {
+    background-image: none!important;
+  }
+
+  .inserted-widget-image {
+    padding-left: $not-header-indent;
+  }
+  
+} 
+
 .CodeMirror-line {
   cursor: inherit!important;
 }
