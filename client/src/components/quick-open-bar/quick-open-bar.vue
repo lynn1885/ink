@@ -173,7 +173,7 @@ export default {
     async closeNote(noteDir) {
       // Can it still be closed
       if (this.allNoteDirs.length <= 1) {
-        this.editor.messager.warning('只剩最后一个标签页, 不能再关闭了');
+        this.editor.messager.warning('只剩最后一个标签页, 不能再关闭了。如要退出分屏请点击左侧图标。');
         return;
       }
       // Calculate the dir to open next

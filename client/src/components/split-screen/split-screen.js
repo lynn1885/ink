@@ -8,6 +8,10 @@ export default {
       editor.messager.success('关闭分屏 ');
     }
     vueComp.$store.commit('updateSplitScreenMode', newSplitScreenMode);
-    return false;
+    return {
+      0: false,
+      1: '上下分屏',
+      2: '左右分屏'
+    }[newSplitScreenMode];
   },
 };

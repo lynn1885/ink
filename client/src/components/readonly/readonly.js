@@ -12,6 +12,6 @@ export default {
       isActive = true;
       editor.messager.warning('进入只读模式');
     }
-    return isActive;
+    return isActive ? '只读' : false;
   },
 };

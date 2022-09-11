@@ -23,6 +23,9 @@
         @click.ctrl="changeCommonTool(t.name)"
       >
         <svg viewBox="0 0 1024 1024" version="1.1" v-html="t.icon" />
+        <div class="button-name" v-if="activeButtons[t.name] !== true && activeButtons[t.name] !== false">
+          {{activeButtons[t.name]}}
+        </div>
       </div>
     </div>
 
@@ -227,6 +230,7 @@ export default {
           icon: stickyNoteSvg,
           type: 'button',
           keyMap: ['Ctrl', 'Shift', 'Y'],
+          onclick: (editor, lastStatus) => (!lastStatus ? '便签' : false),
         },
         {
           name: 'Search Note Bar',
@@ -248,13 +252,13 @@ export default {
           icon: todoSvg,
           type: 'page',
         },
-        {
-          name: 'Review',
-          icon: Review.icon,
-          type: 'button',
-          onclick: Review.handler,
-          keyMap: ['Ctrl', 'Shift', 'R'],
-        },
+        // {
+        //   name: 'Review',
+        //   icon: Review.icon,
+        //   type: 'button',
+        //   onclick: Review.handler,
+        //   keyMap: ['Ctrl', 'Shift', 'R'],
+        // },
         {
           name: 'Mind Map',
           icon: mindMapSvg,
@@ -277,6 +281,7 @@ export default {
           icon: nightModeSvg,
           onclick: (editor, lastStatus) => {
             this.$store.commit('updateIsNightModeOn', !lastStatus);
+            return !lastStatus ? '夜间模式' : false;
           },
           type: 'button',
         },
@@ -301,16 +306,18 @@ export default {
           name: 'Fluorescent Pen',
           icon: fluorescentPenSvg,
           type: 'button',
+          onclick: (editor, lastStatus) => (!lastStatus ? '荧光笔*' : false),
         },
         {
           name: 'Paint',
           icon: paintSvg,
           type: 'button',
-          onclick: () => {
-            if (!this.activeButtons.Paint) { // 展开侧边栏, 防止paint界面无法显示
-              // this.isSideBarSmallMode = false;
-            }
-          },
+          // onclick: () => {
+          //   if (!this.activeButtons.Paint) { // 展开侧边栏, 防止paint界面无法显示
+          //     // this.isSideBarSmallMode = false;
+          //   }
+          // },
+          onclick: (editor, lastStatus) => (!lastStatus ? '画板' : false),
           keyMap: ['Ctrl', 'Shift', 'P'],
         },
 
@@ -385,21 +392,27 @@ export default {
         this.sideBarWidth = tool.sideBarWidth || this.defaultSideBarWidth;
         // "button" tool is a button, which will trigger something
       } else if (tool.type === 'button') {
-        if (tool.onclick) {
-          tool.onclick(
+        if (tool.onclick) { // 如果有onclick, 开关状态由onclick控制
+          const newButtonStatus = tool.onclick(
             this.$store.state.editor,
             this.activeButtons[tool.name],
             this
           );
-        }
-
-        if (tool.isCannotActive) { // 始终无法激活的按钮
-          this.$set(this.activeButtons, tool.name, false);
-        } else if (!this.activeButtons[tool.name]) { // 可以激活的按钮
+          this.$set(this.activeButtons, tool.name, newButtonStatus);
+        } else if (!this.activeButtons[tool.name]) { // 如果不存在onclick, 开发状态默认有true, false两种
           this.$set(this.activeButtons, tool.name, true); // 触发vue监听
         } else {
           this.$set(this.activeButtons, tool.name, false);
         }
+
+
+        // if (tool.isCannotActive) { // 始终无法激活的按钮
+        //   this.$set(this.activeButtons, tool.name, false);
+        // } else if (!this.activeButtons[tool.name]) { // 可以激活的按钮
+        //   this.$set(this.activeButtons, tool.name, true); // 触发vue监听
+        // } else {
+        //   this.$set(this.activeButtons, tool.name, false);
+        // }
       }
     },
 
@@ -520,6 +533,12 @@ export default {
       height: 54%;
       vertical-align: middle;
       fill: $icon-color;
+    }
+    .button-name {
+      font-size: 9px;
+      margin-top: -22px;
+      height: 14px;
+      color:$icon-color-active;
     }
     &:last-child {
       margin-bottom: 100px;

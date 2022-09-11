@@ -179,7 +179,8 @@ export default class {
     }
 
     // ink-mark
-    el.setAttribute('ink-mark', el.innerText.slice(0, 10) + el.innerText.slice(-10));
+    el.setAttribute('ink-mark-1', el.innerText.slice(0, 10));
+    el.setAttribute('ink-mark-2', el.innerText.slice(-10));
 
     // 添加链接
     const links = $('.cm-link:not(.cm-formatting)', el);

@@ -129,7 +129,7 @@
     padding-left:  $not-header-indent!important; // 修改这个也要修改图片插件的缩进
   }
 
-  [ink-mark] {
+  [ink-mark-1] {
     background-image: none!important;
   }
 
@@ -455,67 +455,67 @@
 }
 
 // 样式
-[ink-mark^='所以']{
+[ink-mark-1^='所以']{
   background: url(/imgs/所以.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark^='因为']{
+[ink-mark-1^='因为']{
   background: url(/imgs/因为.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark^='假如']{
+[ink-mark-1^='假如']{
   background: url(/imgs/灯泡.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
 
-[ink-mark*='个人理解'] {
+[ink-mark-1*='个人理解'] {
   background: url(/imgs/个人理解.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(222, 158, 40)!important
 }
 
 
-[ink-mark^='问题'], [ink-mark*='问题是'], [ink-mark*='有一个问题'] {
+[ink-mark-1^='问题'], [ink-mark-1*='问题是'], [ink-mark-1*='有一个问题'] {
   background: url(/imgs/问题.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(222, 158, 40)!important
 }
 
-[ink-mark^='首先'], [ink-mark^='其次'], [ink-mark^='然后'], [ink-mark^='第'], [ink-mark^='其中第'], [ink-mark^='而第']{
+[ink-mark-1^='首先'], [ink-mark-1^='其次'], [ink-mark-1^='然后'], [ink-mark-1^='第'], [ink-mark-1^='其中第'], [ink-mark-1^='而第']{
   background: url(/imgs/圆点.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark*='下面'], [ink-mark*='后面'], [ink-mark*='下一个'], [ink-mark*='接下来'], [ink-mark*='如下']{
+[ink-mark-1*='下面'], [ink-mark-1*='后面'], [ink-mark-1*='下一个'], [ink-mark-1*='接下来'], [ink-mark-1*='如下']{
   background: url(/imgs/向下.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark*='上面'], [ink-mark*='前面'], [ink-mark*='上一个'], [ink-mark*='如上']{
+[ink-mark-1*='上面'], [ink-mark-1*='前面'], [ink-mark-1*='上一个'], [ink-mark-1*='如上']{
   background: url(/imgs/向上.png) 110px 8px / 13px 13px no-repeat!important;
 }
-[ink-mark^='[']{
+[ink-mark-1^='[']{
   background: url(/imgs/网络.png) 110px 8px / 13px 13px no-repeat!important;
 }
-[ink-mark*='左']{
+[ink-mark-1*='左']{
   background: url(/imgs/向左.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark*='右']{
+[ink-mark-1*='右']{
   background: url(/imgs/向右.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark^='其实'], [ink-mark^='事实']{
+[ink-mark-1^='其实'], [ink-mark-1^='事实']{
   background: url(/imgs/石头.png) 110px 8px / 13px 13px no-repeat!important;
 }
 
-[ink-mark^='注意'], [ink-mark^='要注意'], [ink-mark^='但注意'] {
+[ink-mark-1^='注意'], [ink-mark-1^='要注意'], [ink-mark-1^='但注意'] {
   background: url(/imgs/注意.png) 110px 8px / 13px 13px no-repeat!important;
   color: rgb(223, 113, 126)!important;
 }
 
-[ink-mark*='本质'], [ink-mark*='总而言之'], [ink-mark*='简而言之'] {
+[ink-mark-1*='本质'], [ink-mark-1*='总而言之'], [ink-mark-1*='简而言之'] {
   background: url(/imgs/本质.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(255, 182, 47)!important
 }
 
-[ink-mark^='举例'], [ink-mark^='例子'], [ink-mark^='例如'], [ink-mark^='比如'], [ink-mark^='举个'], [ink-mark*='为例'] {
+[ink-mark-1^='举例'], [ink-mark-1^='例子'], [ink-mark-1^='例如'], [ink-mark-1^='比如'], [ink-mark-1^='举个'], [ink-mark-1*='为例'] {
   background: url(/imgs/举例.png) 110px 8px / 13px 13px no-repeat!important;
   color:rgb(158, 89, 42)!important
 }
@@ -526,14 +526,29 @@
 }
 
 
-.line-important, [ink-mark*='⭐'] {
+.line-important, [ink-mark-1*='⭐'], [ink-mark-2*='⭐'] {
   background: rgb(255, 251, 235)!important;
   color: rgb(248, 193, 126)!important;
 }
 
+[ink-mark-1*='⭐⭐'], [ink-mark-2*='⭐⭐'] {
+  background: -webkit-linear-gradient(180deg, rgb(255, 251, 235)  90%, rgb(255, 238, 236) 100%)!important;
+  // border: 1.5px dashed rgb(219, 202, 175)!important;
+  box-sizing: border-box;
+}
 
 
-// ink-mark
+[ink-mark-1*='⭐⭐⭐'], [ink-mark-2*='⭐⭐⭐'] {
+  background: -webkit-linear-gradient(180deg, rgb(255, 251, 235)  90%, rgb(249, 219, 247) 100%)!important;
+  // border: 1.5px dashed rgb(219, 202, 175)!important;
+  box-sizing: border-box;
+}
+
+
+
+
+
+// ink-mark-1
 // @keyframes B00 {
 //   0% {
 //     background: rgb(233, 249, 229);
@@ -570,52 +585,39 @@
 //   }
 // }
 
-// [ink-mark^='('] {
-//   &[ink-mark*='B8']{
+// [ink-mark-1^='('] {
+//   &[ink-mark-1*='B8']{
 //     background: -webkit-linear-gradient(left, rgb(230, 220, 246)  0%, rgb(245, 204, 218) 100%)!important;
 //   }
-//   &[ink-mark*='B9']{
+//   &[ink-mark-1*='B9']{
 //     background: -webkit-linear-gradient(left, rgb(245, 241, 205)  0%, rgb(194, 233, 227) 100%)!important;
 //   }
-//   &[ink-mark*='B00']{
+//   &[ink-mark-1*='B00']{
 //     animation: B00 2s ease-in-out alternate infinite;
 //   }
 
-//   &[ink-mark*='C9']{
+//   &[ink-mark-1*='C9']{
 //     background:-webkit-linear-gradient(270deg,#7f8ddd,#79ebd6);
 //     background-clip: text;
 //     -webkit-background-clip: text;
 //     color: transparent;
 //   }
 
-//   &[ink-mark*='C8']{
+//   &[ink-mark-1*='C8']{
 //     background:-webkit-linear-gradient(270deg,#f1e77b,#f18b6f);
 //     background-clip: text;
 //     -webkit-background-clip: text;
 //     color: transparent;
 //   }
 
-//   &[ink-mark*='C00']{
+//   &[ink-mark-1*='C00']{
 //     animation: C00 2s ease-in-out alternate infinite;
 //   }
 
-//   &[ink-mark*='C01']{
+//   &[ink-mark-1*='C01']{
 //     animation: C01 2s ease-in-out alternate infinite;
 //   }
 // }
-
-[ink-mark*='⭐⭐'] {
-  background: -webkit-linear-gradient(180deg, rgb(255, 251, 235)  90%, rgb(255, 238, 236) 100%)!important;
-  // border: 1.5px dashed rgb(219, 202, 175)!important;
-  box-sizing: border-box;
-}
-
-
-[ink-mark*='⭐⭐⭐'] {
-  background: -webkit-linear-gradient(180deg, rgb(255, 251, 235)  90%, rgb(249, 219, 247) 100%)!important;
-  // border: 1.5px dashed rgb(219, 202, 175)!important;
-  box-sizing: border-box;
-}
 
 
 
