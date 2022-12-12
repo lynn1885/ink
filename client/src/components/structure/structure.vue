@@ -172,7 +172,10 @@ export default {
     addTag(lvs) {
       const tag = lvs.filter(item => item).join('-');
       // console.log(tag);
-      if (tag) this.editor.addTag(null, tag);
+      if (tag) {
+        this.editor.addTag(null, tag);
+        this.$message.success('添加标签成功');
+      }
     },
 
     // 展开、收缩行

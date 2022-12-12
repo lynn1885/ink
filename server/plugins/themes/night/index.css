@@ -253,3 +253,10 @@
 .cm-header.cm-strong:not(.cm-formatting) {
   color: #cc6868!important
 }
+
+
+.ink-button, .ink-input-bar  {
+  background: #666;
+  color: #ccc;
+  border: 1px solid #666;
+}
