@@ -8,8 +8,7 @@
       <div class="items lv1 cm-header cm-header-1" v-for="(lv1Obj, lv1Name, index) in tags" :key="lv1Name">
         <div v-if="lv1Name !== '_lines'">
             <span class="tag-name" @click="addTag([lv1Name])">{{index+1}}. {{lv1Name}}</span>
-            <span class="tag-num button ink-button">{{lv1Obj._lines.length}}条</span>
-            <span class="expand button ink-button" @click="expandLine(lv1Name)">+</span>
+            <span class="tag-num button ink-button" @click="expandLine(lv1Name)">{{lv1Obj._lines.length}}条</span>
             <span class="rename button ink-button" @click="rename([lv1Name])">重命名</span>
           <div v-if="isShowLines[lv1Name]" class="lines">
             <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv1Obj._lines" :key="lineText">{{lineText}}</div>
@@ -18,8 +17,7 @@
         <div class="items lv2 cm-header cm-header-2" v-if="lv1Obj._lines" v-for="(lv2Obj, lv2Name, index) in lv1Obj" :key="lv2Name">
           <div v-if="lv2Name !== '_lines'">
               <span class="tag-name" @click="addTag([lv1Name, lv2Name])">{{index}}. {{lv2Name}}</span>
-              <span class="tag-num button ink-button">{{lv2Obj._lines.length}}条</span>
-              <span class="expand button ink-button" @click="expandLine(lv1Name+lv2Name)">+</span>
+              <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name)">{{lv2Obj._lines.length}}条</span>
               <span class="rename button ink-button" @click="rename([lv1Name, lv2Name])">重命名</span>
             <div v-if="isShowLines[lv1Name+lv2Name]" class="lines">
               <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv2Obj._lines" :key="lineText">{{lineText}}</div>
@@ -28,8 +26,7 @@
           <div class="items lv3 cm-header cm-header-3" v-if="lv2Obj._lines"  v-for="(lv3Obj, lv3Name, index) in lv2Obj" :key="lv3Name">
             <div v-if="lv3Name !== '_lines'">
                 <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name])">{{index}}. {{lv3Name}}</span>
-                <span class="tag-num button ink-button">{{lv3Obj._lines.length}}条</span>
-                <span class="expand button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name)">+</span>
+                <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name)">{{lv3Obj._lines.length}}条</span>
                 <span class="rename button button ink-button" @click="rename([lv1Name, lv2Name, lv3Name])">重命名</span>
               <div v-if="isShowLines[lv1Name+lv2Name+lv3Name]" class="lines">
                 <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv3Obj._lines" :key="lineText">{{lineText}}</div>
@@ -38,8 +35,7 @@
             <div class="items lv4 cm-header cm-header-4" v-if="lv3Obj._lines"  v-for="(lv4Obj, lv4Name, index) in lv3Obj" :key="lv4Name">
               <div v-if="lv4Name !== '_lines'">
                   <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name, lv4Name])">{{index}}. {{lv4Name}}</span>
-                  <span class="tag-num button ink-button">{{lv4Obj._lines.length}}条</span>
-                  <span class="expand button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name+lv4Name)">+</span>
+                  <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name+lv4Name)">{{lv4Obj._lines.length}}条</span>
                   <span class="rename button button ink-button" @click="rename([lv1Name, lv2Name,lv3Name, lv4Name])">重命名</span>
                 <div v-if="isShowLines[lv1Name+lv2Name+lv3Name+lv4Name]" class="lines">
                   <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv4Obj._lines" :key="lineText">{{lineText}}</div>
@@ -129,7 +125,7 @@ export default {
       const doc = this.editor.cm.getDoc();
 
       const tags = this.editor.getTags('TAG2LINENUM');
-      // console.log(tags);
+
       const newTags = {};
       // 过滤标签
       for (let tagName in tags) {
@@ -141,9 +137,9 @@ export default {
         if (!tagName) return;
 
         const components = tagName.split('-');
-        let [a, b, c, d] = components;
+        let [a, b, c, d, e] = components;
         if (components.length > 4) { // 超过4级
-          c = components.slice(3).join('-');
+          d = components.slice(3).join('-');
         }
 
         // 创建标题
@@ -156,7 +152,8 @@ export default {
         if (c && !newTags[a][b][c]) newTags[a][b][c] = { _lines: [] };
         if (c && !d) newTags[a][b][c]._lines.push(`${tagLine} ${lineText}`);
 
-        if (d && !newTags[a][b][c][d]) newTags[a][b][c][d] = { _lines: [`${tagLine} ${lineText}`] };
+        if (d && !newTags[a][b][c][d]) newTags[a][b][c][d] = { _lines: [] };
+        if (d && !e) newTags[a][b][c][d]._lines.push(`${tagLine} ${lineText}`);
       }
       // console.log(newTags);
       this.tags = newTags; // 其实是每次清空重建
