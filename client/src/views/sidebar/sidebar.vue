@@ -12,7 +12,7 @@
       <div
         v-for="t of tools"
         v-show="t.icon"
-        :title="t.name + (t.keyMap ? ` (${t.keyMap.join('+')})` : '')"
+        :title="t.displayName + (t.keyMap ? ` (${t.keyMap.join('+')})` : '')"
         :class="{
           'tool-icon': true,
           'active': t.name === activePage || activeButtons[t.name],
@@ -23,8 +23,12 @@
         @click.ctrl="changeCommonTool(t.name)"
       >
         <svg viewBox="0 0 1024 1024" version="1.1" v-html="t.icon" />
-        <div class="button-name" v-if="activeButtons[t.name] !== true && activeButtons[t.name] !== false">
+        <!-- <div class="button-name" v-if="activeButtons[t.name] !== true && activeButtons[t.name] !== false">
           {{activeButtons[t.name]}}
+        </div> -->
+
+        <div class="button-name" v-if="activeButtons[t.name] || activePage == t.name">
+          {{t.displayName}}
         </div>
       </div>
     </div>
@@ -56,11 +60,11 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></search>
-      <note-map
+      <!-- <note-map
         v-if="activePage === 'Note Map' && !commonTools['Note Map']"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
-      ></note-map>
+      ></note-map> -->
       <structure
         v-if="activePage === 'Structure' && !commonTools['Structure']"
         :timestamp="changeToolTimestamp"
@@ -204,30 +208,35 @@ export default {
       tools: [
         {
           name: 'Catalog',
+          displayName: '目录',
           icon: bookSvg,
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'E'],
         },
         {
           name: 'Read Only',
+          displayName: '只读',
           icon: Readonly.icon,
           type: 'button',
           onclick: Readonly.handler,
         },
         {
           name: 'Search',
+          displayName: '搜索',
           icon: searchSvg,
           type: 'page',
           keyMap: ['Ctrl', 'F'],
         },
         {
           name: 'Outline',
+          displayName: '大纲',
           icon: outlineSvg,
           type: 'page',
           keyMap: ['Ctrl', 'Shift', 'O'],
         },
         {
           name: 'Split Screen',
+          displayName: '分屏',
           icon: SplitScreen.icon,
           type: 'button',
           isCannotActive: true,
@@ -235,6 +244,7 @@ export default {
         },
         {
           name: 'Sticky Note',
+          displayName: '便签',
           icon: stickyNoteSvg,
           type: 'button',
           keyMap: ['Ctrl', 'Shift', 'Y'],
@@ -249,19 +259,21 @@ export default {
             this.isShowSearchNoteBar = false;
           },
         },
-        {
-          name: 'Note Map',
-          icon: noteMapSvg,
-          type: 'page',
-          sideBarWidth: '38%',
-        },
+        // {
+        //   name: 'Note Map',
+        //   icon: noteMapSvg,
+        //   type: 'page',
+        //   sideBarWidth: '38%',
+        // },
         {
           name: 'Structure',
+          displayName: '结构',
           icon: structureSvg,
           type: 'page',
         },
         {
           name: 'Todo',
+          displayName: '待办',
           icon: todoSvg,
           type: 'page',
         },
@@ -274,6 +286,7 @@ export default {
         // },
         {
           name: 'Mind Map',
+          displayName: '导图',
           icon: mindMapSvg,
           type: 'page',
           sideBarWidth: '35%',
@@ -281,16 +294,19 @@ export default {
         },
         {
           name: 'Statistics',
+          displayName: '统计',
           icon: statisticsSvg,
           type: 'page',
         },
         {
           name: 'Batch',
+          displayName: '批量修改',
           icon: batchSvg,
           type: 'page',
         },
         {
           name: 'Night Mode',
+          displayName: '夜间模式',
           icon: nightModeSvg,
           onclick: (editor, lastStatus) => {
             this.$store.commit('updateIsNightModeOn', !lastStatus);
@@ -300,29 +316,34 @@ export default {
         },
         {
           name: 'Tags',
+          displayName: '标签',
           icon: tagsSvg,
           type: 'page',
         },
         {
           name: 'Web',
+          displayName: '网页',
           icon: webSvg,
           type: 'page',
           sideBarWidth: '38%',
         },
         {
           name: 'Gallery',
+          displayName: '画廊',
           icon: gallerySvg,
           type: 'page',
           sideBarWidth: '50%',
         },
         {
           name: 'Fluorescent Pen',
+          displayName: '荧光笔',
           icon: fluorescentPenSvg,
           type: 'button',
           onclick: (editor, lastStatus) => (!lastStatus ? '荧光笔*' : false),
         },
         {
           name: 'Paint',
+          displayName: '绘图',
           icon: paintSvg,
           type: 'button',
           // onclick: () => {
