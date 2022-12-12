@@ -61,6 +61,11 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></note-map>
+      <structure
+        v-if="activePage === 'Structure' && !commonTools['Structure']"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></structure>
       <todo
         v-if="activePage === 'Todo' && !commonTools.Todo"
         :timestamp="changeToolTimestamp"
@@ -126,6 +131,7 @@ import Readonly from '@/components/readonly/readonly';
 import SplitScreen from '@/components/split-screen/split-screen';
 import Review from '@/components/review/review';
 import Batch from '@/components/batch/batch';
+import Structure from '@/components/structure/structure';
 import Paint from '@/components/paint/paint';
 import Gallery from '@/components/gallery/gallery';
 import Tags from '@/components/tags/tags';
@@ -146,6 +152,7 @@ import {
   nightModeSvg,
   fluorescentPenSvg,
   batchSvg,
+  structureSvg,
   paintSvg,
   gallerySvg,
   tagsSvg,
@@ -166,6 +173,7 @@ export default {
     Todo,
     MindMap,
     NoteMap,
+    Structure,
     StickyNote,
     SearchNoteBar,
     Statistics,
@@ -246,6 +254,11 @@ export default {
           icon: noteMapSvg,
           type: 'page',
           sideBarWidth: '38%',
+        },
+        {
+          name: 'Structure',
+          icon: structureSvg,
+          type: 'page',
         },
         {
           name: 'Todo',

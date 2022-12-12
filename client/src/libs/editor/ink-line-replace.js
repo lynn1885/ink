@@ -43,6 +43,7 @@ export default function (editor, config) {
               arr[1] = arr.slice(1).join(':');
               [, replaceLineObj[arr[0]]] = arr;
             }
+            // console.log(arr);
             // if (arr.length === 2) {
             // [, replaceLineObj[arr[0]]] = arr;
             // } else if (arr.length === 3) {
@@ -56,6 +57,7 @@ export default function (editor, config) {
             break;
           }
         }
+
 
         if (replaceLineObj['[import]']) {
           const importModules = replaceLineObj['[import]'].split(',');

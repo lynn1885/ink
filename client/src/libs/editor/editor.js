@@ -634,7 +634,7 @@ export default class {
 
   /**
    * getHeaderByCursor: 获取当前cursor位于的head
-   * @param {pos} cursor 要检测的cursor. 如果不传入cursor, 默认使用当前cursor. 检测范围从传入的行开始(含)
+   * @param {pos} cursor 可选，要检测的cursor. 如果不传入cursor, 默认使用当前cursor. 检测范围从传入的行开始(含)
    * @returns {object } 如果找到了headerLv, 返回值中的headerLv有值. headerLineNum和headerLineText是和headerLv相关的值
    * 如果没有找到headerLv, 返回值中的headerLv没有值. 但headerLineNum和headerLineText依旧存在, 存储的是第一行的信息
    */
@@ -875,7 +875,8 @@ export default class {
    * @param {string} tagContent 标签内容
    */
   addTag(lineNum, tagContent) {
-    if (!lineNum) lineNum = this.cm.getCursor();
+    if (!lineNum) lineNum = this.cm.getCursor().line;
+    if (!lineNum) return;
     const doc = this.cm.getDoc();
     const lineText = doc.getLine(lineNum);
     doc.setSelection(

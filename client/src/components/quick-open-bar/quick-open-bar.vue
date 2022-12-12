@@ -19,6 +19,7 @@
       <span class="whole-dir">{{calWholeDir(noteDir)}}</span>
       <div :class="closeButtonClass" @click="closeNote(noteDir)">×</div>
     </li>
+    <li class="add el-icon-plus" @click="createPage"></li>
     <li class="bar-placeholder"></li>
   </ul>
 </template>
@@ -257,6 +258,11 @@ export default {
         noteDir.split('/').slice(0, 3)
       );
     },
+
+    // 创建页面
+    createPage() {
+      this.inkCommon.plugins.catalog.createCatalog();
+    }
   },
   mounted() {
     if (isEnableConsole) {
@@ -314,6 +320,15 @@ export default {
     &::selection {
       background: transparent !important;
     }
+  }
+  .add {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 30px;
+    font-size: 15px;
+    cursor: pointer;
   }
   .active {
     background: $editor-bg !important;

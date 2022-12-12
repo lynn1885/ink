@@ -13,7 +13,7 @@
 
 /* font */
 * {
-  font-family: '.PingFang SC'!important;
+  /* font-family: '.PingFang SC'!important; */
 }
 
 /* selection & scroll bar */
@@ -44,7 +44,7 @@
 }
 
 /* tool page */
-#tool-page {
+#tool-page, #common-tools {
   background: var(--tool-page-bg)!important;
 }
 #tool-page li {
@@ -102,6 +102,12 @@
 .CodeMirror-line:not(.line-cm-header) {
   color: var(--editor--color);
   font-weight: bold!important;
+}
+.CodeMirror-line.line-important {
+  background: rgb(74, 71, 61)!important;
+}
+.CodeMirror-line.line-todo {
+  background: rgb(110, 75, 75)!important;
 }
 .cm-header-1:not(.cm-formatting), #outline .header1{
   color: rgb(209, 102, 102)!important;
@@ -200,6 +206,10 @@
 }
 #outline .item:hover {
   background: var(--accent-hover-bg)!important;
+}
+
+#outline .item.important {
+  background: var(--accent-bg)!important;
 }
 
 /* search-note-bar */

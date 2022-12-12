@@ -37,6 +37,7 @@ import Paint from '@/components/paint/paint';
 import Gallery from '@/components/gallery/gallery';
 import Tags from '@/components/tags/tags';
 import Web from '@/components/web/web';
+import Structure from '@/components/structure/structure';
 
 export default {
   name: 'common-tools',
@@ -55,7 +56,8 @@ export default {
     Paint,
     Gallery,
     Tags,
-    Web
+    Web,
+    Structure
   },
   data() {
     return {

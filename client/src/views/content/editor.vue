@@ -84,8 +84,66 @@ export default {
       });
 
       // double click alt to search the selection text
+      // document.addEventListener('keydown', (e) => {
+      //   if (e.altKey) {
+      //     const thisPressAltTime = Date.now();
+      //     if (thisPressAltTime - this.lastPressAltTime < 300) {
+      //       const doc = this.editor.cm.getDoc();
+      //       const selection = doc.getSelection();
+
+      //       const searchText = selection.trim();
+      //       if (!searchText) return;
+      //       if (/[a-zA-Z?'\s\t:.'-@#$%&*()_+=/?]+/.test(searchText)) {
+      //         window.open(`https://www.google.com/search?q=${searchText}`, '_blank');
+      //       } else {
+      //         window.open(`https://www.baidu.com/s?wd=${searchText}`, '_blank');
+      //       }
+      //     }
+
+      //     this.lastPressAltTime = Date.now();
+      //   }
+      // });
+
+      // double click ctrl to search web
+      // document.addEventListener('keydown', (e) => {
+      //   if (e.ctrlKey) {
+      //     const thisPressAltTime = Date.now();
+      //     if (thisPressAltTime - this.lastPressAltTime < 300) {
+      //       const doc = this.editor.cm.getDoc();
+      //       const selection = doc.getSelection();
+
+      //       const searchText = selection.trim();
+      //       if (!searchText) return;
+      //       if (/[a-zA-Z?'\s\t:.'-@#$%&*()_+=/?]+/.test(searchText)) {
+      //         window.open(`https://www.google.com/search?q=${searchText}`, '_blank');
+      //       } else {
+      //         window.open(`https://www.baidu.com/s?wd=${searchText}`, '_blank');
+      //       }
+      //     }
+
+      //     this.lastPressAltTime = Date.now();
+      //   }
+      // });
+
+      // double click shift to search cnki
+      // document.addEventListener('keydown', (e) => {
+      //   if (e.shiftKey) {
+      //     const thisPressAltTime = Date.now();
+      //     if (thisPressAltTime - this.lastPressAltTime < 300) {
+      //       const doc = this.editor.cm.getDoc();
+      //       const selection = doc.getSelection();
+
+      //       const searchText = selection.trim();
+      //       if (!searchText) return;
+      //       window.open(`https://kns.cnki.net/KNS8/DefaultResult/Index?dbcode=SCDB&kw=${searchText}&korder=SU`, '_blank');
+      //     }
+
+      //     this.lastPressAltTime = Date.now();
+      //   }
+      // });
+
       document.addEventListener('keydown', (e) => {
-        // ctrl + /: toggle zen mode
+        // alt alt
         if (e.altKey) {
           const thisPressAltTime = Date.now();
           if (thisPressAltTime - this.lastPressAltTime < 300) {
@@ -94,10 +152,9 @@ export default {
 
             const searchText = selection.trim();
             if (!searchText) return;
-            if (/[a-zA-Z?'\s\t:.'-@#$%&*()_+=/?]+/.test(searchText)) {
-              window.open(`https://www.google.com/search?q=${searchText}`, '_blank');
-            } else {
-              window.open(`https://www.baidu.com/s?wd=${searchText}`, '_blank');
+            const cursor = this.editor.getHeaderByCursor();
+            if (cursor && cursor.headerLineNum) {
+              this.editor.addTag(cursor.headerLineNum, searchText);
             }
           }
 

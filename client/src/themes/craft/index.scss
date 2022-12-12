@@ -149,28 +149,33 @@
 
 .cm-header-1 {
   color: $header-1 !important;
-  font-weight: bold !important;
+  font-weight: 900 !important;
 }
 
 .cm-header-2 {
   color: $header-2 !important;
-  font-weight: bold !important;
+  font-weight: 900 !important;
 }
 
 .cm-header-3 {
   color: $header-3 !important;
+  font-weight: bold !important;
+
 }
 
 .cm-header-4 {
   color: $header-4 !important;
+  font-weight: bold !important;
 }
 
 .cm-header-5 {
   color: $header-5 !important;
+  font-weight: bold !important;
 }
 
 .cm-header-6 {
   color: $header-6 !important;
+  font-weight: bold !important;
 }
 
 .CodeMirror .line-cm-header-1 {
@@ -527,7 +532,7 @@
 
 
 .line-important, [ink-mark-1*='⭐'], [ink-mark-2*='⭐'] {
-  background: rgb(255, 251, 235)!important;
+  background: rgba(255, 251, 235)!important;
   color: rgb(248, 193, 126)!important;
 }
 

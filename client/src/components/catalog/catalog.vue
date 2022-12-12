@@ -142,6 +142,7 @@ export default {
   },
   data() {
     return {
+      name: 'catalog',
       editor: null,
       // 基础
       isCatalogLoaded: false, // 目录是否加载完毕
@@ -458,9 +459,11 @@ export default {
     },
 
     // 右键菜单: 创建目录
-    async createCat(menu) {
+    async createCat(menu, curContentMenuCatLv) {
       // 记录当前的右键菜单信息, 因为右键菜单消失后, 这些信息会被清除, 而该函数中又包含异步操作
-      const { curContentMenuCatLv } = this;
+      if (!curContentMenuCatLv) {
+        ({ curContentMenuCatLv } = this);
+      }
       const { curContentMenuCatIndex } = this;
 
       // 弹出创建窗口
@@ -574,16 +577,18 @@ export default {
     },
 
     // 右键目录: 删除目录
-    async deleteCat() {
+    async deleteCat(curContentMenuCatLv, curContentMenuCatName) {
       // 记录当前的右键菜单信息, 因为右键菜单消失后, 这些信息会被清除, 而该函数中又包含异步操作
-      const { curContentMenuCatLv } = this;
-      const { curContentMenuCatName } = this;
+      // eslint-disable-next-line prefer-destructuring
+      if (!curContentMenuCatLv) curContentMenuCatLv = this.curContentMenuCatLv;
+      // eslint-disable-next-line prefer-destructuring
+      if (!curContentMenuCatName) curContentMenuCatName = this.curContentMenuCatName;
 
       // 对于导入的笔记, 删除对应的图片目录
       let needDeleteImgFolder = [];
       let filePath = '';
       try {
-        filePath = tools.fileArr2FilePath([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName]);
+        filePath = tools.fileArr2FilePath([this.curCatLv1, this.curCatLv2, curContentMenuCatName]);
         const fileContent = await Files.get(filePath, this.$message);
         const imgLines = this.editor.getAllImgLines(fileContent);
         needDeleteImgFolder = Array.from(new Set(imgLines.map(item => item.imgFolder))).filter(folder => folder.startsWith(config.importNodeImgPrefix));
@@ -1190,6 +1195,10 @@ export default {
         // await this.getAllNotesHeaders();
       }
     }, { immediate: true });
+
+    this.inkCommon.addPluginObject(this.name, {
+      createCatalog: () => this.createCat('create after', 3),
+    });
   },
 };
 </script>
