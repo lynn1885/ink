@@ -1087,4 +1087,12 @@ export default class {
 
     return imgLines.length ? imgLines : [];
   }
+
+  getCursorLine() {
+    const cursor = this.cm.getDoc().getCursor();
+    if (cursor) {
+      return cursor.line;
+    }
+    return undefined;
+  }
 }

@@ -2,41 +2,52 @@
   <div id="structure">
     <!-- 展开 -->
     <div id="expand" class="ink-button" @click="expandLineAll">展开/折叠</div>
+    <input
+        id="search-bar"
+        class="ink-input-bar"
+        type="text"
+        v-model="searchText"
+        :placeholder="'搜索 '+ allTagNum +' 条标签'"
+      />
 
     <!-- 内容 -->
     <div id="content-container">
       <div class="items lv1 cm-header cm-header-1" v-for="(lv1Obj, lv1Name, index) in tags" :key="lv1Name">
-        <div v-if="lv1Name !== '_lines'">
+        <div v-if="lv1Name !== '_lines' && (!searchText || lv1Name.includes(searchText))">
             <span class="tag-name" @click="addTag([lv1Name])">{{index+1}}. {{lv1Name}}</span>
-            <span class="tag-num button ink-button" @click="expandLine(lv1Name)">{{lv1Obj._lines.length}}条</span>
+            <span class="tag-num button ink-button" @click="expandLine(lv1Name)">{{lv1Obj._lines._allNum}}条</span>
             <span class="rename button ink-button" @click="rename([lv1Name])">重命名</span>
+            <div class="fullname" v-if="searchText">{{lv1Name}}</div>
           <div v-if="isShowLines[lv1Name]" class="lines">
             <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv1Obj._lines" :key="lineText">{{lineText}}</div>
           </div>
         </div>
         <div class="items lv2 cm-header cm-header-2" v-if="lv1Obj._lines" v-for="(lv2Obj, lv2Name, index) in lv1Obj" :key="lv2Name">
-          <div v-if="lv2Name !== '_lines'">
+          <div v-if="lv2Name !== '_lines' && (!searchText || lv2Name.includes(searchText))">
               <span class="tag-name" @click="addTag([lv1Name, lv2Name])">{{index}}. {{lv2Name}}</span>
-              <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name)">{{lv2Obj._lines.length}}条</span>
+              <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name)">{{lv2Obj._lines._allNum}}条</span>
               <span class="rename button ink-button" @click="rename([lv1Name, lv2Name])">重命名</span>
+              <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}</div>
             <div v-if="isShowLines[lv1Name+lv2Name]" class="lines">
               <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv2Obj._lines" :key="lineText">{{lineText}}</div>
             </div>
           </div>
           <div class="items lv3 cm-header cm-header-3" v-if="lv2Obj._lines"  v-for="(lv3Obj, lv3Name, index) in lv2Obj" :key="lv3Name">
-            <div v-if="lv3Name !== '_lines'">
+            <div v-if="lv3Name !== '_lines' && (!searchText || lv3Name.includes(searchText))">
                 <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name])">{{index}}. {{lv3Name}}</span>
-                <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name)">{{lv3Obj._lines.length}}条</span>
-                <span class="rename button button ink-button" @click="rename([lv1Name, lv2Name, lv3Name])">重命名</span>
+                <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name)">{{lv3Obj._lines._allNum}}条</span>
+                <span class="rename button ink-button" @click="rename([lv1Name, lv2Name, lv3Name])">重命名</span>
+                <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}-{{lv3Name}}</div>
               <div v-if="isShowLines[lv1Name+lv2Name+lv3Name]" class="lines">
                 <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv3Obj._lines" :key="lineText">{{lineText}}</div>
               </div>
             </div>
             <div class="items lv4 cm-header cm-header-4" v-if="lv3Obj._lines"  v-for="(lv4Obj, lv4Name, index) in lv3Obj" :key="lv4Name">
-              <div v-if="lv4Name !== '_lines'">
+              <div v-if="lv4Name !== '_lines' && (!searchText || lv4Name.includes(searchText))">
                   <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name, lv4Name])">{{index}}. {{lv4Name}}</span>
-                  <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name+lv4Name)">{{lv4Obj._lines.length}}条</span>
-                  <span class="rename button button ink-button" @click="rename([lv1Name, lv2Name,lv3Name, lv4Name])">重命名</span>
+                  <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name+lv4Name)">{{lv4Obj._lines._allNum}}条</span>
+                  <span class="rename button ink-button" @click="rename([lv1Name, lv2Name,lv3Name, lv4Name])">重命名</span>
+                  <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}-{{lv3Name}}-{{lv4Name}}</div>
                 <div v-if="isShowLines[lv1Name+lv2Name+lv3Name+lv4Name]" class="lines">
                   <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv4Obj._lines" :key="lineText">{{lineText}}</div>
                 </div>
@@ -78,6 +89,9 @@ export default {
       isShowRename: false,
       oldTagName: '',
       newTagName: '',
+      waitThisLine: null,
+      searchText: '',
+      allTagNum: 0, // 一共多少tag
     };
   },
 
@@ -126,6 +140,8 @@ export default {
 
       const tags = this.editor.getTags('TAG2LINENUM');
 
+      this.allTagNum = Object.values(tags).length;
+
       const newTags = {};
       // 过滤标签
       for (let tagName in tags) {
@@ -145,15 +161,23 @@ export default {
         // 创建标题
         if (a && !newTags[a]) newTags[a] = { _lines: [] };
         if (a && !b) newTags[a]._lines.push(`${tagLine} ${lineText}`);
+        // eslint-disable-next-line no-unused-expressions
+        if (a) newTags[a]._lines._allNum >= 1 ? newTags[a]._lines._allNum += 1 : newTags[a]._lines._allNum = 1;
 
         if (b && !newTags[a][b]) newTags[a][b] = { _lines: [] };
         if (b && !c) newTags[a][b]._lines.push(`${tagLine} ${lineText}`);
+        // eslint-disable-next-line no-unused-expressions
+        if (b) newTags[a][b]._lines._allNum >= 1 ? newTags[a][b]._lines._allNum += 1 : newTags[a][b]._lines._allNum = 1;
 
         if (c && !newTags[a][b][c]) newTags[a][b][c] = { _lines: [] };
         if (c && !d) newTags[a][b][c]._lines.push(`${tagLine} ${lineText}`);
+        // eslint-disable-next-line no-unused-expressions
+        if (c) newTags[a][b][c]._lines._allNum >= 1 ? newTags[a][b][c]._lines._allNum += 1 : newTags[a][b][c]._lines._allNum = 1;
 
         if (d && !newTags[a][b][c][d]) newTags[a][b][c][d] = { _lines: [] };
         if (d && !e) newTags[a][b][c][d]._lines.push(`${tagLine} ${lineText}`);
+        // eslint-disable-next-line no-unused-expressions
+        if (d) newTags[a][b][c][d]._lines._allNum >= 1 ? newTags[a][b][c][d]._lines._allNum += 1 : newTags[a][b][c][d]._lines._allNum = 1;
       }
       // console.log(newTags);
       this.tags = newTags; // 其实是每次清空重建
@@ -162,6 +186,10 @@ export default {
     // 跳转
     gotoThisLine(lineText) {
       const lineNum = Number(lineText.split(' ')[0]);
+      this.editor.scrollNoteToThisLine(lineNum, classNames.highlightLineClass, 'unfoldAll', true);
+    },
+
+    gotoThisLineNum(lineNum) {
       this.editor.scrollNoteToThisLine(lineNum, classNames.highlightLineClass, 'unfoldAll', true);
     },
 
@@ -236,14 +264,31 @@ export default {
         this.isShowRename = false;
         let txt = this.editor.cm.getValue();
         const reg = new RegExp(`\`${this.oldTagName}`, 'g');
+        this.waitThisLine = this.editor.getCursorLine();
         // console.log(reg, `\`${this.newTagName}`);
         txt = txt.replace(reg, `\`${this.newTagName}`);
         this.editor.cm.setValue(txt);
         this.oldTagName = '';
         this.newTagName = '';
         this.$message.success('修改标签名成功');
+        setTimeout(() => {
+          if (this.waitThisLine >= 0) {
+            this.gotoThisLineNum(this.waitThisLine);
+            this.waitThisLine = null;
+          }
+        }, 500);
       }
-    }
+    },
+
+    // // 检索标签
+    // searchBarKeyDownHandler(e) {
+    //   if (e.keyCode === 13) {
+    //     if (isEnableConsole) {
+    //       console.log('search: press enter');
+    //     }
+    //     this.search();
+    //   }
+    // }
   },
 
   beforeDestroy() {
@@ -267,8 +312,16 @@ export default {
   #expand {
     text-align: center;
   }
+  #search-bar {
+    margin-top: 10px;
+  }
   #content-container{
+    margin-top: 10px;
     overflow: auto;
+  }
+
+  .ink-input-bar {
+    flex-grow: 0;
   }
   .items {
     margin-top: 4px;
@@ -300,6 +353,12 @@ export default {
   .line-text {
     margin-left: 15px;
     border-bottom: 2px dashed $sidebar-item-border-color;
+  }
+
+  .fullname {
+    font-size: 12px;
+    color: #999;
+    font-weight: normal;
   }
 
 
