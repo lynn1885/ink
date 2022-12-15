@@ -13,41 +13,37 @@
     <!-- 内容 -->
     <div id="content-container">
       <div class="items lv1 cm-header cm-header-1" v-for="(lv1Obj, lv1Name, index) in tags" :key="lv1Name">
-        <div v-if="lv1Name !== '_lines' && (!searchText || lv1Name.includes(searchText))">
+        <div v-if="calIsShow([lv1Name], lv1Obj)" :class="{'active': searchText && lv1Name.includes(searchText)}">
             <span class="tag-name" @click="addTag([lv1Name])">{{index+1}}. {{lv1Name}}</span>
             <span class="tag-num button ink-button" @click="expandLine(lv1Name)">{{lv1Obj._lines._allNum}}条</span>
             <span class="rename button ink-button" @click="rename([lv1Name])">重命名</span>
-            <div class="fullname" v-if="searchText">{{lv1Name}}</div>
           <div v-if="isShowLines[lv1Name]" class="lines">
             <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv1Obj._lines" :key="lineText">{{lineText}}</div>
           </div>
         </div>
         <div class="items lv2 cm-header cm-header-2" v-if="lv1Obj._lines" v-for="(lv2Obj, lv2Name, index) in lv1Obj" :key="lv2Name">
-          <div v-if="lv2Name !== '_lines' && (!searchText || lv2Name.includes(searchText))">
+          <div v-if="calIsShow([lv1Name, lv2Name], lv2Obj)" :class="{'active': searchText && lv2Name.includes(searchText)}">
               <span class="tag-name" @click="addTag([lv1Name, lv2Name])">{{index}}. {{lv2Name}}</span>
               <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name)">{{lv2Obj._lines._allNum}}条</span>
               <span class="rename button ink-button" @click="rename([lv1Name, lv2Name])">重命名</span>
-              <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}</div>
             <div v-if="isShowLines[lv1Name+lv2Name]" class="lines">
               <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv2Obj._lines" :key="lineText">{{lineText}}</div>
             </div>
           </div>
           <div class="items lv3 cm-header cm-header-3" v-if="lv2Obj._lines"  v-for="(lv3Obj, lv3Name, index) in lv2Obj" :key="lv3Name">
-            <div v-if="lv3Name !== '_lines' && (!searchText || lv3Name.includes(searchText))">
+            <div v-if="calIsShow([lv1Name, lv2Name, lv3Name], lv3Obj)" :class="{'active': searchText && lv3Name.includes(searchText)}">
                 <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name])">{{index}}. {{lv3Name}}</span>
                 <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name)">{{lv3Obj._lines._allNum}}条</span>
                 <span class="rename button ink-button" @click="rename([lv1Name, lv2Name, lv3Name])">重命名</span>
-                <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}-{{lv3Name}}</div>
               <div v-if="isShowLines[lv1Name+lv2Name+lv3Name]" class="lines">
                 <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv3Obj._lines" :key="lineText">{{lineText}}</div>
               </div>
             </div>
             <div class="items lv4 cm-header cm-header-4" v-if="lv3Obj._lines"  v-for="(lv4Obj, lv4Name, index) in lv3Obj" :key="lv4Name">
-              <div v-if="lv4Name !== '_lines' && (!searchText || lv4Name.includes(searchText))">
+              <div v-if="calIsShow([lv1Name, lv2Name, lv3Name, lv4Name], lv4Obj)" :class="{'active': searchText && lv4Name.includes(searchText)}">
                   <span class="tag-name" @click="addTag([lv1Name, lv2Name, lv3Name, lv4Name])">{{index}}. {{lv4Name}}</span>
                   <span class="tag-num button ink-button" @click="expandLine(lv1Name+lv2Name+lv3Name+lv4Name)">{{lv4Obj._lines._allNum}}条</span>
                   <span class="rename button ink-button" @click="rename([lv1Name, lv2Name,lv3Name, lv4Name])">重命名</span>
-                  <div class="fullname" v-if="searchText">{{lv1Name}}-{{lv2Name}}-{{lv3Name}}-{{lv4Name}}</div>
                 <div v-if="isShowLines[lv1Name+lv2Name+lv3Name+lv4Name]" class="lines">
                   <div class="line-text" @click="gotoThisLine(lineText)" v-for="lineText of lv4Obj._lines" :key="lineText">{{lineText}}</div>
                 </div>
@@ -203,6 +199,41 @@ export default {
       }
     },
 
+    // 搜索时：计算是否展示标签
+    calIsShow(nameArr, lv1Obj) {
+      // 这种不展示
+      if (nameArr[nameArr.length - 1] === '_lines') return false;
+
+      // 没有搜索时，都展示
+      if (!this.searchText) {
+        return true;
+      }
+
+      // 上级标题出现关键词时，下级标题直接展示
+      if (nameArr.join('-').includes(this.searchText)) {
+        return true;
+      }
+
+      // 上级标题没有出现关键词时，下级标题要进行计算
+      let tags = [];
+      this._getObjKeysDeep(lv1Obj, tags);
+      tags = tags.join('-');
+      if (tags.includes(this.searchText)) {
+        return true;
+      }
+      return false;
+    },
+
+    // 递归获取obj的key，写入数组
+    _getObjKeysDeep(obj, container) {
+      for (const key in obj) {
+        container.push(key);
+        if (typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
+          this._getObjKeysDeep(obj[key], container);
+        }
+      }
+    },
+
     // 展开、收缩行
     expandLine(objName) {
       this.$set(this.isShowLines, objName, !this.isShowLines[objName]);
@@ -325,6 +356,9 @@ export default {
   }
   .items {
     margin-top: 4px;
+    .active {
+      background: $cm-searched-text-bg;
+    }
   }
   // .tag-name {
   //   cursor: pointer;
