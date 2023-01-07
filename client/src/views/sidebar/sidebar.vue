@@ -30,6 +30,10 @@
         <div class="button-name" v-if="activeButtons[t.name] || activePage == t.name">
           {{t.displayName}}
         </div>
+
+        <!-- <div class="button-name">
+          {{t.displayName}}
+        </div> -->
       </div>
     </div>
 
@@ -570,7 +574,7 @@ export default {
     }
     .button-name {
       font-size: 9px;
-      margin-top: -22px;
+      margin-top: -20px;
       height: 14px;
       color:$icon-color-active;
     }

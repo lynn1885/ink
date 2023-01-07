@@ -186,6 +186,7 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
     noteContentArr.forEach((line) => {
       const headerMatchRes = line.match(/^(#+)\s(.+)/);
       const imgMatchRes = line.match(/!\[.*?\]\((.+?)\)/);
+      const fontFamily = '宋体';
 
       // 标题
       if (headerMatchRes && headerMatchRes.length && headerMatchRes[1]) {
@@ -198,14 +199,14 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
             //   left: headerLv * 10,
             // },
             spacing: {
-              before: headerLv <= 2 ? 1000 : 200,
+              before: headerLv <= 2 ? 600 : 200,
             },
             children: [
               new docx.TextRun({
                 text: headerMatchRes[2],
-                bold: headerLv <= 2,
-                size: [34, 30, 26, 22, 18, 14][headerLv],
-                font: '黑体',
+                bold: headerLv <= 4,
+                size: [null, 48, 40, 36, 32, 28, 24][headerLv],
+                font: fontFamily,
                 color: '000000',
                 italics: false,
               }),
@@ -243,27 +244,42 @@ exports.exportNoteDocx = async (filePath, oriFileFullNameArr, fileName) => {
 
         // 普通文本
       } else {
-        if (line === '') line = '\n';
-        const matchRes = line.match(/(.*?)\*\*(.+?)\*\*(.*?)/) || ['', line];
+        // if (line === '') line = '\n';
+
+        // const matchRes = line.match(/(.*?)\*\*(.+?)\*\*(.*?)/) || ['', line];
+        // console.log(1, matchRes[1], 2, matchRes[2], 3, matchRes[3]);
+
+        // paragraphs.push(
+        //   new docx.Paragraph({
+        //     children: [
+        //       new docx.TextRun({
+        //         text: ` ${matchRes[1] || '  '}`,
+        //         size: 24,
+        //         font: '宋体',
+        //       }),
+        //       new docx.TextRun({
+        //         text: ` ${matchRes[2] || ''}`,
+        //         size: 24,
+        //         font: '宋体',
+        //         color: '#FF0000',
+        //       }),
+        //       new docx.TextRun({
+        //         text: ` ${matchRes[3] || ''}`,
+        //         size: 24,
+        //         font: '宋体',
+        //       }),
+        //     ],
+        //   }),
+        // );
+        if (!line.trim()) return; // 空行不做写入
 
         paragraphs.push(
           new docx.Paragraph({
             children: [
               new docx.TextRun({
-                text: ` ${matchRes[1] || ''}`,
-                size: 21,
-                font: '微软雅黑',
-              }),
-              new docx.TextRun({
-                text: ` ${matchRes[2] || ''}`,
-                size: 21,
-                font: '微软雅黑',
-                color: '#FF0000',
-              }),
-              new docx.TextRun({
-                text: ` ${matchRes[3] || ''}`,
-                size: 21,
-                font: '微软雅黑',
+                text: `\t${line}`,
+                size: 24,
+                font: fontFamily,
               }),
             ],
           }),

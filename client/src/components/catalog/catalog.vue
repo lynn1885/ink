@@ -784,12 +784,14 @@ export default {
     // 右键菜单: 导出笔记
     async exportNote(type = 'zip') {
       const fileName = this.curContentMenuCatName;
+      await this.$store.state.editor.runCommand('SAVE', { triggerType: 'CATALOG' });
+
       try {
         if (type === 'zip') {
-          const zipBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName], 'zip', this.$message);
+          const zipBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, fileName], 'zip', this.$message);
           tools.downloadArrayBuffer(zipBuffer, fileName, type);
         } else if (type === 'docx') {
-          const docxBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, this.curContentMenuCatName], 'docx', this.$message);
+          const docxBuffer = await Files.exportNote([this.curCatLv1, this.curCatLv2, fileName], 'docx', this.$message);
           tools.downloadArrayBuffer(docxBuffer, fileName, type);
         }
       } catch (error) {
