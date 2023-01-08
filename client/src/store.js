@@ -22,6 +22,7 @@ export default new Vuex.Store({
 
     commonTools: {
       Outline: false,
+      Structure: false,
       Search: false,
       Todo: false,
       Statistics: false,
@@ -29,7 +30,6 @@ export default new Vuex.Store({
       Gallery: false,
       Tags: false,
       Web: false,
-      Structure: false,
     }, // 常用工具
   },
   mutations: {

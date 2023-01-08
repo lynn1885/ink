@@ -1,6 +1,8 @@
 <template>
   <div id="common-tools" :class="{
-    active: activeCommonTools && activeCommonTools.length
+    active: activeCommonTools && activeCommonTools.length,
+    'two-columns': activeCommonTools.length === 2,
+    'three-columns': activeCommonTools.length === 3
   }">
     <div class="common-tool-container" v-for="toolName of activeCommonTools" :key="toolName">
       <div class="title">
@@ -10,9 +12,9 @@
       </div>
       <div class="tool-container">
         <component
-        :is="toolName"
-        :timestamp="changeToolTimestamp"
-        :class="{tool: true}"
+          :is="toolName"
+          :timestamp="changeToolTimestamp"
+          :class="{tool: true}"
         ></component>
       </div>
     </div>
@@ -96,7 +98,7 @@ export default {
 #common-tools {
   width: 0px;
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   bottom: $status-bar-height;
   overflow: hidden;
   box-sizing: border-box;
@@ -108,6 +110,12 @@ export default {
      width: $right-sidebar-width;
      transition: all 0.2s;
   }
+  &.two-columns {
+    width: $right-sidebar-width * 1.8;
+  }
+  &.three-columns {
+    width: $right-sidebar-width * 2.4;
+  }
   /* 每个工具的容器 */
   .common-tool-container {
     display: flex;
@@ -116,8 +124,9 @@ export default {
     flex-shrink: 0;
     flex-basis: 33%;
     box-sizing: border-box;
-    border-bottom: $cutting-border;
+    border-right: $cutting-border;
     overflow: hidden;
+    resize: horizontal;
     transition: all 0.2s;
     .title {
       padding: 4px;

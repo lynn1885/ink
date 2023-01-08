@@ -2,7 +2,7 @@
   <div
     id="side-bar"
     :class="{'side-bar-small-mode': isSideBarSmallMode}"
-    @resize.native="resize(1)"
+    @resize.native="resize"
     :style="{
       width: sideBarWidth
     }"
@@ -49,7 +49,7 @@
         <i class="icon el-icon-arrow-right"></i>
       </div>
       <!--never close catalog-->
-      <catalog
+      <!-- <catalog
         v-show="activePage === 'Catalog'"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
@@ -64,11 +64,11 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></search>
-      <!-- <note-map
+      <note-map
         v-if="activePage === 'Note Map' && !commonTools['Note Map']"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
-      ></note-map> -->
+      ></note-map>
       <structure
         v-if="activePage === 'Structure' && !commonTools['Structure']"
         :timestamp="changeToolTimestamp"
@@ -112,6 +112,73 @@
       ></tags>
        <web
         v-if="activePage === 'Web' && !commonTools.Web"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></web> -->
+
+      <catalog
+        v-show="activePage === 'Catalog'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></catalog>
+      <outline
+        v-if="activePage === 'Outline'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></outline>
+      <search
+        v-if="activePage === 'Search'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></search>
+      <note-map
+        v-if="activePage === 'Note Map'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></note-map>
+      <structure
+        v-if="activePage === 'Structure'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></structure>
+      <todo
+        v-if="activePage === 'Todo'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></todo>
+      <mind-map
+        v-if="activePage === 'Mind Map'"
+        :timestamp="changeToolTimestamp "
+        :class="{tool: true}"
+      ></mind-map>
+      <statistics
+        v-if="activePage === 'Statistics'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></statistics>
+      <batch
+        v-if="activePage === 'Batch'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></batch>
+      <paint
+        v-if="activeButtons.Paint"
+        :timestamp="changeToolTimestamp"
+        @close="activeButtons.Paint = false"
+        :class="{tool: true}"
+      ></paint>
+      <gallery
+        v-if="activePage === 'Gallery'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></gallery>
+      <tags
+        v-if="activePage === 'Tags'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></tags>
+       <web
+        v-if="activePage === 'Web'"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></web>
@@ -486,7 +553,7 @@ export default {
     },
 
     resize() {
-      console.log(1);
+      // console.log(1);
     },
 
     // 改变悬浮窗口

@@ -2,18 +2,24 @@
   <div id="structure">
     <!-- 展开 -->
     <div id="expand" class="ink-button" @click="expandLineAll">展开/折叠</div>
+    <!-- 搜索 -->
     <input
-        id="search-bar"
-        class="ink-input-bar"
-        type="text"
-        v-model="searchText"
-        :placeholder="'搜索 '+ allTagNum +' 条标签'"
-      />
+      id="search-bar"
+      class="ink-input-bar"
+      type="text"
+      v-model="searchText"
+      :placeholder="'搜索 '+ allTagNum +' 条标签'"
+    />
+
+    <!-- 一级标题 -->
+    <div id="lv1-tags">
+      <div class="tag cm-header-1" v-for="(lv1Obj, lv1Name, index) in tags" :key="lv1Name" @click="scrollTagIntoView(lv1Name)">{{index + 1}} {{lv1Name}}</div>
+    </div>
 
     <!-- 内容 -->
     <div id="content-container">
       <div class="items lv1 cm-header cm-header-1" v-for="(lv1Obj, lv1Name, index) in tags" :key="lv1Name">
-        <div v-if="calIsShow([lv1Name], lv1Obj)" :class="{'active': searchText && lv1Name.includes(searchText)}">
+        <div v-if="calIsShow([lv1Name], lv1Obj)" :class="{'active': searchText && lv1Name.includes(searchText)}" :ref="lv1Name">
             <span class="tag-name" @click="addTag([lv1Name])">{{index+1}}. {{lv1Name}}</span>
             <span class="tag-num button ink-button" @click="expandLine(lv1Name)">{{lv1Obj._lines._allNum}}条</span>
             <span class="rename button ink-button" @click="rename([lv1Name])">重命名</span>
@@ -311,6 +317,20 @@ export default {
       }
     },
 
+    // 滚动标题
+    scrollTagIntoView(lv1Name) {
+      if (this.$refs[lv1Name] && this.$refs[lv1Name][0]) {
+        this.searchText = '';
+        setTimeout(() => {
+          this.$refs[lv1Name][0].scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'start',
+          });
+        }, 0);
+      }
+    }
+
     // // 检索标签
     // searchBarKeyDownHandler(e) {
     //   if (e.keyCode === 13) {
@@ -340,14 +360,26 @@ export default {
   flex-direction: column;
   overflow: hidden;
   padding: 8px;
+  // 展开
   #expand {
     text-align: center;
   }
+  // 搜索
   #search-bar {
-    margin-top: 10px;
+    margin-top: 6px;
   }
+  // 一级标题
+  #lv1-tags {
+    display: flex;
+    flex-wrap: wrap;
+    .tag {
+      padding: 2px 4px;
+      cursor: pointer;
+    }
+  }
+  // 标签容器
   #content-container{
-    margin-top: 10px;
+    margin-top: 2px;
     overflow: auto;
   }
 
