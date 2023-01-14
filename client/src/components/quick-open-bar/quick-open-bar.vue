@@ -19,7 +19,7 @@
       <span class="whole-dir">{{calWholeDir(noteDir)}}</span>
       <div :class="closeButtonClass" @click="closeNote(noteDir)">×</div>
     </li>
-    <li class="add el-icon-plus" @click="createPage"></li>
+    <li class="add el-icon-plus" @click.ctrl="createPage(true)" @click.exact="createPage(false)" ></li>
     <li class="bar-placeholder"></li>
   </ul>
 </template>
@@ -260,8 +260,15 @@ export default {
     },
 
     // 创建页面
-    createPage() {
-      this.inkCommon.plugins.catalog.createCatalog();
+    createPage(isTemp) {
+      if (isTemp) {
+        // console.log(`临时${Number.parseInt(1 + (Math.random() * 10000), 10).toString(16)}`); // 后面是16进制字符串
+        // 打开临时目录
+        const reviewPathArr = ['.ink', 'basic', 'temp']; //
+        this.$store.commit('updateGotoThisCatalog', reviewPathArr);
+      } else {
+        this.inkCommon.plugins.catalog.createCatalog();
+      }
     }
   },
   mounted() {
