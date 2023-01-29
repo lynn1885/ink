@@ -213,6 +213,7 @@ export default {
     },
 
     fixThisNoteDir(noteDir) {
+      console.log(noteDir, this.curFileDir);
       if (this.fixedNoteDirs.includes(noteDir)) {
         return;
       }
@@ -264,8 +265,12 @@ export default {
       if (isTemp) {
         // console.log(`临时${Number.parseInt(1 + (Math.random() * 10000), 10).toString(16)}`); // 后面是16进制字符串
         // 打开临时目录
-        const reviewPathArr = ['.ink', 'basic', 'temp']; //
-        this.$store.commit('updateGotoThisCatalog', reviewPathArr);
+        const tempPathArr = ['.ink', 'basic', 'temp'];
+        if (this.curFileDir !== '.ink/basic/temp/temp.md') { // ⚠️硬编码
+          this.fixThisNoteDir(this.curFileDir);
+        }
+        this.$store.commit('updateGotoThisCatalog', tempPathArr);
+        this.$messager.warning('您进入了快速目录哦');
       } else {
         this.inkCommon.plugins.catalog.createCatalog();
       }

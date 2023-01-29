@@ -251,6 +251,7 @@ export default {
         console.log('要前往的路径不是数组: ', value);
         return;
       }
+
       if (
         !this.catalog[value[0]] ||
         !this.catalog[value[0]][value[1]] ||
@@ -259,6 +260,12 @@ export default {
         this.$message.error(`要前往的路径不存在: ${value}`);
         return;
       }
+
+      if (value[0] === this.curCatLv1 && value[1] === this.curCatLv2 && value[2] === this.curCatLv3) {
+        console.log('相同目录，无需跳转');
+        return;
+      }
+
       if (this.$store.state.isProhibitOperation) {
         this.$message.error('暂时不能操作目录'); // 重要
         return;

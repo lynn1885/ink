@@ -80,6 +80,7 @@ export default {
       activeCommonTools: null, // 激活的常用工具
       isSplitScreen: false, // 是否分屏
       splitScreenClass: '', // 分屏模式class
+      editor: null
     };
   },
   watch: {
@@ -150,7 +151,17 @@ export default {
             break;
         }
       }
-    }
+    },
+
+    // eslint-disable-next-line func-names
+    '$store.state.editor': {
+      immediate: true,
+      handler(value) {
+        if (value) {
+          this.editor = value;
+        }
+      },
+    },
   },
   methods: {
     // 计算当前笔记背景图数组
@@ -200,6 +211,16 @@ export default {
         if (e.ctrlKey && e.keyCode === 191) {
           e.preventDefault();
           this.toggleZenMode();
+        }
+
+        // 快速跳转temp笔记
+        // ctrl + shift + alt + t
+        if (e.ctrlKey && e.shiftKey && e.altKey && e.keyCode === 84) {
+          e.preventDefault();
+          this.$store.commit('updateGotoThisCatalog', ['.ink', 'basic', 'temp']);
+          setTimeout(() => {
+            this.editor.cm.focus();
+          }, 200);
         }
       });
     },
