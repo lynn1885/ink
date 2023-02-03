@@ -64,7 +64,7 @@
           @dblclick="closedSearchRes[note.dir] ? searchResults.forEach(note =>  $set(closedSearchRes, note.dir, false)) : searchResults.forEach(note =>  $set(closedSearchRes, note.dir, true))"
         >
           <note-icon class="note-icon" :icon-name="note.dir.split('/')[2]"></note-icon>
-          {{note.dir.slice(0, note.dir.length-1)}} ({{note.items.length}})
+          {{note.dir.slice(0, note.dir.length-1)}} ({{note.maxLineScore}}分，{{note.score}}分，{{note.items.length}}个)
         </div>
         <div
           v-for="item of note.items"
@@ -73,7 +73,8 @@
           :key="item.noteDir + item.line + '/' + item.char"
           @click="clickSearchItemHandler(item)"
         >
-          <div class="line">{{item.noteDir.slice(0, item.noteDir.length-1)}} {{item.line}}</div>
+          <div class="line">{{item.noteDir.slice(0, item.noteDir.length-1)}} {{item.line}}行，{{item.lineScore}}分</div>
+          <pre class="header" v-if="item.headers && item.headers.length">{{item.headers.join('\n') }}</pre>
           <div class="preview" v-html="item.preview"></div>
         </div>
       </div>
@@ -113,8 +114,8 @@ export default {
       searchedItemsNum: 0,
       maxSearchTextLength: 30,
       maxSearchResLength: null, // According to different situations, will be set to different values
-      maxSearchResLengthOne: 50, // When searching for a note
-      maxSearchResLengthAll: 200, // when searching for all notes
+      maxSearchResLengthOne: 100, // When searching for a note
+      maxSearchResLengthAll: 300, // when searching for all notes
       timeConsumption: null,
       closedSearchRes: {},
       searchResults: [],
@@ -240,7 +241,7 @@ export default {
 
       // apply results
       if (this.searchedItemsNum) {
-        res = this.sortSearchRes(res);
+        // res = this.sortSearchRes(res); // 不再排序，后端会排序
         this.searchResults = res;
         this.highlight();
       }
@@ -265,6 +266,9 @@ export default {
 
     // search entry 2
     changesHandler(cm, changes) {
+      if (this.isGlobal) {
+        return;
+      }
       clearTimeout(this.updateTimer);
       // on changes
       this.updateTimer = setTimeout(() => {
@@ -458,6 +462,8 @@ export default {
         this.isSensitiveToCase,
         this.$message
       );
+
+      console.log(123, searchRes);
       return searchRes;
     },
 
@@ -615,7 +621,7 @@ export default {
   }
   .clear {
     position: absolute;
-    right: 84px;
+    right: 66px;
     font-size: 20px;
     line-height: 26px;
     color: $comment-color;
@@ -679,6 +685,12 @@ export default {
       .line {
         color: $comment-color;
         margin-bottom: 5px;
+        font-size: 12px;
+      }
+      .header {
+        color: $comment-color;
+        margin: 0px;
+        font-size: 12px;
       }
       &:hover {
         background: $sidebar-item-hover-bg;
