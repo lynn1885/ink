@@ -20,11 +20,20 @@ exports.get = async filePath => new Promise((resolve, reject) => {
  * getRecursively: 递归的获取目录
  * @param {string} filePath 要获取目录的路径
  * @param {boolean} isIncludeFile 是否获取目录时, 也获取文件, 默认为false
+ * @param {string} returnType 返回数据类型，'object'有层级，'array'没有层级
  * @return {object} 操作成功时: `获取到的目录结构`, 操作失败时: `Throw new Error(错误对象)`, 需要在外界进行捕获
  */
-exports.getRecursively = async (filePath, isIncludeFile = false) => {
-  const result = await r(filePath);
-  return result;
+exports.getRecursively = async (filePath, isIncludeFile = false, returnType = 'object') => {
+  const fileArray = [];
+  const fileObject = await r(filePath);
+  // eslint-disable-next-line default-case
+  switch (returnType) {
+    case 'object':
+      return fileObject;
+    case 'array':
+      return fileArray;
+  }
+  return fileObject;
 
   async function r(fp) {
     const catalog = {};
@@ -42,6 +51,7 @@ exports.getRecursively = async (filePath, isIncludeFile = false) => {
             } else {
               newFp = `${fp}/${f}`;
             }
+
             // eslint-disable-next-line no-await-in-loop
             await new Promise((res, rej) => {
               fs.stat(newFp, async (e, stats) => {
@@ -49,9 +59,11 @@ exports.getRecursively = async (filePath, isIncludeFile = false) => {
                   console.error('getRecursively(): ', e);
                   rej(e);
                 } else if (stats.isDirectory()) {
+                  if (returnType === 'array') fileArray.push(path.normalize(newFp));
                   catalog[f] = await r(newFp);
                 } else if (newFp.includes('.md')) {
                   if (isIncludeFile) {
+                    if (returnType === 'array') fileArray.push(path.normalize(newFp));
                     catalog[f] = true;
                   }
                 }

@@ -36,6 +36,6 @@ module.exports = {
   backupInterval: 300, // seconds
   maxBackupFilesNumber: 12, // 最大备份文件数
   fileSizeLimit: 500, // KB
-  maxSearchNum: 300, // when searching globally, how many results can you find at most
+  maxSearchNum: 500, // when searching globally, how many results can you find at most
   importNodeImgPrefix: '__import__', // 导入的笔记的图片文件夹前缀
 };

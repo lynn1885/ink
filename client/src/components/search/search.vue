@@ -1,27 +1,61 @@
 <template>
   <div id="search">
-    <!-- search bar -->
-    <div id="search-bar">
-      <input
-        class="ink-input-bar"
-        type="text"
-        v-model="searchText"
-        :maxlength="maxSearchTextLength"
-        @keydown="searchBarKeyDownHandler"
-        ref="search-bar"
-      />
-      <button :class="{'ink-button': true, 'active': isGlobal}" @click="isGlobal = !isGlobal" title="golbal search">g</button>
-      <button
-        :class="{'ink-button': true, 'active': isSensitiveToCase}"
-        title="sensitive to English case"
-        @click="isSensitiveToCase = !isSensitiveToCase"
-      >Aa</button>
-      <!-- <button
-        :class="{'active': isRegExp}"
-        title="use regular expression"
-        @click="isRegExp = !isRegExp"
-      >r</button>-->
-      <div class="clear" @click="clear(true)">×</div>
+    <div id="search-container">
+      <!-- 搜索其他 -->
+      <div id="specific-search">
+        <!-- 目录 -->
+        <input
+          class="ink-input-bar"
+          type="text"
+          v-model="specifiedSearchFolder"
+          placeholder="检索目录"
+          autocomplete="true"
+        />
+        <!-- 文件类型 -->
+        <!-- <input
+          class="ink-input-bar"
+          type="txt"
+          v-model="specifiedSearchExtName"
+          placeholder='拓展名，默认为 .txt'
+        /> -->
+
+        <!-- 临近检索 -->
+        <input
+          class="ink-input-bar"
+          type="number"
+          v-model="nearDistance"
+          placeholder='多少字以内'
+          step="10"
+          max="500"
+          min="0"
+        />
+      </div>
+
+      <!-- 搜索框 -->
+      <div id="search-bar">
+        <input
+          class="ink-input-bar"
+          type="text"
+          v-model="searchText"
+          :maxlength="maxSearchTextLength"
+          @keydown="searchBarKeyDownHandler"
+          ref="search-bar"
+        />
+        <button :class="{'ink-button': true, 'active': isGlobal}" @click="isGlobal = !isGlobal" title="golbal search">g</button>
+        <button
+          :class="{'ink-button': true, 'active': isSensitiveToCase}"
+          title="sensitive to English case"
+          @click="isSensitiveToCase = !isSensitiveToCase"
+        >Aa</button>
+        <!-- <button
+          :class="{'active': isRegExp}"
+          title="use regular expression"
+          @click="isRegExp = !isRegExp"
+        >r</button>-->
+        <div class="clear" @click="clear(true)">×</div>
+      </div>
+      <!-- 检索框 -->
+
     </div>
 
     <!-- replace bar -->
@@ -70,10 +104,11 @@
           v-for="item of note.items"
           v-show="!closedSearchRes[note.dir] "
           :class="{item: true, active: activeSearchItem === item}"
+
           :key="item.noteDir + item.line + '/' + item.char"
           @click="clickSearchItemHandler(item)"
         >
-          <div class="line">{{item.noteDir.slice(0, item.noteDir.length-1)}} {{item.line}}行，{{item.lineScore}}分</div>
+          <div class="line" >{{item.noteDir.slice(0, item.noteDir.length-1)}} <span :style="'color: ' + getColorFromNum(item.line)">{{item.line}}行，{{item.lineScore}}分</span></div>
           <pre class="header" v-if="item.headers && item.headers.length">{{item.headers.join('\n') }}</pre>
           <div class="preview" v-html="item.preview"></div>
         </div>
@@ -85,6 +120,7 @@
 import NoteIcon from '@/components/note-icon/note-icon.vue';
 import classNames from '@/tools/class-names.js';
 import Files from '@/models/files';
+import tools from '@/tools/tools';
 
 const isEnableConsole = false;
 
@@ -102,6 +138,9 @@ export default {
       curFilePath: null,
       curFileDir: null,
       searchText: '',
+      specifiedSearchFolder: '', // 要搜索的目录
+      specifiedSearchExtName: '', // 要搜索的文件类型
+      nearDistance: null, // 多少字以内，不设置或为0时，不限制距离
       lastSearchText: '',
       replaceText: '',
       isGlobal: false,
@@ -115,7 +154,7 @@ export default {
       maxSearchTextLength: 30,
       maxSearchResLength: null, // According to different situations, will be set to different values
       maxSearchResLengthOne: 100, // When searching for a note
-      maxSearchResLengthAll: 300, // when searching for all notes
+      maxSearchResLengthAll: 500, // when searching for all notes
       timeConsumption: null,
       closedSearchRes: {},
       searchResults: [],
@@ -450,18 +489,22 @@ export default {
           [, searchText] = textArr;
         }
       }
-      const searchRes = await Files.searchAllFiles(
-        `${this.curFilePath
+      const req = {
+        fromPath: `${this.curFilePath
           .split('/')
           .slice(0, 3)
           .join('/')}/`,
-        searchDir,
+        searchPath: searchDir,
         searchText,
-        this.searchedTextClass,
-        this.isRegExp,
-        this.isSensitiveToCase,
-        this.$message
-      );
+        searchedTextClass: this.searchedTextClass,
+        isRegExp: this.isRegExp,
+        isSensitiveToCase: this.isSensitiveToCase,
+        messager: this.$message,
+        specifiedSearchFolder: this.specifiedSearchFolder,
+        specifiedSearchExtName: this.specifiedSearchExtName,
+      };
+      if (this.nearDistance) req.nearDistance = this.nearDistance;
+      const searchRes = await Files.searchAllFiles(req);
 
       console.log(123, searchRes);
       return searchRes;
@@ -485,8 +528,14 @@ export default {
     },
 
     // click search item handler
-    clickSearchItemHandler(item) {
+    async clickSearchItemHandler(item) {
       this.activeSearchItem = item;
+
+      if (item.isSpecifiedMode) {
+        tools.copyText(item.previewText.slice(0, 12));
+        await Files.open(item.noteDir, this.$message);
+        return;
+      }
 
       if (this.curFileDir === item.noteDir) {
         // scroll directly
@@ -541,6 +590,7 @@ export default {
           if (isEnableConsole) {
             console.log('highlight:', note.dir);
           }
+
           break;
         }
       }
@@ -572,6 +622,15 @@ export default {
         if (mark.className === this.searchedTextClass) mark.clear();
       }
     },
+
+    // 根据行号计算颜色
+    getColorFromNum(num) {
+      num = Number(num);
+      const a = (num * 30) % 56;
+      const b = (num * 50) % 256;
+      const c = (num * 70) % 256;
+      return `rgb(${a},${b},${c})`;
+    }
   },
   mounted() {
     if (isEnableConsole) {
@@ -598,6 +657,7 @@ export default {
 
 // top bar
 #search-bar,
+#specific-search,
 #replace-bar {
   position: relative;
   display: flex;
@@ -656,7 +716,7 @@ export default {
   width: 100%;
   left: 0;
   right: 0;
-  top: 62px;
+  top: 94px;
   bottom: 0;
   overflow-y: scroll;
   .note {
@@ -666,16 +726,16 @@ export default {
     font-size: $font-size-sidebar;
     color: $tool-page-color;
     .note-dir {
-      height: 24px;
+      // height: 24px;
       box-sizing: border-box;
       padding: 4px 4px;
       background: darken($color: $tool-page-bg, $amount: 0.6);
       cursor: pointer;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      // overflow: hidden;
+      // text-overflow: ellipsis;
+      // white-space: nowrap;
       .note-icon {
-        height: 90%;
+        height: 14px;
       }
     }
     .item {

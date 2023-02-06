@@ -9,6 +9,32 @@ const { serverUrl } = config.server;
 
 const Files = {
   /**
+   * 打开文件
+   * @param {string} path 要打开的文件路径
+   * @param {function} messager 通知器
+   */
+  async open(path, messager) {
+    await axios.get(`${serverUrl}open-file-default`, {
+      params: { path },
+    })
+      .then((res) => {
+        if (res.status === 200) {
+          // messager.success('打开文件成功');
+        } else {
+          if (messager) {
+            messager.error(`openFile(): Bad HTTP status: ${res}`);
+          }
+          throw new Error(`openFile(): Bad HTTP status: ${res}`);
+        }
+      })
+      .catch((err) => {
+        if (messager) {
+          messager.error(`openFile failed: ${err}\n path: ${path}`);
+        }
+        throw new Error(`openFile failed: ${err}\n path: ${path}`);
+      });
+  },
+  /**
    * 获取文件
    * @param {string} path 要打开的文件路径
    * @param {function} messager 通知器
@@ -88,7 +114,9 @@ const Files = {
  * @param {Function} messager 通知器
  * @returns {Object} 搜索的内容
  */
-  async searchAllFiles(fromPath, searchPath, searchText, searchedTextClass, isRegExp, isSensitiveToCase, messager) {
+  async searchAllFiles({
+    fromPath, searchPath, searchText, searchedTextClass, isRegExp, isSensitiveToCase, specifiedSearchFolder, specifiedSearchExtName, nearDistance, messager
+  }) {
     let searchRes = null;
 
     await axios.get(`${serverUrl}search-all-files`, {
@@ -99,6 +127,9 @@ const Files = {
         searchedTextClass,
         isRegExp,
         isSensitiveToCase,
+        nearDistance,
+        specifiedSearchFolder,
+        specifiedSearchExtName,
       },
     })
       .then((res) => {

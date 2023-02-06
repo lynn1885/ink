@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const childProcess = require('child_process');
 const Files = require('../models/files');
 const Directories = require('../models/directories');
 const config = require('../../config');
@@ -78,6 +79,7 @@ exports.update = async (req, res) => {
 
 // search all files
 exports.searchAllFiles = async (req, res) => {
+  // 处理前端参数
   if (!req.query.fromPath
     || !req.query.isRegExp
     || !req.query.isSensitiveToCase
@@ -88,53 +90,106 @@ exports.searchAllFiles = async (req, res) => {
     return;
   }
 
+  if (req.query.searchPath) req.query.searchPath = req.query.searchPath.trim().toLowerCase(); // 路径匹配始终不考虑大小写和左右空格
+  let nearDistance;
+  if (req.query.nearDistance && Number(req.query.nearDistance)) {
+    nearDistance = Number(req.query.nearDistance);
+  }
+
+  console.log('检索设置：', req.query);
+
+  // 时间统计
   const startTime = new Date();
-  const allDir = await Directories.getRecursively(config.user.dirs.notes);
-  // sort directories
-  req.query.searchPath = req.query.searchPath.toLowerCase();
-  let sortedPathArr = [];
-  const fromPathArr = req.query.fromPath.split('/').slice(0, 3);
-  if (isEnableConsole) {
-    console.log('fromPathArr: ', fromPathArr);
-  }
-  if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}`.toLowerCase().includes(req.query.searchPath)) {
-    sortedPathArr.push(`${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}/${fromPathArr[2]}.md`);
-  }
-  if (isEnableConsole) {
-    console.log('first path: ', sortedPathArr[0]);
-  }
-  Object.keys(allDir[fromPathArr[0]][fromPathArr[1]]).forEach((file) => {
-    if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${file}`.toLowerCase().includes(req.query.searchPath)) {
-      sortedPathArr.push(`${fromPathArr[0]}/${fromPathArr[1]}/${file}/${file}.md`);
-    }
-  });
-  Object.keys(allDir[fromPathArr[0]]).forEach((dir2) => {
-    Object.keys(allDir[fromPathArr[0]][dir2]).forEach((file) => {
-      if (!req.query.searchPath || `${fromPathArr[0]}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
-        sortedPathArr.push(`${fromPathArr[0]}/${dir2}/${file}/${file}.md`);
+
+  // console.log(123, req.query);
+
+  // 获取目录文件
+  const specifiedSearchFolder = req.query.specifiedSearchFolder && path.normalize(req.query.specifiedSearchFolder); // 搜索指定目录
+  // const specifiedSearchFolder = ''; // 搜索指定目录
+  const specifiedSearchExtName = req.query.specifiedSearchExtName || '.txt'; // 搜索指定类型文件，不指定则仅搜索.txt文件
+  let fileList = []; // 要检索的文件列表
+
+  const scorePlans = {
+    mdFile: {
+      matchAllScore: 16, // 全部匹配额外加分
+      distanceScore: 10, // 距离分
+    },
+    plainFile: {
+      matchAllScore: 20, // 全部匹配额外加分
+      distanceScore: 20, // 距离分
+    },
+  };
+
+  let curScorePlan;
+  if (specifiedSearchFolder) curScorePlan = scorePlans.plainFile;
+  else curScorePlan = scorePlans.mdFile;
+
+  // 模式1：读取指定目录文件
+  if (specifiedSearchFolder) {
+    fileList = tools.getFileList(specifiedSearchFolder, specifiedSearchExtName);
+  } else {
+    // 模式2：读取ink笔记
+    const allDirAndFiles = await Directories.getRecursively(config.user.dirs.notes, true, 'array');
+    // 只要md文件，且只要非备份文件
+    allDirAndFiles.forEach((item) => {
+      if (
+        item.endsWith('.md')
+        && !(/^\d+$/.test(path.basename(item, '.md')))
+        && (!req.query.searchPath || item.toLowerCase().includes(req.query.searchPath))
+      ) {
+        fileList.push(item);
       }
     });
-  });
-  Object.keys(allDir).forEach((dir1) => {
-    Object.keys(allDir[dir1]).forEach((dir2) => {
-      Object.keys(allDir[dir1][dir2]).forEach((file) => {
-        if (!req.query.searchPath || `${dir1}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
-          sortedPathArr.push(`${dir1}/${dir2}/${file}/${file}.md`);
-        }
-      });
-    });
-  });
-  sortedPathArr = Array.from(new Set(sortedPathArr));
-  if (isEnableConsole) {
-    console.log('sortedPathArr: ', sortedPathArr, sortedPathArr.length);
+    // sort directories
+    // req.query.searchPath = req.query.searchPath.toLowerCase();
+    // let fileList = [];
+    // const fromPathArr = req.query.fromPath.split('/').slice(0, 3);
+    // if (isEnableConsole) {
+    //   console.log('fromPathArr: ', fromPathArr);
+    // }
+    // if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}`.toLowerCase().includes(req.query.searchPath)) {
+    //   fileList.push(`${fromPathArr[0]}/${fromPathArr[1]}/${fromPathArr[2]}/${fromPathArr[2]}.md`);
+    // }
+    // if (isEnableConsole) {
+    //   console.log('first path: ', fileList[0]);
+    // }
+    // Object.keys(allDir[fromPathArr[0]][fromPathArr[1]]).forEach((file) => {
+    //   if (!req.query.searchPath || `${fromPathArr[0]}/${fromPathArr[1]}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+    //     fileList.push(`${fromPathArr[0]}/${fromPathArr[1]}/${file}/${file}.md`);
+    //   }
+    // });
+    // Object.keys(allDir[fromPathArr[0]]).forEach((dir2) => {
+    //   Object.keys(allDir[fromPathArr[0]][dir2]).forEach((file) => {
+    //     if (!req.query.searchPath || `${fromPathArr[0]}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+    //       fileList.push(`${fromPathArr[0]}/${dir2}/${file}/${file}.md`);
+    //     }
+    //   });
+    // });
+    // Object.keys(allDir).forEach((dir1) => {
+    //   Object.keys(allDir[dir1]).forEach((dir2) => {
+    //     Object.keys(allDir[dir1][dir2]).forEach((file) => {
+    //       if (!req.query.searchPath || `${dir1}/${dir2}/${file}`.toLowerCase().includes(req.query.searchPath)) {
+    //         fileList.push(`${dir1}/${dir2}/${file}/${file}.md`);
+    //       }
+    //     });
+    //   });
+    // });
+    // fileList = Array.from(new Set(fileList));
+    // if (isEnableConsole) {
+    //   console.log('fileList: ', fileList, fileList.length);
+    // }
   }
-  if (sortedPathArr.length === 0) {
+
+  // console.log('fileList', fileList);
+  if (fileList.length === 0) {
     res.status(223).send(`要搜索的路径不存在${req.query.searchPath}`);
     if (isEnableConsole) {
       console.log(`要搜索的路径不存在${req.query.searchPath}`);
     }
     return;
   }
+
+
   // search
   const searchRes = [];
   let searchedItemsNum = 0;
@@ -149,9 +204,11 @@ exports.searchAllFiles = async (req, res) => {
   const searchParts = searchText.split(/\s+/g);
   // 生成正则表达式
   let reg;
+  let reg2;
   try {
     // eslint-disable-next-line no-useless-escape
     reg = new RegExp(searchText.replace(/[\-\/\\\^\$\*\+\?\.\(\)\|\[\]\{\}]/g, '\\$&').split(/\s+/g).join('|'), 'g');
+    reg2 = new RegExp(searchText.replace(/[\-\/\\\^\$\*\+\?\.\(\)\|\[\]\{\}]/g, '\\$&').split(/\s+/g).join('|'), 'g');
     console.log('检索表达式：', reg);
   } catch (error) {
     console.error('生成正则表达式失败：', searchParts);
@@ -159,10 +216,12 @@ exports.searchAllFiles = async (req, res) => {
 
   // 递归函数，用于检索每一篇笔记
   async function _search() {
+    let fileWordPointer = 0; // 指针，当前检索到了全文哪个位置
     let fileContent;
     let isGoOnSearch = true;
+    const noteDir = specifiedSearchFolder ? fileList[fileIndex] : `${path.dirname(path.relative(config.user.dirs.notes, fileList[fileIndex]))}/`.replace(/\\/g, '/'); // 返回前端所需的格式，用正斜杠，且最后需要一个斜杠
     const curFileRes = { // 当前文件的检索结果
-      dir: `${path.dirname(sortedPathArr[fileIndex])}/`,
+      dir: noteDir,
       items: [],
       score: 0, // 当前文章的总得分
       maxLineScore: 0, // 得分最高的行是多少分
@@ -170,9 +229,9 @@ exports.searchAllFiles = async (req, res) => {
 
     // 读取文件内容
     try {
-      fileContent = await Files.read(path.join(config.user.dirs.notes, sortedPathArr[fileIndex]));
+      fileContent = await Files.read(fileList[fileIndex]);
     } catch (e) {
-      console.log(`${new Date().toLocaleString()}: [search all file warning]: cannot open `, sortedPathArr[fileIndex]);
+      console.log(`${new Date().toLocaleString()}: [search all file warning]: cannot open `, fileList[fileIndex]);
       isGoOnSearch = false;
     }
 
@@ -194,8 +253,6 @@ exports.searchAllFiles = async (req, res) => {
 
       // 继续搜索
       if (isGoOnSearch) {
-        // console.log('[search] 正则表达式：', reg, sortedPathArr[fileIndex]);
-
         // 当前文章，每一行都给个加权评分
         const lineScores = {};
         // 六级标题，用于存储标题带来的上下文
@@ -208,6 +265,7 @@ exports.searchAllFiles = async (req, res) => {
           const lineText = lines[index];
           const oriLineText = lineText;
 
+
           // 更新标题上下文
           if (lineText.startsWith('# ')) headers = [lineText];
           if (lineText.startsWith('## ')) headers = [headers[0], lineText];
@@ -216,7 +274,7 @@ exports.searchAllFiles = async (req, res) => {
           if (lineText.startsWith('##### ')) headers = [headers[0], headers[1], headers[2], headers[3], lineText];
           if (lineText.startsWith('###### ')) headers = [headers[0], headers[1], headers[2], headers[3], headers[4], lineText];
 
-          // const prevContext = sortedPathArr[fileIndex] + headers.join(' '); // 前文，也就是文件名加上上级标题
+          // const prevContext = fileList[fileIndex] + headers.join(' '); // 前文，也就是文件名加上上级标题
           // console.log('语境内容：', prevContext);
 
 
@@ -225,47 +283,81 @@ exports.searchAllFiles = async (req, res) => {
           // eslint-disable-next-line no-loop-func
           searchParts.forEach((part) => {
             if (headers.join(' ').includes(part)) curLineSearchedItems[part] = 8; // 如果语境出现该词汇，加分
-            if (sortedPathArr[fileIndex].includes(part)) curLineSearchedItems[part] = 16; // 如果语境出现该词汇，加分
+            if (fileList[fileIndex].includes(part)) curLineSearchedItems[part] = 16; // 如果语境出现该词汇，加分
             else curLineSearchedItems[part] = 0;
           });
-
 
           // 检索一行：一行可能命中多次，所以要多次搜索，此处使用正则表示式实现
           let match;
           const matchIndexes = []; // 记录命中的字符串出现的位置
+
+
           // eslint-disable-next-line no-cond-assign
           while ((searchedItemsNum <= config.maxSearchNum) && (match = reg.exec(lineText))) {
             // 返回给前端的搜索显示效果，是一串html
-            const preview = [
-              lineText.slice(match.index - 30 < 0 ? 0 : match.index - 30, match.index), // 最多往前倒30个字符，目的是让匹配字符前面的文字也可以显示出来，其实就是显示上下文
+            const previewText = lineText.slice(match.index - 50 < 0 ? 0 : match.index, match.index + 50);
+            let preview = [
+              lineText.slice(match.index - 50 < 0 ? 0 : match.index - 50, match.index), // 最多往前倒50个字符，目的是让匹配字符前面的文字也可以显示出来，其实就是显示上下文
               `<span class="${req.query.searchedTextClass}">`,
               oriLineText.slice(match.index, match.index + match[0].length),
               '</span>',
               lineText.slice(
                 match.index + match[0].length,
-                match.index + match[0].length + 30,
+                match.index + match[0].length + 50,
               ),
-            ].join('');
+            ].join('').trim();
 
             matchIndexes.push(match.index);
             // console.log('preview', preview);
 
-            // 简单的实现一下加权计算
-            // 当前行第一次命中某单词，加大分，因为此时比较重要。以后再命中，加小分
-            // eslint-disable-next-line no-unused-expressions
-            curLineSearchedItems[match[0]] === 0 ? curLineSearchedItems[match[0]] += 6 : curLineSearchedItems[match[0]] += 1;
+            // 如果要求必须临近，则添加额外计算
+            let isIncludeThisItem = true; // 是否包含这一项
+            let contentSegment = '';
+            const curPointer = fileWordPointer + match.index;
 
-            // 当前行检索结果汇总
-            curFileRes.items.push({
-              noteDir: `${path.dirname(sortedPathArr[fileIndex])}/`,
-              line: index,
-              char: [match.index, match.index + match[0].length],
-              preview,
-              headers,
-            });
+            // console.log(fileContent[curPointer], lineText[match.index]);
 
-            // 总共检索数量统计
-            searchedItemsNum += 1;
+            if (nearDistance) {
+              const start = curPointer - nearDistance <= 0 ? 0 : curPointer - nearDistance;
+              const end = curPointer + nearDistance >= fileContent.length ? fileContent.length : curPointer + nearDistance;
+              contentSegment = fileContent.slice(start, end + 1);
+              for (const part of searchParts) {
+                // console.log(contentSegment);
+                if (!contentSegment.includes(part)) {
+                  isIncludeThisItem = false;
+                  contentSegment = '';
+                  break;
+                }
+              }
+              if (isIncludeThisItem) {
+                // 必须使用reg2，因为reg1对象在执行exec，它是有状态的
+                preview = contentSegment.replace(reg2, `<span class="${req.query.searchedTextClass}">$&</span>`);
+                // preview = contentSegment;
+              }
+            }
+
+            // 包含这个搜索结果
+            if (isIncludeThisItem) {
+              // 简单的实现一下加权计算
+              // 当前行第一次命中某单词，加大分，因为此时比较重要。以后再命中，加小分
+              // eslint-disable-next-line no-unused-expressions
+              curLineSearchedItems[match[0]] === 0 ? curLineSearchedItems[match[0]] += 6 : curLineSearchedItems[match[0]] += 1;
+
+              // 当前行检索结果汇总
+              curFileRes.items.push({
+                isSpecifiedMode: !!specifiedSearchFolder,
+                noteDir,
+                line: index,
+                lineText: lineText.slice(0, 200),
+                char: [match.index, match.index + match[0].length],
+                previewText: contentSegment || previewText,
+                preview,
+                headers,
+              });
+
+              // 总共检索数量统计
+              searchedItemsNum += 1;
+            }
           }
           // 当前行检索结束后：如果匹配到了内容，则求当前行加权分
           if (matchIndexes.length) {
@@ -294,20 +386,21 @@ exports.searchAllFiles = async (req, res) => {
             const searchedItemValues = Object.values(curLineSearchedItems);
             itemsScore = searchedItemValues.reduce((a, b) => a + b);
             if (searchedItemValues.filter(v => v === 0).length === 0) { // 当前行命中的所有词汇，额外加分
-              itemsScore += 10;
+              itemsScore += curScorePlan.matchAllScore;
             }
             // console.log('单词分：', curLineSearchedItems, itemsScore);
 
             // 单词距离越近，加分越多
             const diff = matchIndexes.sort((a, b) => a - b).map((item, idx, arr) => (idx === 0 ? 0 : item - arr[idx - 1])); // 求差值
             const distanceAvg = diff.reduce((a, b) => a + b) / diff.length; // 求差值的均指
-            distanceScore = Math.floor(10 / (distanceAvg || 999)); // 如果距离为0，应该值命中的一个词汇，则此项加很少的分
+            distanceScore = Math.floor(curScorePlan.distanceScore / (distanceAvg || 999)); // 如果距离为0，应该值命中的一个词汇，则此项加很少的分
             // console.log('距离分：', distanceAvg, distanceScore);
+
+            // console.log(123, curScorePlan);
 
             // 汇总
             lineScores[index] += (itemsScore + headerScore + distanceScore);
             // console.log('总分：', lineScores[index]);
-
 
             // const lastIndex = -1;
             // const isFirstSearch = true;
@@ -333,7 +426,7 @@ exports.searchAllFiles = async (req, res) => {
             //       ),
             //     ].join('');
             //     curFileRes.items.push({
-            //       noteDir: `${path.dirname(sortedPathArr[fileIndex])}/`,
+            //       noteDir: `${path.dirname(fileList[fileIndex])}/`,
             //       line: index,
             //       char: [lastIndex, lastIndex + searchText.length],
             //       preview,
@@ -342,6 +435,9 @@ exports.searchAllFiles = async (req, res) => {
             //   }
             // } while (lastIndex > -1);
           }
+
+          // 要放在最后一行
+          fileWordPointer += (lineText.length + 1); // 向前移动指针，因为还包含一个空格，所以多移动一位
         }
 
         // 打印用的
@@ -374,7 +470,7 @@ exports.searchAllFiles = async (req, res) => {
     }
 
     // 递归，搜索下一个文件
-    if ((fileIndex + 1) < sortedPathArr.length && searchRes.length < config.maxSearchNum) {
+    if ((fileIndex + 1) < fileList.length && searchRes.length < config.maxSearchNum) {
       fileIndex += 1;
       await _search();
     }
@@ -518,4 +614,60 @@ exports.importNote = async (req, res) => {
     res.status(400).send(error.message);
     console.error('[import note] import failed: ', error);
   }
+};
+
+/**
+ * open 打开文件
+ * @returns
+ */
+exports.openFileDefault = async (req, res) => {
+  if (!req.query.path) {
+    res.status(400).send('错误的path参数');
+    return;
+  }
+  console.log(`${new Date().toLocaleString()}: [open file] `, req.query.path);
+
+  res.send();
+  try {
+    // 对于txt，尝试打开同名pdf⚠️
+    let filePath;
+    if (req.query.path.endsWith('.txt')) {
+      const pdfPath = path.normalize(req.query.path).replace(/.txt$/, '.pdf');
+      if (fs.existsSync(pdfPath)) {
+        filePath = pdfPath;
+      } else {
+        filePath = req.query.path;
+      }
+    }
+
+
+    // 处理命令行
+    // start C:\Users\ji\Desktop\english\"集群 cluster.txt"   要处理成这种，在win上面才能打开，注意不能直接全部加引号""
+    filePath = path.normalize(filePath
+      .split('\\')
+      .map((seg) => {
+        if (seg.includes(' ')) {
+          return `"${seg}"`;
+        }
+        return seg;
+      })
+      .join('\\'));
+
+
+    // sameNamePdf = filePath.replace(/.txt$/, '.pdf');
+    // if (fs.existsSync(sameNamePdf)) filePath = sameNamePdf;
+    childProcess.exec(`start ${filePath}`, {
+      windowsHide: true,
+    });
+  } catch (error) {
+    res.status(500).send(`读取文件失败${req.query.path}`);
+  }
+  // await Files.read(path.normalize(req.query.path))
+  //   .then((data) => {
+  //     res.send(data);
+  //   })
+  //   .catch((e) => {
+  //     console.error(e);
+  //     res.status(500).send(`读取文件失败${req.query.path}`);
+  //   });
 };

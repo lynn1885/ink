@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
 
 /**
  * isFileNameValid: 检测文件名是否合法
@@ -95,3 +97,49 @@ exports.calWordCount = function calWordCount(text) {
   text = text.replace(/\s+/g, '');
   return text.length + englishWordCount;
 };
+
+/**
+ * 获取文件列表
+ * @param {string} p 要获取文件的路径
+ * @param {string[]} extNames 设置文件名必须包含的字段，如['.txt', '.md']，不设置则包含所有文件
+ * @returns {string[]} 数组中是所有符合的文件路径
+ */
+exports.getFileList = function getFileList(p, extNames) {
+  // 路径必须存在
+  if (!fs.existsSync(p)) return;
+  const maxFileNum = 5000;
+
+  const fileList = [];
+  try {
+    // 递归获取所有文件
+    _getCurPathFiles(p, extNames, fileList, maxFileNum);
+  } catch (error) {
+    console.error('[getFileList] 递归获取文件失败：', error);
+    return;
+  }
+
+  return fileList;
+};
+
+
+// 获取文件列表的递归函数
+function _getCurPathFiles(p, extNames, fileList, maxFileNum) {
+  const items = fs.readdirSync(p);
+  // console.log(p, fileList);
+  // 当前目录中的内容
+  for (const item of items) {
+    if (fileList.length >= maxFileNum) return;
+    const newP = path.join(p, item);
+    const itemStat = fs.statSync(newP);
+    if (itemStat.isDirectory()) { // 是目录
+      _getCurPathFiles(newP, extNames, fileList, maxFileNum);
+    } else if (itemStat.isFile) { // 是文件
+      const fileExtName = path.extname(newP);
+      if (extNames && extNames.length && extNames.includes(fileExtName)) {
+        fileList.push(newP);
+      } else if (!extNames || extNames.length === 0) {
+        fileList.push(newP);
+      }
+    }
+  }
+}
