@@ -423,6 +423,10 @@
   background: $cm-searched-text-bg;
 }
 
+.cm-searched-text-2 {
+  background: $cm-searched-text-bg-2;
+}
+
 .cm-highlight-line {
   background: $cm-highlight-line-bg !important;
   transition: all 0.4s !important;
@@ -663,7 +667,7 @@ jmnode.selected {
 }
 
 // component
-.ink-input-bar {
+.ink-input-bar, .el-input{
   width: 100%;
   flex-grow: 1;
   padding: 2px 4px;
@@ -672,6 +676,20 @@ jmnode.selected {
   border: 1px solid $sidebar-input-border-color;
   background: $sidebar-input-bg;
   box-sizing: border-box;
+}
+.el-input {
+  margin: 0;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  input {
+    outline: none;
+    border: 0px;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+  }
 }
 
 .ink-button {

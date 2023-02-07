@@ -115,7 +115,7 @@ const Files = {
  * @returns {Object} 搜索的内容
  */
   async searchAllFiles({
-    fromPath, searchPath, searchText, searchedTextClass, isRegExp, isSensitiveToCase, specifiedSearchFolder, specifiedSearchExtName, nearDistance, messager
+    fromPath, searchPath, searchText, searchedTextClass, isRegExp, isSensitiveToCase, minScore, specifiedSearchFolder, specifiedSearchExtName, nearDistance, messager
   }) {
     let searchRes = null;
 
@@ -126,6 +126,7 @@ const Files = {
         searchText,
         searchedTextClass,
         isRegExp,
+        minScore,
         isSensitiveToCase,
         nearDistance,
         specifiedSearchFolder,

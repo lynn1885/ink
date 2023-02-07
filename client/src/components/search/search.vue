@@ -4,13 +4,20 @@
       <!-- 搜索其他 -->
       <div id="specific-search">
         <!-- 目录 -->
-        <input
-          class="ink-input-bar"
+        <el-autocomplete
+          class="ink-input-bar local-dir"
+          v-model="specifiedSearchFolder"
+          :fetch-suggestions="getFileHistory"
+          placeholder="检索本地目录"
+          :clearable="true"
+        ></el-autocomplete>
+        <!-- <input
+          class="ink-input-bar local-dir"
           type="text"
           v-model="specifiedSearchFolder"
-          placeholder="检索目录"
-          autocomplete="true"
-        />
+          placeholder="检索本地目录"
+          autocomplete
+        /> -->
         <!-- 文件类型 -->
         <!-- <input
           class="ink-input-bar"
@@ -24,9 +31,20 @@
           class="ink-input-bar"
           type="number"
           v-model="nearDistance"
-          placeholder='多少字以内'
+          placeholder='文本距离'
           step="10"
           max="500"
+          min="0"
+        />
+
+        <!-- 最小得分 -->
+        <input
+          class="ink-input-bar"
+          type="number"
+          v-model="minScore"
+          placeholder='最少分'
+          step="10"
+          max="200"
           min="0"
         />
       </div>
@@ -92,13 +110,12 @@
       <div class="note" :key="note.dir" v-for="note of searchResults">
         <div
           class="note-dir"
-          :title="`${note.dir} (${note.items.length})`"
           v-if="note.items.length > 0"
           @click="closedSearchRes[note.dir] ? $set(closedSearchRes, note.dir, false) : $set(closedSearchRes, note.dir, true)"
           @dblclick="closedSearchRes[note.dir] ? searchResults.forEach(note =>  $set(closedSearchRes, note.dir, false)) : searchResults.forEach(note =>  $set(closedSearchRes, note.dir, true))"
         >
           <note-icon class="note-icon" :icon-name="note.dir.split('/')[2]"></note-icon>
-          {{note.dir.slice(0, note.dir.length-1)}} ({{note.maxLineScore}}分，{{note.score}}分，{{note.items.length}}个)
+          {{note.dir.slice(0, note.dir.length)}} ({{note.maxLineScore}}分，{{note.score}}分，{{note.items.length}}个)
         </div>
         <div
           v-for="item of note.items"
@@ -108,9 +125,9 @@
           :key="item.noteDir + item.line + '/' + item.char"
           @click="clickSearchItemHandler(item)"
         >
-          <div class="line" >{{item.noteDir.slice(0, item.noteDir.length-1)}} <span :style="'color: ' + getColorFromNum(item.line)">{{item.line}}行，{{item.lineScore}}分</span></div>
+          <div class="line" >{{item.noteDir}} {{item.line}}行，<span :style="'color: ' + getColorFromNum(item.lineScore)">{{item.lineScore}}分</span></div>
           <pre class="header" v-if="item.headers && item.headers.length">{{item.headers.join('\n') }}</pre>
-          <div class="preview" v-html="item.preview"></div>
+          <pre class="preview" v-html="item.previewHighlight"></pre>
         </div>
       </div>
     </div>
@@ -138,6 +155,7 @@ export default {
       curFilePath: null,
       curFileDir: null,
       searchText: '',
+      minScore: null,
       specifiedSearchFolder: '', // 要搜索的目录
       specifiedSearchExtName: '', // 要搜索的文件类型
       nearDistance: null, // 多少字以内，不设置或为0时，不限制距离
@@ -240,6 +258,8 @@ export default {
       if (isEnableConsole) {
         console.log('begin search');
       }
+
+
       this.clear();
       if (!this.searchText) {
         return;
@@ -449,7 +469,7 @@ export default {
             isFirstSearch = false;
             if (lastIndex > -1) {
               const start = lastIndex - 30 < 0 ? 0 : lastIndex - 30;
-              const preview = [
+              const previewHighlight = [
                 lineText.slice(start, lastIndex),
                 `<span class="${this.searchedTextClass}">`,
                 oriLineText.slice(lastIndex, lastIndex + searchText.length),
@@ -463,7 +483,7 @@ export default {
                 noteDir: this.curFileDir,
                 line: i,
                 char: [lastIndex, lastIndex + searchText.length],
-                preview,
+                previewHighlight,
               });
               searchedItemsNum += 1;
             }
@@ -480,6 +500,18 @@ export default {
     // search all notes
     // The search will be done on the server
     async searchAll() {
+      // 记录本地路径
+      if (this.specifiedSearchFolder) {
+        const historyArr = JSON.parse(localStorage.getItem('localFileHistory')) || [];
+        if (!historyArr.includes(this.specifiedSearchFolder)) {
+          historyArr.push(this.specifiedSearchFolder);
+          if (historyArr.length > 6) {
+            historyArr.shift();
+          }
+        }
+        localStorage.setItem('localFileHistory', JSON.stringify(historyArr));
+      }
+
       let searchDir = '';
       let { searchText } = this;
       if (this.searchText.includes('|')) {
@@ -499,6 +531,7 @@ export default {
         searchedTextClass: this.searchedTextClass,
         isRegExp: this.isRegExp,
         isSensitiveToCase: this.isSensitiveToCase,
+        minScore: this.minScore,
         messager: this.$message,
         specifiedSearchFolder: this.specifiedSearchFolder,
         specifiedSearchExtName: this.specifiedSearchExtName,
@@ -506,7 +539,7 @@ export default {
       if (this.nearDistance) req.nearDistance = this.nearDistance;
       const searchRes = await Files.searchAllFiles(req);
 
-      console.log(123, searchRes);
+      // console.log(123, searchRes);
       return searchRes;
     },
 
@@ -559,8 +592,8 @@ export default {
     sortSearchRes(res) {
       res.sort((a, b) => b.items.length - a.items.length);
       function sortItems(a, b) {
-        const matchResA = a.preview.match(/^#+ /);
-        const matchResB = b.preview.match(/^#+ /);
+        const matchResA = a.previewHighlight.match(/^#+ /);
+        const matchResB = b.previewHighlight.match(/^#+ /);
         const numA = matchResA ? 7 - matchResA[0].length : 0;
         const numB = matchResB ? 7 - matchResB[0].length : 0;
         return numB - numA;
@@ -626,10 +659,30 @@ export default {
     // 根据行号计算颜色
     getColorFromNum(num) {
       num = Number(num);
-      const a = (num * 30) % 56;
-      const b = (num * 50) % 256;
-      const c = (num * 70) % 256;
-      return `rgb(${a},${b},${c})`;
+      // const a = (num * 30) % 56;
+      // const b = (num * 50) % 256;
+      // const c = (num * 70) % 256;
+      // return `rgb(${a},${b},${c})`;
+      if (num > 60) {
+        return '#ff6e88';
+      } if (num > 50) {
+        return 'purple';
+      } else if (num > 40) {
+        return 'green';
+      } else if (num > 30) {
+        return 'blue';
+      } else if (num > 20) {
+        return 'orange';
+      }
+      return 'red';
+    },
+
+    // 获取目录
+    getFileHistory(str, cb) {
+      const historyArr = JSON.parse(localStorage.getItem('localFileHistory'));
+      if (historyArr && historyArr.length) {
+        cb(historyArr.reverse().map(item => ({ value: item })));
+      }
     }
   },
   mounted() {
@@ -667,6 +720,9 @@ export default {
   .input-bar[disabled] {
     background: $sidebar-input-disabled-bg;
   }
+  input {
+    height: 24px;
+  }
   button {
     flex-basis: 26px;
     margin: 0px 2px;
@@ -696,7 +752,11 @@ export default {
     flex-basis: 100px;
   }
 }
-
+#specific-search {
+  .local-dir {
+    min-width: 60%;
+  }
+}
 // search info
 #search-info {
   text-align: center;
@@ -752,6 +812,10 @@ export default {
         margin: 0px;
         font-size: 12px;
       }
+      .preview {
+        white-space: pre-wrap;
+        margin: 0;
+      }
       &:hover {
         background: $sidebar-item-hover-bg;
       }
@@ -766,3 +830,17 @@ export default {
 }
 </style>
 
+
+<style lang="scss">
+.el-autocomplete-suggestion {
+  width: 280px!important;
+  .el-autocomplete-suggestion__wrap {
+    padding: 0px!important;
+    li {
+      padding: 0px 2px;
+      font-size: 12px;
+    }
+  }
+}
+
+</style>
