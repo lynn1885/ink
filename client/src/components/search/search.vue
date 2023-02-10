@@ -142,7 +142,7 @@ import tools from '@/tools/tools';
 const isEnableConsole = false;
 
 export default {
-  name: 'outline',
+  name: 'search',
   components: {
     NoteIcon,
   },
@@ -171,7 +171,7 @@ export default {
       searchedItemsNum: 0,
       maxSearchTextLength: 30,
       maxSearchResLength: null, // According to different situations, will be set to different values
-      maxSearchResLengthOne: 100, // When searching for a note
+      maxSearchResLengthOneNote: 100, // When searching for a note
       maxSearchResLengthAll: 500, // when searching for all notes
       timeConsumption: null,
       closedSearchRes: {},
@@ -287,7 +287,7 @@ export default {
         res.forEach((note) => { this.$set(this.closedSearchRes, note.dir, true); });
       } else {
         // search one
-        this.maxSearchResLength = this.maxSearchResLengthOne;
+        this.maxSearchResLength = this.maxSearchResLengthOneNote;
         const searchRes = this.searchCurrent(this.searchText);
         ({ res, searchedItemsNum: this.searchedItemsNum } = searchRes);
         if (isEnableConsole) {
@@ -629,10 +629,10 @@ export default {
       }
       const doc = this.editor.cm.getDoc();
       let i = 0;
-      // Up to 'this.maxSearchResLengthOne' highlights per note
+      // Up to 'this.maxSearchResLengthOneNote' highlights per note
       // beacause doc.markText() is a very heavy operation.
       for (const item of items) {
-        if (i < this.maxSearchResLengthOne) {
+        if (i < this.maxSearchResLengthOneNote) {
           doc.markText(
             { line: item.line, ch: item.char[0] },
             { line: item.line, ch: item.char[1] },
@@ -664,7 +664,7 @@ export default {
       // const c = (num * 70) % 256;
       // return `rgb(${a},${b},${c})`;
       if (num > 60) {
-        return '#ff6e88';
+        return 'rgb(255 164 164)';
       } if (num > 50) {
         return 'purple';
       } else if (num > 40) {

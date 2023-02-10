@@ -372,6 +372,11 @@ export default {
   #lv1-tags {
     display: flex;
     flex-wrap: wrap;
+    background: red;
+    max-height: 150px;
+    background: darken($color: $tool-page-bg, $amount: 2);
+    border-radius: 4px;
+    overflow-y: scroll;
     .tag {
       padding: 2px 4px;
       cursor: pointer;

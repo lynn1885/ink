@@ -344,6 +344,11 @@
   cursor: pointer;
 }
 
+// 普通样式
+.text-center {
+  text-align: center;
+}
+
 // image
 .line-cm-image {
   &>span {
@@ -420,11 +425,24 @@
 
 // highlight
 .cm-searched-text {
-  background: $cm-searched-text-bg;
+  background: $cm-searched-text-bg!important;
+  box-sizing: border-box;
+  border: 2px solid red;
 }
-
-.cm-searched-text-2 {
-  background: $cm-searched-text-bg-2;
+.cm-searched-text-blue {
+  background: $cm-searched-text-bg-blue!important;
+  box-sizing: border-box;
+  border: 2px solid red;
+}
+.cm-searched-text-green {
+  background: $cm-searched-text-bg-green!important;
+  box-sizing: border-box;
+  border: 2px solid red;
+}
+.cm-searched-text-red {
+  background: $cm-searched-text-bg-red!important;
+  box-sizing: border-box;
+  border: 2px solid green;
 }
 
 .cm-highlight-line {

@@ -20,7 +20,7 @@ export default new Vuex.Store({
     splitScreenMode: 0, // 0: 不分屏, 1: 上下分屏, 2: 左右分屏
     smallScreenMaxWith: 600, // 小于这个宽度, 就进入小屏模式
 
-    commonTools: {
+    commonTools: { // 常用工具，如果不存在与下列对象中，则不能放在常用工具区。如果为false，代表可以出现在重用工具区，但现在没出现，true为出现
       Outline: false,
       Structure: false,
       Search: false,
@@ -30,6 +30,7 @@ export default new Vuex.Store({
       Gallery: false,
       Tags: false,
       Web: false,
+      Paper: false,
     }, // 常用工具
   },
   mutations: {

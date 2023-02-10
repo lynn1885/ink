@@ -41,6 +41,7 @@ export default {
       clearTimeout(this.updateTimer);
       this.updateTimer = setTimeout(() => {
         this.isContentChanged = false;
+        // ⭐获取全文，读取全文
         const noteStr = this.editor.cm.getValue();
         const noteLines = noteStr.split('\n');
         const gameLines = [];

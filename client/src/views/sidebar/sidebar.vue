@@ -141,6 +141,11 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></structure>
+      <paper
+        v-if="activePage === 'Paper'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></paper>
       <todo
         v-if="activePage === 'Todo'"
         :timestamp="changeToolTimestamp"
@@ -177,7 +182,7 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></tags>
-       <web
+      <web
         v-if="activePage === 'Web'"
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
@@ -211,6 +216,7 @@ import Paint from '@/components/paint/paint';
 import Gallery from '@/components/gallery/gallery';
 import Tags from '@/components/tags/tags';
 import Web from '@/components/web/web';
+import Paper from '@/components/paper/paper';
 
 // eslint-disable-next-line no-unused-vars
 import {
@@ -231,7 +237,8 @@ import {
   paintSvg,
   gallerySvg,
   tagsSvg,
-  webSvg
+  webSvg,
+  paperSvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -257,7 +264,8 @@ export default {
     Paint,
     Gallery,
     Tags,
-    Web
+    Web,
+    Paper
   },
   data() {
     return {
@@ -340,6 +348,11 @@ export default {
           name: 'Structure',
           displayName: '结构',
           icon: structureSvg,
+          type: 'page',
+        }, {
+          name: 'Paper',
+          displayName: '论文',
+          icon: paperSvg,
           type: 'page',
         },
         {

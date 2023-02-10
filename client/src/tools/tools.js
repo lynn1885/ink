@@ -249,8 +249,47 @@ const tools = {
     }
     // eslint-disable-next-line consistent-return
     return `${fileArr[0]}/${fileArr[1]}/${fileArr[2]}/${fileArr[2]}.md`;
-  }
+  },
 
+  highlightText(cm, reg, className, maxLength, messager) {
+    let searchedIndex = 0;
+
+    const doc = cm.getDoc();
+    const fullText = cm.getValue().split('\n');
+
+    // 每一行
+    let lineNum = 0;
+    for (const lineText of fullText) {
+      let match;
+      reg.lastIndex = 0; // 重置reg状态，reg是有状态对象
+
+      // 每行标记
+      // eslint-disable-next-line no-cond-assign
+      while ((searchedIndex <= maxLength) && (match = reg.exec(lineText))) {
+        doc.markText(
+          { line: lineNum, ch: match.index },
+          { line: lineNum, ch: match.index + match[0].length },
+          {
+            className,
+          }
+        );
+        searchedIndex += 1;
+      }
+
+      lineNum += 1;
+    }
+
+    if (searchedIndex >= maxLength) messager.warning(`超出最大检索个数: 最多${maxLength}个, ${className}`);
+    // console.log('高亮个数：', searchedIndex);
+  },
+
+  unhighlightText(cm, className) {
+    const doc = cm.getDoc();
+    const allMarks = doc.getAllMarks();
+    for (const mark of allMarks) {
+      if (mark.className === className) mark.clear();
+    }
+  },
 };
 
 export default tools;

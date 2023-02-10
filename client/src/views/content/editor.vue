@@ -181,7 +181,7 @@ export default {
             && editor.fileServer.curFilePath === curEditingFilePath // 打开了相同页面
             && editor.cm.getValue() !== curFileContent // 但是和我们的内容不一样
           ) {
-            console.log('同步更新编辑器: ', editor.id);
+            // console.log('同步更新编辑器: ', editor.id);
             editor.cm.getDoc().setValue(curFileContent); // 更新那些别的编辑器
           }
         }
