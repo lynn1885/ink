@@ -13,7 +13,7 @@
     <textarea
       contenteditable="true"
       :maxlength="maxlength"
-      @keydown="setNoteContent"
+      @keydown="saveNoteContent"
       placeholder="Can only enter up to 1000 words"
       ref="textarea"
     ></textarea>
@@ -21,6 +21,7 @@
 </template>
 <script>
 import $ from 'jquery';
+import tools from '@/tools/tools';
 
 const isEnableConsole = true;
 
@@ -30,31 +31,44 @@ export default {
     return {
       maxlength: 1000, // max length
       setNoteTimer: null, // save sticky note timeout id
-      setNoteInterval: 2000,
-      localStorageKey: 'stickyNoteContent',
       oriClientX: null,
       oriClientY: null,
       oriOffsetRight: null,
       oriOffsetTop: null,
+      filePath: '.ink/basic/sticky note/sticky note.md'
     };
   },
   methods: {
     // get note content from storage
-    getNoteContent() {
-      this.$refs.textarea.value = localStorage.getItem(this.localStorageKey);
+    async loadNoteContent() {
+      const fileContent = await tools.loadFile(this.filePath, this.$message);
+      this.$refs.textarea.value = fileContent;
     },
 
     // set note content to localstorage
-    setNoteContent(e) {
-      if (e.ctrlKey && e.keyCode === 83) {
+    // 第二个参数是节流秒数
+    saveNoteContent(e, interval = 2000) {
+      if (e && e.ctrlKey && e.keyCode === 83) {
         // prevent ctrl-s
         e.preventDefault();
         return;
       }
-      clearTimeout(this.setNoteTimer);
-      this.setNoteTimer = setTimeout(() => {
-        localStorage.setItem(this.localStorageKey, this.$refs.textarea.value);
-      }, this.setNoteInterval);
+
+      if (interval) { // 节流保存
+        clearTimeout(this.setNoteTimer);
+        this.setNoteTimer = setTimeout(() => {
+          tools.saveFile({
+            path: this.filePath,
+            data: this.$refs.textarea.value
+          }, this.$message);
+        }, interval);
+      } else { // 立即保存
+        clearTimeout(this.setNoteTimer);
+        tools.saveFile({
+          path: this.filePath,
+          data: this.$refs.textarea.value
+        }, this.$message);
+      }
     },
 
     // drag
@@ -93,13 +107,12 @@ export default {
     // stickyNote.css('top', `${localStorage.getItem('offsetTop') || 10}px`);
     stickyNote.css('right', '10px');
     stickyNote.css('top', '10px');
-    this.getNoteContent();
+    this.loadNoteContent();
     this.$refs.textarea.focus();
   },
 
   beforeDestroy() {
-    clearTimeout(this.setNoteTimer);
-    localStorage.setItem(this.localStorageKey, this.$refs.textarea.value);
+    this.saveNoteContent(null, 0); // 立即保存
     if (isEnableConsole) {
       console.log('sticky note destroy');
     }

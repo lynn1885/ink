@@ -70,11 +70,11 @@ const Files = {
 
   /**
    * 保存文件
-   * @param {object} content {filePath: ..., data: ...}
+   * @param {object} content {path: ..., data: ...}
    * @param {function} messager 通知器
    * @param {boolean} isShowSuccessInfo 保存成功时是否显示通知
    */
-  async update(content, messager, isShowSuccessInfo) {
+  async update(content, messager, isShowSuccessInfo = false) {
     await axios.put(`${serverUrl}files/`, JSON.stringify(content), {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',

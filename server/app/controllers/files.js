@@ -50,6 +50,7 @@ exports.update = async (req, res) => {
     });
 
   // 备份文件
+  if (req.body.path.includes('不备份')) return; // ⚠️如果文件名含有“不备份”三个字，则不再备份该文件
   const filePathDir = path.dirname(filePath);
   const files = await Directories.get(filePathDir);
   const backupTimes = [];
@@ -202,7 +203,8 @@ exports.searchAllFiles = async (req, res) => {
       searchText = searchText.toLowerCase();
     }
     // 检索词用空格分隔时
-    const searchParts = searchText.split(/\s+/g);
+    const searchParts = searchText.split(/\s+/g).filter(item => item);
+    // console.log(123, searchParts);
     // 生成正则表达式
     let reg;
     let reg2;

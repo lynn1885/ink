@@ -123,7 +123,7 @@
           :class="{item: true, active: activeSearchItem === item}"
 
           :key="item.noteDir + item.line + '/' + item.char"
-          @click="clickSearchItemHandler(item)"
+          @click="clickSearchItemHandler(item, $event)"
         >
           <div class="line" >{{item.noteDir}} {{item.line}}行，<span :style="'color: ' + getColorFromNum(item.lineScore)">{{item.lineScore}}分</span></div>
           <pre class="header" v-if="item.headers && item.headers.length">{{item.headers.join('\n') }}</pre>
@@ -505,7 +505,7 @@ export default {
         const historyArr = JSON.parse(localStorage.getItem('localFileHistory')) || [];
         if (!historyArr.includes(this.specifiedSearchFolder)) {
           historyArr.push(this.specifiedSearchFolder);
-          if (historyArr.length > 6) {
+          if (historyArr.length > 12) {
             historyArr.shift();
           }
         }
@@ -561,12 +561,15 @@ export default {
     },
 
     // click search item handler
-    async clickSearchItemHandler(item) {
+    async clickSearchItemHandler(item, e) {
       this.activeSearchItem = item;
 
       if (item.isSpecifiedMode) {
-        tools.copyText(item.previewText.slice(0, 12));
-        await Files.open(item.noteDir, this.$message);
+        if (e.ctrlKey) {
+          tools.copyText(item.previewText.slice(0, 12));
+          await Files.open(item.noteDir, this.$message);
+          this.$message.success('打开文件');
+        }
         return;
       }
 
@@ -799,13 +802,16 @@ export default {
       }
     }
     .item {
-      cursor: pointer;
+      // cursor: pointer;
       padding: 3px 8px;
       border-top: 1px solid darken($color: $tool-page-bg, $amount: 2);
       .line {
         color: $comment-color;
         margin-bottom: 5px;
         font-size: 12px;
+         &::selection {
+          background: rgb(191, 220, 255)!important;
+        }
       }
       .header {
         color: $comment-color;
@@ -815,6 +821,9 @@ export default {
       .preview {
         white-space: pre-wrap;
         margin: 0;
+        &::selection {
+          background: rgb(191, 220, 255)!important;
+        }
       }
       &:hover {
         background: $sidebar-item-hover-bg;

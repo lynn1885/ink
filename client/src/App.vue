@@ -10,7 +10,7 @@
       ></side-bar>
 
       <!-- 笔记本 -->
-      <div id="all-note-content" :class="[splitScreenClass]">
+      <div id="all-note-content" :class="[splitScreenClass]" ref="note-content">
         <note-content :isDefaultEditor="true" class="note-content note-content-1"></note-content>
         <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="true"></note-content>
       </div>
@@ -48,6 +48,7 @@ import CommonTools from '@/views/common-tools/common-tools.vue';
 import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
+import { throttle } from 'lodash';
 // import Files from '@/models/files';
 const { clientWidth } = document.body;
 
@@ -62,7 +63,8 @@ export default {
   },
   data() {
     return {
-      smallScreen: clientWidth < this.$store.state.smallScreenMaxWith,
+      // smallScreen: clientWidth < this.$store.state.smallScreenMaxWith,
+      smallScreen: true,
       staticIconsUrl: config.server.staticIconsUrl, // 背景图服务器地址
       isShowBgImg: false, // 是否显示背景图
       bgImgName: config.bgImgName, // 背景图名字
@@ -225,6 +227,16 @@ export default {
       });
     },
 
+    onResizeNoteContent(e) {
+      const observer = new ResizeObserver(throttle((entries) => {
+        for (const entry of entries) {
+          if (entry.contentRect.width < 720) this.smallScreen = true;
+          else this.smallScreen = false;
+        }
+      }, 500));
+
+      observer.observe(this.$refs['note-content']);
+    },
     // zen mode
     toggleZenMode() {
       if (this.isZenMode) {
@@ -276,6 +288,7 @@ export default {
       this.isShowBgImg = true;
     }, 300);
     await this.getDefaultTheme();
+    this.onResizeNoteContent();
 
     // After opening the software for 3 seconds, get all files for caching these notes in memory
     // setTimeout(async () => {

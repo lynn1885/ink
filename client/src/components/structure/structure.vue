@@ -367,19 +367,26 @@ export default {
   // 搜索
   #search-bar {
     margin-top: 6px;
+    // margin-bottom: 2px;
   }
   // 一级标题
   #lv1-tags {
     display: flex;
+    flex-shrink: 0;
     flex-wrap: wrap;
-    background: red;
-    max-height: 150px;
+    max-height: 140px;
     background: darken($color: $tool-page-bg, $amount: 2);
+    box-shadow: inset 0 0 4px 2px darken($color: $tool-page-bg, $amount: 6);
+    padding: 2px;
+    // border: 2px solid darken($color: $tool-page-bg, $amount: 10);
     border-radius: 4px;
     overflow-y: scroll;
     .tag {
       padding: 2px 4px;
       cursor: pointer;
+      // &:hover {
+      //   background: $content-menu-active-bg!important;
+      // }
     }
   }
   // 标签容器

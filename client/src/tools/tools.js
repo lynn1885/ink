@@ -1,5 +1,6 @@
 import config from '@/config';
 import $ from 'jquery';
+import Files from '@/models/files';
 
 const tools = {
   /**
@@ -290,6 +291,48 @@ const tools = {
       if (mark.className === className) mark.clear();
     }
   },
+
+  /**
+   * 读取文件
+   * @param {str} filePath 文件路径
+   * @param {function} $message 通知函数
+   * @returns {null|string} 读取成功返回string，失败返回null
+   */
+  async loadFile(filePath, $message) {
+    if (!filePath) {
+      $message.error(`tools.loadFile(), illegal filePath: ${filePath}`);
+    }
+    let content = null;
+    try {
+      content = await Files.get(filePath, $message);
+    } catch (error) {
+      $message.error(`tools.loadFile(), load Failed: ${filePath}`);
+      console.log(`tools.loadFile(), load failed: ${content}`, error);
+    }
+    return content;
+  },
+
+  /**
+   * 保存文件
+   * @param {object} content {filePath: ..., data: ...}
+   * @param {function} messager 通知器
+   */
+  async saveFile(content, $message) {
+    if (!content.path) {
+      $message.error(`tools.saveFile(), illegal path: ${content.path}`);
+    }
+
+    if (typeof content.data !== 'string') {
+      $message.error(`tools.saveFile(), non-string content: ${content.data}`);
+    }
+
+    try {
+      await Files.update(content, $message);
+    } catch (error) {
+      $message.error(`tools.saveFile(), save failed: ${content}`);
+      console.log(`tools.saveFile(), save failed: ${content}`, error);
+    }
+  }
 };
 
 export default tools;
