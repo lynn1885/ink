@@ -8,6 +8,9 @@ start-server.bat
 /cert/
 /tools/
 
+# local files
+/server/files
+
 # local env files
 .env.local
 .env.*.local

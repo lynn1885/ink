@@ -305,7 +305,7 @@ export default {
 // common
 * {
   font-family: $font-family-main;
-  font-weight: bold;
+  font-weight: normal;
 }
 textarea {
   font-family: $font-family-main!important;

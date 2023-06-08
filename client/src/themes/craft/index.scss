@@ -537,6 +537,16 @@
   color:rgb(222, 158, 40)!important
 }
 
+[ink-mark-1^='User'] {
+  background: url(/imgs/个人理解.png) 110px 8px / 13px 13px no-repeat!important;
+  color:rgb(222, 158, 40)!important
+}
+
+[ink-mark-1^='ChatGPT'] {
+  background: url(/imgs/ChatGPT.png) 110px 8px / 13px 13px no-repeat!important;
+  color:rgb(60, 179, 64)!important
+}
+
 [ink-mark-1^='首先'], [ink-mark-1^='其次'], [ink-mark-1^='然后'], [ink-mark-1^='第'], [ink-mark-1^='其中第'], [ink-mark-1^='而第']{
   background: url(/imgs/圆点.png) 110px 8px / 13px 13px no-repeat!important;
 }

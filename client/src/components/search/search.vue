@@ -578,7 +578,7 @@ export default {
         this.editor.scrollNoteToThisLine(
           item.line,
           this.highlightLineClass,
-          'intelligently',
+          'unfoldAll',
           true
         );
       } else {

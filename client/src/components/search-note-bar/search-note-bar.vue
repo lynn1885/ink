@@ -106,11 +106,11 @@ export default {
           return;
         } else if (searchText) {
           // search logic
-          const searchTextArr = searchText.toLowerCase().split('/');
+          const searchTextArr = searchText.toLowerCase().split(' ');
           for (const cat of this.catalogArr) {
             let isNeedPush = true;
             for (let i = 0; i < searchTextArr.length; i += 1) {
-              if (cat.toLowerCase().includes(searchTextArr[i])) {
+              if (cat.toLowerCase().includes(searchTextArr[i].trim())) {
                 isNeedPush = true;
               } else {
                 isNeedPush = false;
