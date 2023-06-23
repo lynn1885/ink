@@ -594,13 +594,16 @@ export default {
       // 对于导入的笔记, 删除对应的图片目录
       let needDeleteImgFolder = [];
       let filePath = '';
-      try {
-        filePath = tools.fileArr2FilePath([this.curCatLv1, this.curCatLv2, curContentMenuCatName]);
-        const fileContent = await Files.get(filePath, this.$message);
-        const imgLines = this.editor.getAllImgLines(fileContent);
-        needDeleteImgFolder = Array.from(new Set(imgLines.map(item => item.imgFolder))).filter(folder => folder.startsWith(config.importNodeImgPrefix));
-      } catch (error) {
-        this.$message.warning('无法读取要删除的笔记: ', filePath);
+      // ⚠️暂时只处理删除三级目录的情况
+      if (curContentMenuCatLv === 3) {
+        try {
+          filePath = tools.fileArr2FilePath([this.curCatLv1, this.curCatLv2, curContentMenuCatName]);
+          const fileContent = await Files.get(filePath, this.$message);
+          const imgLines = this.editor.getAllImgLines(fileContent);
+          needDeleteImgFolder = Array.from(new Set(imgLines.map(item => item.imgFolder))).filter(folder => folder.startsWith(config.importNodeImgPrefix));
+        } catch (error) {
+          this.$message.warning('无法读取要删除的笔记: ', filePath);
+        }
       }
 
 
