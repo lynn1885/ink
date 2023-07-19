@@ -178,7 +178,7 @@ export default {
             curLine._lineNums[header] = Number(headerLineNum);
 
             if (width) _tableHeaders[header] = width;
-            if (!_tableHeaders[header]) _tableHeaders[header] = '100px'; // ⭐ 各列默认宽度
+            if (!_tableHeaders[header]) _tableHeaders[header] = '120px'; // ⭐ 各列默认宽度
           });
 
           // 写入该行
@@ -227,6 +227,9 @@ export default {
 
 <style>
 #ink-table .el-table__row .cell {
-  white-space: pre!important;
+  white-space: pre-wrap!important;
+  /* text-overflow:  */
+  /* overflow: scroll; */
+  /* word-wrap: break-word!important; */
 }
 </style>

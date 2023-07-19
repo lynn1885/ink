@@ -361,7 +361,7 @@ export default {
           name: 'Ink Table',
           displayName: '表格',
           icon: inkTableSvg,
-          sideBarWidth: '60%',
+          sideBarWidth: '50%',
           type: 'page',
         }, {
           name: 'Paper',
