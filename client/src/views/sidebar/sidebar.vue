@@ -136,6 +136,11 @@
         :timestamp="changeToolTimestamp"
         :class="{tool: true}"
       ></note-map>
+      <ink-table
+        v-if="activePage === 'Ink Table'"
+        :timestamp="changeToolTimestamp"
+        :class="{tool: true}"
+      ></ink-table>
       <structure
         v-if="activePage === 'Structure'"
         :timestamp="changeToolTimestamp"
@@ -217,6 +222,7 @@ import Gallery from '@/components/gallery/gallery';
 import Tags from '@/components/tags/tags';
 import Web from '@/components/web/web';
 import Paper from '@/components/paper/paper';
+import InkTable from '@/components/ink-table/ink-table';
 
 // eslint-disable-next-line no-unused-vars
 import {
@@ -238,7 +244,8 @@ import {
   gallerySvg,
   tagsSvg,
   webSvg,
-  paperSvg
+  paperSvg,
+  inkTableSvg
 } from './svg';
 
 const isEnableConsole = false;
@@ -265,7 +272,8 @@ export default {
     Gallery,
     Tags,
     Web,
-    Paper
+    Paper,
+    InkTable
   },
   data() {
     return {
@@ -348,6 +356,12 @@ export default {
           name: 'Structure',
           displayName: '结构',
           icon: structureSvg,
+          type: 'page',
+        }, {
+          name: 'Ink Table',
+          displayName: '表格',
+          icon: inkTableSvg,
+          sideBarWidth: '60%',
           type: 'page',
         }, {
           name: 'Paper',

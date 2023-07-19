@@ -719,7 +719,6 @@ export default class {
    */
   getHeadersArray(text) {
     if (!text) {
-      console.log(123, this.cm.getDoc());
       text = this.cm.getDoc().getValue();
     }
     const lines = text.split('\n');
@@ -851,6 +850,7 @@ export default class {
             tagName: newTag,
             lineNum,
             lineText,
+            headerLv: this.getHeaderLvByStr(lineText),
             lineTextWithoutTag
           };
           return newTag;

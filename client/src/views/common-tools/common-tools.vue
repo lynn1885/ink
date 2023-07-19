@@ -41,6 +41,7 @@ import Tags from '@/components/tags/tags';
 import Web from '@/components/web/web';
 import Structure from '@/components/structure/structure';
 import Paper from '@/components/paper/paper';
+import InkTable from '@/components/ink-table/ink-table';
 
 export default {
   name: 'common-tools',
@@ -61,7 +62,8 @@ export default {
     Tags,
     Web,
     Structure,
-    Paper
+    Paper,
+    InkTable
   },
   data() {
     return {
