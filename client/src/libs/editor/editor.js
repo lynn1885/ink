@@ -670,11 +670,13 @@ export default class {
     lineNum: 'lineNum',
     lv: 'lv',
     text: 'text',
+    textWithoutHeader: 'textWithoutHeader',
     nextLine1: 'nextLine1',
     nextLine2: 'nextLine2',
     nextLine3: 'nextLine3', // 标题之后三行
-    children: 'children'
-  }) {
+    children: 'children',
+    content: 'content'
+  }, isNeedContent = false) {
     if (!text) {
       text = this.cm.getDoc().getValue();
     }
@@ -687,26 +689,52 @@ export default class {
         const headerLv = matchRes[1].length;
         if (headerLv === 1) {
           lastMeetHeaders[headerLv] = [];
-          hierarchy.push({
+
+          const res = {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
+            [propNames.textWithoutHeader]: matchRes[0].split(/^#+ /)[1],
             [propNames.nextLine1]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
             [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],
-          });
+          };
+          hierarchy.push(res);
+
+          // 标题下的文本内容
+          if (isNeedContent) {
+            let j = i;
+            let content = '';
+            while (++j && j < lineArr.length && !this.isThisLineAHeader(lineArr[j])) {
+              content += `${lineArr[j]}\n`;
+            }
+            res[propNames.content] = content;
+          }
         } else if (headerLv > 1 && headerLv <= 6 && lastMeetHeaders[headerLv - 1]) {
           lastMeetHeaders[headerLv] = [];
-          lastMeetHeaders[headerLv - 1].push({
+          const res = {
             [propNames.lineNum]: i,
             [propNames.lv]: headerLv,
             [propNames.text]: matchRes[0],
+            [propNames.textWithoutHeader]: matchRes[0].split(/^#+ /)[1],
             [propNames.nextLine1]: lineArr[i + 1],
             [propNames.nextLine2]: lineArr[i + 2],
             [propNames.nextLine3]: lineArr[i + 3],
             [propNames.children]: lastMeetHeaders[headerLv],
-          });
+          };
+          lastMeetHeaders[headerLv - 1].push(res);
+
+          // 标题下的文本内容
+          if (isNeedContent) {
+            let j = i;
+            let content = '';
+            while (++j && j < lineArr.length && !this.isThisTextAHeader(lineArr[j])) {
+              content += `${lineArr[j]}\n`;
+              // console.log(lineArr[j]);
+            }
+            res[propNames.content] = content;
+          }
         }
       }
     }
@@ -781,11 +809,12 @@ export default class {
    *  2: 只获取两层标题, 比如当前标题行是四级, 就只获取四级标题 + 五级标题
    *  ...
    *  6: 获取六层标题
+   * @param {string} returnType 返回值类型 'str', 返回文本, 'arr', 返回数组
    * @param {boolean} isSelectionAllContent 是否同时选中当前标题(含)下的所有内容
 
    * @returns 获取到的内容
    */
-  getHeaderContent(headerLineNum, onlyHeaderDeep = 0, isSelectionAllContent = false) {
+  getHeaderContent(headerLineNum, onlyHeaderDeep = 0, isSelectionAllContent = false, returnType = 'str') {
     // 如果当前行不是header, 直接返回
     if (!this.isThisLineAHeader(headerLineNum)) return '';
 
@@ -798,17 +827,24 @@ export default class {
     const endLineText = doc.getLine(endLineNum);
     let res = [];
     for (let i = headerLineNum; i <= endLineNum; i += 1) {
-      res.push(doc.getLine(i));
+      const lineText = doc.getLine(i);
+      res.push({
+        lineText,
+        lineNum: i,
+        lineTextWithoutHeader: lineText.split(/^#+ /)[1],
+        isFirstHeader: i === headerLineNum
+      });
     }
 
     // 按需求提取标题
     if (onlyHeaderDeep && res.length) {
-      const firstHeaderLevelNum = this.getHeaderLvByStr(res[0]);
+      const firstHeaderLevelNum = this.getHeaderLvByStr(res[0].lineText);
       const maxHeaderLv = firstHeaderLevelNum + (onlyHeaderDeep - 1);
       if (maxHeaderLv) {
-        res = res.filter((line) => {
-          const curLineHeaderLv = this.getHeaderLvByStr(line);
+        res = res.filter((lineObj) => {
+          const curLineHeaderLv = this.getHeaderLvByStr(lineObj.lineText);
           if (curLineHeaderLv && curLineHeaderLv <= maxHeaderLv) {
+            lineObj.headerLv = curLineHeaderLv;
             return true;
           }
           return false;
@@ -824,7 +860,12 @@ export default class {
       );
     }
 
-    return res.join('\n');
+    if (returnType === 'str') {
+      return res.map(lineObj => lineObj.lineText).join('\n');
+    } else if (returnType === 'arr') {
+      return res;
+    }
+    return undefined;
   }
 
   /**
