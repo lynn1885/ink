@@ -19,9 +19,9 @@
           :prop="colName"
           :label="colName"
           :key="colName"
+          :width="colName === '序号' ? '50px' : undfined"
           :fixed="colName === '序号' || colName === '标题'"
-          :min-width="tableData._tableColStyle[colName] && tableData._tableColStyle[colName].width"
-          :sortable="true"
+          :min-width="tableData._tableColStyle[colName] ? tableData._tableColStyle[colName].width : '120px'"
         />
         <!-- <el-table-column
           v-for="header in tableData"
@@ -295,9 +295,11 @@ export default {
       if (endLineNum) {
         endLineNum += 1;
         let str = '## 标题\n';
-        tableData._tableColName.forEach((colName) => {
-          str += `### ${colName}\n`;
-        });
+        tableData._tableColName
+          .filter(item => item !== '序号' && item !== '标题')
+          .forEach((colName) => {
+            str += `### ${colName}\n`;
+          });
 
         this.editor.cm.getDoc().replaceRange(
           str,
