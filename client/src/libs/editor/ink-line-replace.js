@@ -58,7 +58,6 @@ export default function (editor, config) {
           }
         }
 
-
         if (replaceLineObj['[import]']) {
           const importModules = replaceLineObj['[import]'].split(',');
           if (importModules) {

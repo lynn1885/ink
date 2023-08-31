@@ -653,7 +653,7 @@
 //   }
 // }
 
-// [ink-mark-1^='('] {
+// [ink-mark-1$=')'] {
 //   &[ink-mark-1*='B8']{
 //     background: -webkit-linear-gradient(left, rgb(230, 220, 246)  0%, rgb(245, 204, 218) 100%)!important;
 //   }

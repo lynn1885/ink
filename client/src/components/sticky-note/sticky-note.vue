@@ -42,6 +42,7 @@ export default {
     // get note content from storage
     async loadNoteContent() {
       const fileContent = await tools.loadFile(this.filePath, this.$message);
+      localStorage.setItem('stickyNoteContent', fileContent);
       this.$refs.textarea.value = fileContent;
     },
 
@@ -61,6 +62,7 @@ export default {
             path: this.filePath,
             data: this.$refs.textarea.value
           }, this.$message);
+          localStorage.setItem('stickyNoteContent', this.$refs.textarea.value);
         }, interval);
       } else { // 立即保存
         clearTimeout(this.setNoteTimer);
@@ -68,6 +70,7 @@ export default {
           path: this.filePath,
           data: this.$refs.textarea.value
         }, this.$message);
+        localStorage.setItem('stickyNoteContent', this.$refs.textarea.value);
       }
     },
 
