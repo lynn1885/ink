@@ -305,7 +305,7 @@ export default {
 // common
 * {
   font-family: $font-family-main;
-  font-weight: normal;
+  font-weight: $font-weight;
 }
 textarea {
   font-family: $font-family-main!important;
@@ -450,7 +450,7 @@ textarea {
     background-image: url('/imgs/paper.jpg')!important;
   } */
    #all-note-content {
-    max-width: 1040px;
+    max-width: 860px;
     margin: 0 auto;
     z-index: 10;
   }

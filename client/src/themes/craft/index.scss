@@ -18,11 +18,18 @@
   color: $editor-color !important;
   background-color: $editor-bg !important;
   caret-color: $cursor;
+  // width: 860px;
+  // margin: 0 auto;
 
   pre {
     padding-left: 0px;
   }
 }
+
+// .CodeMirror-sizer {
+//   background-image: url(https://img.zcool.cn/community/01719d57a92edb0000018c1b6896fa.jpg@2o.jpg)!important;
+//   background-size: 100%;
+// }
 
 // 最后一行的margin-bottom
 // 可能.codemirror直接包裹pre行, 也可能.codemirror包裹div再包裹pre行
