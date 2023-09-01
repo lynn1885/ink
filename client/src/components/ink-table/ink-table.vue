@@ -90,7 +90,11 @@ export default {
     },
 
     build() {
-      this.buildTable();
+      try {
+        this.buildTable();
+      } catch (error) {
+        console.error('构建表错误：', error);
+      }
       this.changesHandler = _.debounce(this.buildTable, 1000);
       this.editor.on('changes', this.changesHandler);
     },
