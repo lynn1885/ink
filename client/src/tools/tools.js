@@ -107,6 +107,18 @@ const tools = {
     element.remove();
   },
 
+  async readClipboardText() {
+    try {
+      // 使用await等待剪贴板文本读取完成
+      const text = await navigator.clipboard.readText();
+      // 成功读取剪贴板中的文本后，可以在这里处理文本
+      return text;
+    } catch (err) {
+      // 处理错误情况
+      console.error(`无法读取剪贴板中的文本：${err}`);
+    }
+  },
+
   indexMark: {
     1: '①',
     2: '②',

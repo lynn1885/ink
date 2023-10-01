@@ -48,7 +48,11 @@ import CommonTools from '@/views/common-tools/common-tools.vue';
 import store from '@/store';
 import config from '@/config';
 import UserConfig from '@/models/user-config';
+import Files from '@/models/files';
+import tools from '@/tools/tools'; // 临时导入, 记得删除
+
 import { throttle } from 'lodash';
+
 // import Files from '@/models/files';
 const { clientWidth } = document.body;
 
@@ -208,7 +212,7 @@ export default {
 
     // bind hot key
     bindHotKey() {
-      document.addEventListener('keydown', (e) => {
+      document.addEventListener('keydown', async (e) => {
         // ctrl + /: toggle zen mode
         if (e.ctrlKey && e.keyCode === 191) {
           e.preventDefault();
@@ -216,13 +220,35 @@ export default {
         }
 
         // 快速跳转temp笔记
-        // ctrl + shift + alt + t
-        if (e.ctrlKey && e.shiftKey && e.altKey && e.keyCode === 84) {
+        // ctrl + shift + alt + v
+        // if (e.ctrlKey && e.shiftKey && e.altKey && e.keyCode === 86) {
+        if (e.ctrlKey && e.shiftKey && e.keyCode === 86) {
           e.preventDefault();
-          this.$store.commit('updateGotoThisCatalog', ['.ink', 'basic', 'temp']);
-          setTimeout(() => {
-            this.editor.cm.focus();
-          }, 200);
+          // this.$store.commit('updateGotoThisCatalog', ['.ink', 'basic', 'temp']);
+          // setTimeout(() => {
+          // this.editor.cm.focus();
+          // }, 200);
+          // 获取文件内容
+          const filePath = '.ink/basic/temp/temp.md';
+          const pasteText = await tools.readClipboardText();
+          if (pasteText) {
+            let tempFileContent = await Files.get(filePath, this.$message);
+
+            tempFileContent = `\n# 采集\n${pasteText}\n${tempFileContent}`;
+            try {
+              await Files.update({
+                path: filePath,
+                data: tempFileContent,
+              });
+              this.$message.success(`采集成功: ${pasteText.slice(0, 10)}`);
+            } catch (error) {
+              this.$message.warning(`采集失败: ${pasteText.slice(0, 10)}`);
+            }
+            // console.log(123, pasteText);
+            // console.log(123, tempFileContent);
+          } else {
+            this.$message.warning('剪贴板内容为空');
+          }
         }
       });
     },
