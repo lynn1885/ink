@@ -274,12 +274,30 @@ export default {
       } else {
         this.inkCommon.plugins.catalog.createCatalog();
       }
-    }
+    },
+
+    // 卸载网页时
+    onbeforeunload() {
+      // console.log(123, this.fixedNoteDirs, this.curFilePath, this.curFilePathArr);
+      const quickOpendDir = this.fixedNoteDirs.concat();
+      quickOpendDir.push(`${this.curFilePathArr[0]}/${this.curFilePathArr[1]}/${this.curFilePathArr[2]}/`);
+
+      localStorage.setItem('quickOpendDir', JSON.stringify(quickOpendDir));
+      // console.log(123, JSON.stringify(quickOpendDir));
+    },
   },
   mounted() {
     if (isEnableConsole) {
       console.log('mounted');
     }
+    window.addEventListener('beforeunload', this.onbeforeunload);
+
+    const lastQuickOpendDir = JSON.parse(localStorage.getItem('quickOpendDir'));
+    this.fixedNoteDirs = Array.from(new Set(this.fixedNoteDirs.concat(lastQuickOpendDir)));
+  },
+
+  beforeDestroy() {
+    window.removeEventListener('beforeunload', this.onbeforeunload);
   },
 
   destroyed() {
