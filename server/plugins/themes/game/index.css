@@ -1,0 +1,42 @@
+/* vars */
+/* :root {
+  --tool-icons-bg: #fff2e3;
+  --tool-pages-bg: #fff8e3;
+  --editor-bg: #fff9e3;
+  --main-bg: #fff8e3;
+
+  --editor-color: rgb(114, 107, 107);
+  --tool-pages-color: #333;
+} */
+
+/* font */
+* {
+  font-family: '方正像素14';
+  /* font-weight: normal; */
+}
+
+/* main */
+/* #main {
+  background: var(--main-bg)!important;
+} */
+
+/* tool icons */
+/* #tool-icons {
+  background: var(--tool-icons-bg)!important;
+} */
+
+
+/* tool pages */
+/* #tool-pages {
+  background: var(--tool-pages-bg)!important;
+} */
+
+/* content menu */
+/* #content-menu {
+  background: var(--editor-bg)!important;
+} */
+
+/* editor */
+/* .CodeMirror {
+  background: var(--editor-bg)!important;
+} */

@@ -272,7 +272,7 @@ export default {
       this.isSearching = true;
       this.editor.on('changes', this.changesHandler);
 
-      if (this.isGlobal) {
+      if (this.isGlobal || this.specifiedSearchFolder) {
         // search all
         await this.editor.runCommand('SAVE', {
           triggerType: 'BEFORE_GLOBAL_SEARCH',
@@ -285,7 +285,7 @@ export default {
         }
         // fold results automatically
         res.forEach((note) => { this.$set(this.closedSearchRes, note.dir, true); });
-      } else {
+      } else if (!this.isGlobal && !this.specifiedSearchFolder) {
         // search one
         this.maxSearchResLength = this.maxSearchResLengthOneNote;
         const searchRes = this.searchCurrent(this.searchText);
@@ -325,7 +325,7 @@ export default {
 
     // search entry 2
     changesHandler(cm, changes) {
-      if (this.isGlobal) {
+      if (this.isGlobal || this.specifiedSearchExtName) {
         return;
       }
       clearTimeout(this.updateTimer);
@@ -385,7 +385,7 @@ export default {
             // other conditions: clear the result set
             this.clear();
           }
-        } else if (!this.isGlobal) {
+        } else if (!this.isGlobal && !this.specifiedSearchFolder) {
           // not global
           // When the current note content changes, the search will be triggered automatically.
           if (changes[0].origin !== 'setValue') {
@@ -545,7 +545,7 @@ export default {
 
     // search bar key down handler
     searchBarKeyDownHandler(e) {
-      if (!this.isGlobal) {
+      if (!this.isGlobal && !this.specifiedSearchFolder) {
         setTimeout(() => {
           this.search();
         }, 100);
@@ -792,7 +792,7 @@ export default {
       // height: 24px;
       box-sizing: border-box;
       padding: 4px 4px;
-      background: darken($color: $tool-page-bg, $amount: 0.6);
+      background: $sidebar-item-active-bg;
       cursor: pointer;
       // overflow: hidden;
       // text-overflow: ellipsis;

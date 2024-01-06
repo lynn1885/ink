@@ -10,12 +10,13 @@
       >
         <div class="tag-item-text">
           <div class="tag-title">
-             <div class="tag-name">
-              {{tagName.replace('__', ' ')}}
-            </div>
             <div class="delete">
               <i class="el-icon-delete" @click="deleteTag(info)"></i>
             </div>
+             <div class="tag-name">
+              {{tagName.replace('__', ' ')}}
+            </div>
+
           </div>
           <div class="line-text">
             {{info.lineTextWithoutTag}}
@@ -306,9 +307,12 @@ export default {
 
     /* 文本 */
     .tag-item-text {
+      display: flex;
+      align-items: center;
       .tag-title {
         display: flex;
         align-items: center;
+        margin-right: 4px;
         .tag-name {
           flex-shrink: 0;
           flex-grow: 1;
@@ -317,6 +321,9 @@ export default {
           border-radius: 2px;
           text-align: center;
           color: $code-color;
+        }
+        .delete {
+          padding-top: 5px;
         }
         .delete:hover {
           color: red

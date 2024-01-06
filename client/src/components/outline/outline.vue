@@ -419,6 +419,12 @@ export default {
         text-align: center;
         font-size: 11px;
       }
+      &.cutting{
+        // background: red;
+        text-align: center;
+        font-weight: bold;
+        background: $sidebar-item-active-bg;
+      }
     }
     .header1:not(:first-of-type) {
       margin-top: 10px;
