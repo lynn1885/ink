@@ -77,6 +77,8 @@ export default {
           }
         }
         this.thisEditor.runCommand('OPENFILE', this.$store.state.curFilePath);
+      } else {
+        this.thisEditor.runCommand('OPENFILE', '.ink/basic/temp/temp.md');
       }
     },
 

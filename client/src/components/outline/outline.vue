@@ -1,6 +1,54 @@
 <template>
   <div id="outline">
     <div id="outline-info" v-if="!displayHeaders">没有发现标题~</div>
+    <div class="important-headers">
+      <!-- 特级标题 -->
+      <div class="headers-container">
+        <div class="container-title">零级标题</div>
+        <div
+          v-if="header.lv === 1 && header.text.startsWith('# - ') "
+          :class="{
+            item: true,
+            active: header.lineNum === activeHeaderLineNum
+          }"
+          :key="header.lineNum + '-' + header.lv + '-' + header.text"
+          v-for="header of displayHeaders"
+          @click="scrollNoteToThisLine(header.lineNum, false)"
+          :title="header.text.replace(/^#+/, '')"
+        >{{ header.text.replace(/^#+/, '') }}</div>
+      </div>
+      <!-- 重要标题 -->
+      <div class="headers-container">
+        <div class="container-title">重要标题</div>
+        <div
+          v-if="header.text.endsWith('⭐')"
+          :class="{
+            item: true,
+            active: header.lineNum === activeHeaderLineNum
+          }"
+          :key="header.lineNum + '-' + header.lv + '-' + header.text"
+          v-for="header of displayHeaders"
+          @click="scrollNoteToThisLine(header.lineNum, false)"
+          :title="header.text.replace(/^#+/, '')"
+        >{{ header.text.replace(/^#+/, '') }}</div>
+      </div>
+      <!-- 一级标题 -->
+      <div class="headers-container">
+        <div class="container-title">一级标题</div>
+        <div
+          v-if="header.lv === 1 && (!header.text.startsWith('# %'))"
+          :class="{
+            item: true,
+            active: header.lineNum === activeHeaderLineNum
+          }"
+          :key="header.lineNum + '-' + header.lv + '-' + header.text"
+          v-for="header of displayHeaders"
+          @click="scrollNoteToThisLine(header.lineNum, false)"
+          :title="header.text.replace(/^#+/, '')"
+        >{{ header.text.replace(/^#+/, '') }}</div>
+      </div>
+    </div>
+
 
     <div class="headers-container">
       <div
@@ -323,9 +371,9 @@ export default {
     },
 
     // let the note scroll to this line
-    scrollNoteToThisLine(lineNum) {
+    scrollNoteToThisLine(lineNum, isForbidHeadersBarToScroll = true) {
       // this.curCursorLineNum = lineNum;
-      this.isForbidHeadersBarToScroll = true;
+      this.isForbidHeadersBarToScroll = isForbidHeadersBarToScroll;
       this.calDisplayHeaders(lineNum);
       this.editor.scrollNoteToThisLine(lineNum, this.highlightLineClass, 'unfoldAll', true);
     },
@@ -350,7 +398,7 @@ export default {
 @import '@/themes/craft/var.scss';
 #outline {
   position: relative;
-  flex-direction: column;
+  flex-direction: row;
   display: flex;
   width: 100%;
   height: 100%;
@@ -383,10 +431,28 @@ export default {
   }
 
   /* 标题容器 */
+  .important-headers {
+    width: 200px;
+    flex-grow: 0;
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+      width: 0px;
+      height: 0px;
+    }
+    .container-title {
+      color: $header-1;
+      text-align: center;
+    }
+    .item {
+      padding: 4px 4px 4px 6px!important;
+      color: $header-2;
+    }
+  }
   .headers-container {
     width: 100%;
     overflow: auto;
     box-sizing: border-box;
+
     &::-webkit-scrollbar {
       width: 0px;
       height: 0px;
@@ -405,7 +471,7 @@ export default {
         background: $sidebar-item-hover-bg;
       }
       &:last-of-type {
-        margin-bottom: 120px;
+        margin-bottom: 10px;
       }
       .children-count {
         position: absolute;
@@ -423,7 +489,7 @@ export default {
         // background: red;
         text-align: center;
         font-weight: bold;
-        background: $sidebar-item-active-bg;
+        // background: $sidebar-item-active-bg;
       }
     }
     .header1:not(:first-of-type) {

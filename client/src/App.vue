@@ -12,7 +12,7 @@
       <!-- 笔记本 -->
       <div id="all-note-content" :class="[splitScreenClass]" ref="note-content">
         <note-content :isDefaultEditor="true" class="note-content note-content-1"></note-content>
-        <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="true"></note-content>
+        <note-content v-if="isSplitScreen" class="note-content note-content-2" :isAutoOpenCurFilePath="false"></note-content>
       </div>
 
       <!-- 常用工具栏 -->
@@ -234,7 +234,7 @@ export default {
           if (pasteText) {
             let tempFileContent = await Files.get(filePath, this.$message);
 
-            tempFileContent = `\n# 采集\n${pasteText}\n${tempFileContent}`;
+            tempFileContent = `\n# ${pasteText}\n${tempFileContent}`;
             try {
               await Files.update({
                 path: filePath,
@@ -391,10 +391,18 @@ textarea {
     &.up-down-split-screen {
       transition: all 0.2s;
       flex-direction: column;
+      .note-content-2{
+        height: 260px;
+        flex-grow: 0;
+      }
     }
     &.left-right-split-screen {
       transition: all 0.2s;
       flex-direction: row;
+      // .note-content-2{
+      //   width: 300px;
+      //   flex-grow: 0;
+      // }
     }
     .note-content {
       transition: all 0.2s;
