@@ -435,22 +435,26 @@ export default {
     width: 200px;
     flex-grow: 0;
     overflow-y: auto;
+    // border-right: 1px solid red;
+    box-shadow: $float-box-shadow;
     &::-webkit-scrollbar {
       width: 0px;
       height: 0px;
     }
     .container-title {
-      color: $header-1;
+      color: $header-0;
       text-align: center;
     }
     .item {
       padding: 4px 4px 4px 6px!important;
-      color: $header-2;
+      color: $header-1;
     }
   }
   .headers-container {
     width: 100%;
     overflow: auto;
+    // padding-top: 4px;
+    line-height: 24px;
     box-sizing: border-box;
 
     &::-webkit-scrollbar {
