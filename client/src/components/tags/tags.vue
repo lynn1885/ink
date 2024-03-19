@@ -1,5 +1,6 @@
 <template>
   <div id="tags">
+    <Outline :blocks="['important']"></Outline>
     <!-- 重点标签 -->
     <div class="important-tags">
       <div
@@ -41,7 +42,7 @@
     </div>
 
     <!-- 临时标签 -->
-    <div class="temp-tags">
+    <!-- <div class="temp-tags">
       <div
         class="tag-item"
         v-for="(info, tagName) in tempTags"
@@ -65,19 +66,21 @@
           <img :src="info.img">
         </div>
       </div>
-    </div>
+    </div> -->
 
     <!-- 工具 -->
     <div class="tools">
-      <div class="tool" @click="addTag('临时')">临时</div>
+      <!-- <div class="tool" @click="addTag('临时')">临时</div> -->
       <div class="tool" @click="addTag('⭐')">⭐</div>
-      <div class="tool" @click="addTag('公式定理⭐')">公式定理</div>
-      <div class="tool" @click="addTag('概念⭐')">概念</div>
+      <!-- <div class="tool" @click="addTag('公式定理⭐')">公式定理</div> -->
+      <!-- <div class="tool" @click="addTag('概念⭐')">概念</div> -->
     </div>
   </div>
 </template>
 <script>
 import classNames from '@/tools/class-names';
+import Outline from '@/components/outline/outline.vue';
+
 import _ from 'lodash';
 
 export default {
@@ -90,6 +93,10 @@ export default {
       changesHandler: null,
       headers: [],
     };
+  },
+
+  components: {
+    Outline
   },
 
   watch: {
@@ -250,6 +257,7 @@ export default {
   .important-tags {
     height: 60%;
     overflow: auto;
+    border-top: 2px dashed $sidebar-item-border-color;
     border-bottom: 2px dashed $sidebar-item-border-color;
     margin-bottom: 4px;
   }
@@ -257,7 +265,7 @@ export default {
   /* 最近标签 */
   .recent-tags {
     border-bottom: 2px dashed $sidebar-item-border-color;
-    height: 240px;
+    height: 140px;
     overflow: auto;
     flex-shrink: 0;
     .tag {

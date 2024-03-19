@@ -1,8 +1,8 @@
 <template>
   <div id="outline">
     <div id="outline-info" v-if="!displayHeaders">没有发现标题~</div>
-    <div class="important-headers">
-      <!-- 特级标题 -->
+    <div class="important-headers" v-if="blocks.includes('important')">
+
       <div class="headers-container">
         <div class="container-title">零级标题</div>
         <div
@@ -17,22 +17,7 @@
           :title="header.text.replace(/^#+/, '')"
         >{{ header.text.replace(/^#+/, '') }}</div>
       </div>
-      <!-- 重要标题 -->
-      <div class="headers-container">
-        <div class="container-title">重要标题</div>
-        <div
-          v-if="header.text.endsWith('⭐')"
-          :class="{
-            item: true,
-            active: header.lineNum === activeHeaderLineNum
-          }"
-          :key="header.lineNum + '-' + header.lv + '-' + header.text"
-          v-for="header of displayHeaders"
-          @click="scrollNoteToThisLine(header.lineNum, false)"
-          :title="header.text.replace(/^#+/, '')"
-        >{{ header.text.replace(/^#+/, '') }}</div>
-      </div>
-      <!-- 一级标题 -->
+
       <div class="headers-container">
         <div class="container-title">一级标题</div>
         <div
@@ -47,10 +32,24 @@
           :title="header.text.replace(/^#+/, '')"
         >{{ header.text.replace(/^#+/, '') }}</div>
       </div>
+
+      <div class="headers-container">
+        <div class="container-title">重要标题</div>
+        <div
+          v-if="header.text.endsWith('⭐')"
+          :class="{
+            item: true,
+            active: header.lineNum === activeHeaderLineNum
+          }"
+          :key="header.lineNum + '-' + header.lv + '-' + header.text"
+          v-for="header of displayHeaders"
+          @click="scrollNoteToThisLine(header.lineNum, false)"
+          :title="header.text.replace(/^#+/, '')"
+        >{{ header.text.replace(/^#+/, '') }}</div>
+      </div>
     </div>
 
-
-    <div class="headers-container">
+    <div class="headers-container" v-if="blocks.includes('headers')">
       <div
         :class="{
           item: true,
@@ -77,7 +76,7 @@
     </div>
 
     <!-- 标题计数: 下面的-1是, 为了去除最后一行命令行带来的干扰-->
-    <div class="headers-counter">
+    <!-- <div class="headers-counter">
       <div class="count lv1">{{headerCount[1]}}</div>
       <div class="count lv2">{{headerCount[2]}}</div>
       <div class="count lv3">{{headerCount[3]}}</div>
@@ -86,7 +85,7 @@
       <div class="count lv6">{{headerCount[6]}}</div>
       <div class="count important"> <span class="star">⭐</span> {{headerCount.important}}</div>
       <div class="count all">{{headerCount.all}} 个知识点</div>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -121,7 +120,14 @@ export default {
       }, // 标题计数
     };
   },
-
+  props: {
+    blocks: {
+      type: Array,
+      default() {
+        return ['headers']; // important就是显示重要标题，headers就是显示正常标题，也可以两个都写进去
+      }
+    }
+  },
   watch: {
     // eslint-disable-next-line func-names
     '$store.state.editor': {
@@ -431,9 +437,9 @@ export default {
   }
 
   /* 标题容器 */
+  // 重要标题
   .important-headers {
-    width: 200px;
-    flex-grow: 0;
+    flex-grow: 1;
     overflow-y: auto;
     // border-right: 1px solid red;
     box-shadow: $float-box-shadow;
@@ -442,7 +448,7 @@ export default {
       height: 0px;
     }
     .container-title {
-      color: $header-0;
+      // color: $header-0;
       text-align: center;
     }
     .item {
@@ -450,12 +456,14 @@ export default {
       color: $header-1;
     }
   }
+  // 普通标题
   .headers-container {
     width: 100%;
     overflow: auto;
     // padding-top: 4px;
     line-height: 24px;
     box-sizing: border-box;
+    flex-grow: 1;
 
     &::-webkit-scrollbar {
       width: 0px;

@@ -287,12 +287,24 @@
   text-decoration: none;
   background: $cm-link-bg!important;
   padding: 2px;
-  color: $cm-link-color !important;
+  // color: $cm-link-color !important;
   border-radius: 0px;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
+}
+
+.cm-formatting-link {
+  border-top-left-radius: 2px;
+  border-bottom-left-radius: 2px;
+}
+
+.cm-link+.cm-formatting-link {
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-top-right-radius: 2px;
+  border-bottom-right-radius: 2px;
 }
 
 .line-cm-code-block-boundary {
@@ -338,6 +350,7 @@
 .cm-formatting-header,
 .cm-formatting-em,
 .cm-formatting-code,
+.cm-formatting-link,
 .cm-formatting-strong,
 .cm-formatting-strikethrough {
   color: transparent !important;
@@ -352,6 +365,7 @@
   .cm-formatting-header,
   .cm-formatting-em,
   .cm-formatting-code,
+  .cm-formatting-link,
   .cm-formatting-strong {
     color: $cm-formatting-color !important; // visibility"可能"会导致复制失效, 所以使用安全的opacity
   }
